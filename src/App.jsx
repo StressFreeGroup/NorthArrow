@@ -290,19 +290,61 @@ function ShieldPage({setPage}){
           </div>
         </div>
       </div>
-      <div style={{background:C.navy800,color:C.white,padding:'clamp(100px,12vw,160px) clamp(40px,5vw,72px) clamp(60px,8vw,100px)',display:'flex',flexDirection:'column',justifyContent:'center',position:'relative'}}>
+      <div style={{background:C.navy800,color:C.white,padding:'clamp(110px,13vw,160px) clamp(36px,5vw,64px) clamp(60px,8vw,90px)',display:'flex',flexDirection:'column',justifyContent:'center',position:'relative',overflow:'hidden'}}>
+        {/* Subtle grid background */}
         <div style={{position:'absolute',inset:0,backgroundImage:'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)',backgroundSize:'40px 40px',opacity:0.5}}/>
-        <div style={{position:'relative'}}>
-          <div style={{display:'flex',alignItems:'baseline',gap:8,marginBottom:8}}>
-            <span style={{fontFamily:'var(--font-display)',fontSize:'clamp(3.5rem,7vw,6rem)',fontWeight:800,lineHeight:1}}>$25</span>
-          </div>
-          <div style={{fontSize:'1.02rem',color:C.navy300,marginBottom:28,fontStyle:'italic'}}>per day · per vehicle · capped at $199/trip</div>
-          {[['Deductible per occurrence','$250'],['Max coverage per occurrence','$2,500'],['Review window','7 Days'],['Damage notification window','24 Hours'],['Claim submission window','5 Business Days']].map(([l,v])=>
-            <div key={l} style={{display:'flex',justifyContent:'space-between',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.08)',gap:14}}>
-              <span style={{color:C.navy300,fontSize:'0.93rem'}}>{l}</span>
-              <span style={{fontWeight:700,whiteSpace:'nowrap'}}>{v}</span>
+        {/* Glowing accent orb */}
+        <div style={{position:'absolute',top:'15%',right:-100,width:340,height:340,borderRadius:'50%',background:`radial-gradient(circle, ${C.green500}25 0%, transparent 65%)`,pointerEvents:'none'}}/>
+
+        <div style={{position:'relative',maxWidth:480}}>
+          {/* HEADLINE PRICE CARD */}
+          <div style={{padding:'28px 32px',background:'linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',border:'1px solid rgba(255,255,255,0.1)',borderRadius:14,marginBottom:24,backdropFilter:'blur(8px)',position:'relative',overflow:'hidden'}}>
+            <div style={{position:'absolute',top:0,left:0,bottom:0,width:4,background:`linear-gradient(180deg, ${C.green400}, ${C.green600})`}}/>
+            <div style={{display:'flex',alignItems:'center',gap:6,fontSize:'0.7rem',fontWeight:700,letterSpacing:'0.14em',textTransform:'uppercase',color:C.green400,marginBottom:10}}>
+              <span style={{width:6,height:6,background:C.green400,borderRadius:'50%',boxShadow:`0 0 10px ${C.green400}`}}/>
+              Standalone Waiver Pricing
             </div>
-          )}
+            <div style={{display:'flex',alignItems:'baseline',gap:10,marginBottom:6,flexWrap:'wrap'}}>
+              <span style={{fontFamily:'var(--font-display)',fontSize:'clamp(3.6rem,7vw,5.6rem)',fontWeight:800,lineHeight:1,letterSpacing:'-0.02em'}}>$25</span>
+              <span style={{color:C.navy300,fontSize:'1rem',fontWeight:500}}>per day · per vehicle</span>
+            </div>
+            <div style={{display:'inline-flex',alignItems:'center',gap:6,padding:'5px 12px',background:'rgba(76,192,126,0.14)',border:'1px solid rgba(76,192,126,0.25)',borderRadius:99,fontSize:'0.78rem',color:C.green400,fontWeight:600,marginTop:8}}>
+              <Lock size={12}/>Capped at $199 per trip
+            </div>
+          </div>
+
+          {/* STAT BLOCKS — 2x2 grid for the four key numbers */}
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:14}}>
+            {[
+              {label:'Deductible',value:'$250',sub:'per occurrence',accent:C.amber200},
+              {label:'Max Coverage',value:'$2,500',sub:'per occurrence',accent:C.green400},
+              {label:'Notify Within',value:'24hr',sub:'of damage',accent:C.navy300},
+              {label:'Claim Window',value:'5 Days',sub:'to submit',accent:C.navy300},
+            ].map(s=>(
+              <div key={s.label} style={{padding:'14px 16px',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:8}}>
+                <div style={{fontSize:'0.68rem',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',color:s.accent,marginBottom:4}}>{s.label}</div>
+                <div style={{fontFamily:'var(--font-display)',fontSize:'1.6rem',fontWeight:800,lineHeight:1,marginBottom:3}}>{s.value}</div>
+                <div style={{fontSize:'0.74rem',color:C.navy300}}>{s.sub}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* REVIEW WINDOW INLINE BAR */}
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'14px 18px',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:8,marginBottom:18}}>
+            <div style={{display:'flex',alignItems:'center',gap:10}}>
+              <Clock size={16} color={C.navy300}/>
+              <span style={{fontSize:'0.86rem',color:C.navy200,fontWeight:600}}>Review window</span>
+            </div>
+            <span style={{fontWeight:800,fontSize:'0.95rem'}}>7 Business Days</span>
+          </div>
+
+          {/* DISCLAIMER */}
+          <div style={{display:'flex',alignItems:'flex-start',gap:8,padding:'10px 14px',background:'rgba(220,38,38,0.08)',border:'1px solid rgba(220,38,38,0.2)',borderRadius:6}}>
+            <AlertTriangle size={14} color="#FCA5A5" style={{marginTop:3,flexShrink:0}}/>
+            <div style={{fontSize:'0.74rem',color:'rgba(255,255,255,0.85)',lineHeight:1.5}}>
+              <strong style={{color:'#FCA5A5'}}>NOT AN INSURANCE PRODUCT.</strong> Not regulated by the CA Department of Insurance. Stress Free Group LLC is not a licensed insurance carrier.
+            </div>
+          </div>
         </div>
       </div>
       <style>{`@media(max-width:880px){.shield-hero{grid-template-columns:1fr!important}}`}</style>
