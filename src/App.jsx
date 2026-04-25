@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Shield, Phone, Mail, MapPin, Menu, X, Check, AlertTriangle, TrendingUp, DollarSign, FileText, Users, Truck, Clock, Star, ArrowRight, ChevronDown, ChevronUp, Lock, Zap, Eye, Heart, Wrench, CircleDot, Scale, BadgeCheck, Clipboard, Send, LogIn, Layers, AlertOctagon, TriangleAlert, Ban, Info } from 'lucide-react'
+import { Shield, Phone, Mail, MapPin, Menu, X, Check, AlertTriangle, TrendingUp, DollarSign, FileText, Users, Truck, Clock, Star, ArrowRight, ChevronDown, ChevronUp, Lock, Zap, Eye, Heart, Wrench, CircleDot, Scale, BadgeCheck, Clipboard, Send, LogIn, Layers, AlertOctagon, TriangleAlert, Ban, Info, ShieldCheck, ExternalLink, XCircle } from 'lucide-react'
+import ApplicationForm from './ApplicationForm.jsx'
 
 const C={navy900:'#0A1628',navy800:'#0F2240',navy700:'#132D5E',navy600:'#1A3F7A',navy500:'#2558A3',navy400:'#3B7DD8',navy300:'#6FA3E8',navy200:'#A8C8F0',navy100:'#D4E4F8',navy50:'#EBF2FB',green700:'#1B6E3D',green600:'#238B4E',green500:'#2EA663',green400:'#4CC07E',green100:'#D6F0E2',purple700:'#4A2D7A',purple600:'#5E3B99',purple500:'#7349B8',purple400:'#8F6DD0',purple100:'#E6DCF5',white:'#FFFFFF',grey50:'#F7F8FA',grey100:'#F0F2F5',grey200:'#E2E6EB',grey300:'#CDD3DB',grey400:'#9CA5B2',grey500:'#6B7685',grey600:'#4A5568',grey700:'#2D3748',red600:'#DC2626',red700:'#B91C1C',red50:'#FEF2F2',amber600:'#D97706',amber50:'#FFFBEB'}
 const sWrap={maxWidth:1200,margin:'0 auto',padding:'0 clamp(20px,4vw,40px)'}
@@ -180,7 +181,7 @@ function HomePage({setPage}){
       <div style={sWrap}>
         <SectionHeader overline="How It Works" title="From Application to Coverage in Three Steps" accent="purple"/>
         <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:0}}>
-          {[{step:'01',icon:FileText,title:'Apply Online',desc:'Complete our streamlined 5-step application. Add your fleet, choose your tier, select add-ons.',color:C.navy700},{step:'02',icon:Eye,title:'Underwriter Review',desc:'Our underwriting team reviews your application and fleet details within business days.',color:C.purple600},{step:'03',icon:BadgeCheck,title:'Get Covered',desc:'Receive policy documents, proof of insurance, and North Arrow owner portal access.',color:C.green600}].map((s,i)=><div key={i} style={{padding:'clamp(32px,4vw,48px)',borderBottom:`4px solid ${s.color}`,borderRight:i<2?`1px solid ${C.grey200}`:'none',background:C.white}}><div style={{fontFamily:'var(--font-display)',fontSize:'2.8rem',fontWeight:800,color:C.grey200,marginBottom:16}}>{s.step}</div><div style={{width:44,height:44,background:`${s.color}12`,display:'flex',alignItems:'center',justifyContent:'center',marginBottom:16}}><s.icon size={22} color={s.color}/></div><h4 style={{marginBottom:10,color:C.navy800}}>{s.title}</h4><p style={{fontSize:'0.9rem',color:C.grey500,lineHeight:1.7}}>{s.desc}</p></div>)}
+          {[{step:'01',icon:FileText,title:'Apply Online',desc:'Complete our streamlined 5-step application. Add your fleet, choose your tier, select add-ons.',color:C.navy700,clickable:true},{step:'02',icon:Eye,title:'Underwriter Review',desc:'Our underwriting team reviews your application and fleet details within business days.',color:C.purple600},{step:'03',icon:BadgeCheck,title:'Get Covered',desc:'Receive policy documents, proof of insurance, and North Arrow owner portal access.',color:C.green600}].map((s,i)=><div key={i} onClick={s.clickable?()=>{setPage('apply');window.scrollTo(0,0)}:undefined} style={{padding:'clamp(32px,4vw,48px)',borderBottom:`4px solid ${s.color}`,borderRight:i<2?`1px solid ${C.grey200}`:'none',background:C.white,cursor:s.clickable?'pointer':'default',transition:'background 0.2s, transform 0.2s',position:'relative'}} onMouseEnter={e=>{if(s.clickable){e.currentTarget.style.background=C.navy50}}} onMouseLeave={e=>{if(s.clickable){e.currentTarget.style.background=C.white}}}><div style={{fontFamily:'var(--font-display)',fontSize:'2.8rem',fontWeight:800,color:C.grey200,marginBottom:16}}>{s.step}</div><div style={{width:44,height:44,background:`${s.color}12`,display:'flex',alignItems:'center',justifyContent:'center',marginBottom:16}}><s.icon size={22} color={s.color}/></div><h4 style={{marginBottom:10,color:C.navy800}}>{s.title}</h4><p style={{fontSize:'0.9rem',color:C.grey500,lineHeight:1.7,marginBottom:s.clickable?14:0}}>{s.desc}</p>{s.clickable&&<div style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:'0.85rem',fontWeight:700,color:s.color}}>Start Application <ArrowRight size={14}/></div>}</div>)}
         </div>
       </div>
     </section>
@@ -238,30 +239,200 @@ function CoveragePage({setPage}){
 }
 
 function ShieldPage({setPage}){
+  const covered=[
+    {t:'Accidental interior damage while vehicle is stationary',sub:'Not from negligence, misuse, or willful acts'},
+    {t:'Refrigerator or freezer handle breakage'},
+    {t:'Microwave turntable plate (glass plate only)',sub:'Not the microwave unit itself'},
+    {t:'Interior sliding door off track',sub:'Not applicable to slide-out room doors'},
+    {t:'Toilet clog — standard clearing',sub:'Foreign-object blockage requiring pump-out excluded'},
+    {t:'Minor marks, scrapes, or scuffs — max 3 inches, one location per occurrence'},
+    {t:'Interior hardware: cabinet latches, magnetic catches, drawer pulls, hinges, handle screws'},
+    {t:'Window blind slats or pull cords — accidental breakage'},
+    {t:'Shower curtain rod or hooks — accidental breakage'},
+    {t:'Broken cup holders or small molded interior trim components'},
+    {t:'Fresh water hose and grommet'},
+    {t:'Septic hose and adaptor'},
+    {t:'Stabilizer jack hand-crank'},
+    {t:'TV remote — missing or broken',sub:'Remote only — not the TV or entertainment unit'},
+    {t:'Sink, shower, or tub faucet fixtures — accidental damage'},
+    {t:'One courtesy mobile service call',sub:"If provided by host at host's sole discretion"},
+    {t:'Missing interior supply kit items (small bin items only)'},
+  ]
+  const notCovered=[
+    'Pet or animal damage of any kind',
+    'Tires, slide-outs, or awnings',
+    'Exterior body, paint, glass, or roof',
+    'Generator or mechanical systems',
+    'TV, audio, or entertainment system units',
+    'Keys, fobs, or lock hardware',
+    'Acts of nature or acts of God',
+    'Negligence, misuse, or rental agreement violations',
+    'Water damage from open vents or windows',
+    'Theft of any items',
+    'Damage while vehicle is in motion',
+    'Pre-existing or undisclosed damage',
+    'Foreign-object toilet blockage (pump-out required)',
+    'Festival or high-attendance event rentals',
+    'Claims submitted after the 5-day window',
+    'Sensor readings billable by host',
+    'Anything covered by another coverage program',
+  ]
   return(<>
-    <section style={{display:'grid',gridTemplateColumns:'1fr 1fr',minHeight:'80vh'}}>
-      <div style={{background:C.green600,color:C.white,padding:'clamp(100px,12vw,160px) clamp(40px,5vw,80px) clamp(60px,8vw,100px)',display:'flex',flexDirection:'column',justifyContent:'center',position:'relative',overflow:'hidden'}}>
-        <div style={{position:'absolute',inset:0,opacity:0.06,backgroundImage:`radial-gradient(${C.white} 1px, transparent 1px)`,backgroundSize:'28px 28px'}}/>
-        <div style={{position:'relative'}}><div style={{fontSize:'0.78rem',fontWeight:700,letterSpacing:'0.14em',textTransform:'uppercase',color:'rgba(255,255,255,0.7)',marginBottom:20}}>Damage Protection</div><h1 style={{color:C.white,marginBottom:20}}>Shield Accidental Damage Waiver</h1><p style={{fontSize:'1.05rem',color:'rgba(255,255,255,0.85)',lineHeight:1.75,marginBottom:32}}>The only standalone accidental damage waiver built specifically for RV rental fleets. No bundling. No platform lock-in.</p><button onClick={()=>{setPage('apply');window.scrollTo(0,0)}} style={{padding:'16px 40px',background:C.white,color:C.green700,borderRadius:6,fontWeight:700,cursor:'pointer',fontSize:'1rem',border:'none',display:'inline-flex',alignItems:'center',gap:10}}>Add Shield to Your Policy <ArrowRight size={18}/></button></div>
+    {/* HERO — green/white split */}
+    <section style={{display:'grid',gridTemplateColumns:'1.05fr 1fr',minHeight:'78vh'}} className="shield-hero">
+      <div style={{background:C.green600,color:C.white,padding:'clamp(120px,14vw,180px) clamp(40px,5vw,80px) clamp(60px,8vw,100px)',display:'flex',flexDirection:'column',justifyContent:'center',position:'relative',overflow:'hidden'}}>
+        <div style={{position:'absolute',inset:0,opacity:0.05,backgroundImage:`radial-gradient(${C.white} 1px, transparent 1px)`,backgroundSize:'24px 24px'}}/>
+        <div style={{position:'relative',maxWidth:560}}>
+          <div style={{display:'inline-flex',alignItems:'center',gap:8,padding:'6px 12px',background:'rgba(255,255,255,0.12)',border:'1px solid rgba(255,255,255,0.2)',borderRadius:99,fontSize:'0.74rem',fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase',color:C.white,marginBottom:24}}>
+            <span style={{width:6,height:6,background:C.white,borderRadius:'50%'}}/>Interior Accidental Damage Liability Waiver
+          </div>
+          <h1 style={{color:C.white,marginBottom:16,fontSize:'clamp(2.4rem,5vw,3.6rem)',lineHeight:1.05}}>Stress Free Shield</h1>
+          <p style={{fontSize:'1.18rem',color:'rgba(255,255,255,0.92)',lineHeight:1.55,marginBottom:14,fontStyle:'italic'}}>Reimbursement for common occurrences.</p>
+          <p style={{fontSize:'1rem',color:'rgba(255,255,255,0.82)',lineHeight:1.7,marginBottom:32}}>Reinforcing good experiences start to finish — ensuring minor accidental damage doesn't spoil an otherwise successful trip for guests and hosts alike. The only standalone interior damage waiver built specifically for RV rental fleets.</p>
+          <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
+            <button onClick={()=>{setPage('apply');window.scrollTo(0,0)}} style={{padding:'15px 32px',background:C.white,color:C.green700,borderRadius:6,fontWeight:700,cursor:'pointer',fontSize:'0.97rem',border:'none',display:'inline-flex',alignItems:'center',gap:8}}>Add Shield to Your Policy <ArrowRight size={17}/></button>
+            <a href="https://stressfreeshield.vercel.app/" target="_blank" rel="noopener noreferrer" style={{padding:'15px 28px',background:'transparent',color:C.white,borderRadius:6,fontWeight:700,fontSize:'0.97rem',border:'2px solid rgba(255,255,255,0.5)',display:'inline-flex',alignItems:'center',gap:8,textDecoration:'none'}}>Visit StressFreeShield.com <ExternalLink size={16}/></a>
+          </div>
+        </div>
       </div>
-      <div style={{background:C.navy800,color:C.white,padding:'clamp(100px,12vw,160px) clamp(40px,5vw,80px) clamp(60px,8vw,100px)',display:'flex',flexDirection:'column',justifyContent:'center'}}>
-        <div style={{marginBottom:32}}><div style={{fontFamily:'var(--font-display)',fontSize:'clamp(3rem,6vw,5rem)',fontWeight:800,lineHeight:1}}>$25</div><div style={{fontSize:'1.05rem',color:C.navy300,marginTop:4}}>per day, per vehicle</div></div>
-        {[['Deductible','$250'],['Max Per Occurrence','$2,500'],['Review Window','7 Days'],['Notification Window','24 Hours'],['Claim Window','5 Business Days']].map(([l,v])=><div key={l} style={{display:'flex',justifyContent:'space-between',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.06)'}}><span style={{color:C.navy300}}>{l}</span><span style={{fontWeight:700}}>{v}</span></div>)}
+      <div style={{background:C.navy800,color:C.white,padding:'clamp(100px,12vw,160px) clamp(40px,5vw,72px) clamp(60px,8vw,100px)',display:'flex',flexDirection:'column',justifyContent:'center',position:'relative'}}>
+        <div style={{position:'absolute',inset:0,backgroundImage:'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)',backgroundSize:'40px 40px',opacity:0.5}}/>
+        <div style={{position:'relative'}}>
+          <div style={{display:'flex',alignItems:'baseline',gap:8,marginBottom:8}}>
+            <span style={{fontFamily:'var(--font-display)',fontSize:'clamp(3.5rem,7vw,6rem)',fontWeight:800,lineHeight:1}}>$25</span>
+          </div>
+          <div style={{fontSize:'1.02rem',color:C.navy300,marginBottom:28,fontStyle:'italic'}}>per day · per vehicle · capped at $199/trip</div>
+          {[['Deductible per occurrence','$250'],['Max coverage per occurrence','$2,500'],['Review window','7 Days'],['Damage notification window','24 Hours'],['Claim submission window','5 Business Days']].map(([l,v])=>
+            <div key={l} style={{display:'flex',justifyContent:'space-between',padding:'14px 0',borderBottom:'1px solid rgba(255,255,255,0.08)',gap:14}}>
+              <span style={{color:C.navy300,fontSize:'0.93rem'}}>{l}</span>
+              <span style={{fontWeight:700,whiteSpace:'nowrap'}}>{v}</span>
+            </div>
+          )}
+        </div>
       </div>
-      <style>{`@media(max-width:768px){section{grid-template-columns:1fr!important}}`}</style>
+      <style>{`@media(max-width:880px){.shield-hero{grid-template-columns:1fr!important}}`}</style>
     </section>
 
-    <section style={{padding:'clamp(60px,8vw,120px) 0',background:C.white}}>
+    {/* PROMINENT NOT-AN-INSURANCE-PRODUCT BAR */}
+    <section style={{background:C.amber50,borderTop:`1px solid ${C.amber200}`,borderBottom:`1px solid ${C.amber200}`,padding:'18px 0'}}>
+      <div style={{...sWrap,display:'flex',alignItems:'center',gap:14,flexWrap:'wrap',justifyContent:'center',textAlign:'center'}}>
+        <AlertTriangle size={20} color={C.amber600} style={{flexShrink:0}}/>
+        <div style={{fontSize:'0.92rem',color:C.grey700,lineHeight:1.55,fontWeight:600}}><strong style={{color:C.red600,letterSpacing:'0.02em'}}>STRESS FREE SHIELD IS NOT AN INSURANCE PRODUCT.</strong> Not regulated by the California Department of Insurance. Stress Free Group LLC is not a licensed insurance carrier.</div>
+      </div>
+    </section>
+
+    {/* WHAT IS COVERED / NOT COVERED */}
+    <section style={{padding:'clamp(60px,8vw,100px) 0',background:C.navy50}}>
       <div style={sWrap}>
-        <SectionHeader overline="Shield Features" title="What Makes Shield Different" accent="green"/>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))',gap:0,borderTop:`1px solid ${C.grey200}`}}>
-          {[{icon:Lock,title:'Standalone Product',desc:'Works independently. No bundling required.'},{icon:CircleDot,title:'Pre-Screened Vendors',desc:'DeCo Fleet Management and Coachwerx SD.'},{icon:AlertTriangle,title:'Festival Events Excluded',desc:'High-attendance events excluded by design.'},{icon:Star,title:'Capped Exposure',desc:'$2,500 max per occurrence.'},{icon:Clock,title:'Strict Claim Windows',desc:'24-hour notification, 5-day submission.'},{icon:FileText,title:'Clear Legal Terms',desc:'Defined coverage, exclusions, and processes.'}].map((f,i)=><div key={i} style={{padding:'28px 32px',borderBottom:`1px solid ${C.grey200}`,borderLeft:`4px solid ${C.green500}`}}><div style={{display:'flex',alignItems:'center',gap:12,marginBottom:10}}><f.icon size={20} color={C.green600}/><h4 style={{color:C.navy800,margin:0}}>{f.title}</h4></div><p style={{fontSize:'0.88rem',color:C.grey500,lineHeight:1.65,paddingLeft:32}}>{f.desc}</p></div>)}
+        <SectionHeader overline="Coverage Details" title="What's Covered — and What's Not" accent="green"/>
+        <p style={{textAlign:'center',color:C.grey600,fontSize:'0.95rem',maxWidth:680,margin:'-8px auto 36px',lineHeight:1.65}}>Items not expressly listed as covered are excluded. All claims are subject to estimate review and approval prior to reimbursement.</p>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}} className="shield-cov-grid">
+          {/* COVERED */}
+          <div style={{background:C.white,padding:'clamp(28px,3vw,40px) clamp(22px,3vw,36px)',borderTop:`4px solid ${C.green500}`,boxShadow:'0 2px 12px rgba(15,34,64,0.04)'}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:20,paddingBottom:14,borderBottom:`1px solid ${C.grey200}`}}>
+              <div style={{width:30,height:30,background:C.green600,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}}><Check size={17} color={C.white}/></div>
+              <h3 style={{color:C.green700,margin:0,fontSize:'1.18rem'}}>What IS covered</h3>
+            </div>
+            <ul style={{listStyle:'none',padding:0,margin:0}}>
+              {covered.map((c,i)=>(
+                <li key={i} style={{paddingLeft:18,marginBottom:11,position:'relative',color:C.grey700,fontSize:'0.91rem',lineHeight:1.55}}>
+                  <span style={{position:'absolute',left:0,top:8,width:6,height:6,background:C.green500,borderRadius:'50%'}}/>
+                  {c.t}
+                  {c.sub&&<div style={{fontSize:'0.8rem',color:C.grey500,marginTop:3,fontStyle:'italic'}}>{c.sub}</div>}
+                </li>
+              ))}
+            </ul>
+            <div style={{marginTop:18,padding:'12px 14px',background:C.navy50,fontSize:'0.84rem',color:C.navy700,lineHeight:1.55,borderLeft:`3px solid ${C.navy500}`}}>
+              <strong>Scratch and scuff limit:</strong> Marks up to 3 inches, one location per occurrence only.
+            </div>
+          </div>
+          {/* NOT COVERED */}
+          <div style={{background:C.white,padding:'clamp(28px,3vw,40px) clamp(22px,3vw,36px)',borderTop:`4px solid ${C.red600}`,boxShadow:'0 2px 12px rgba(15,34,64,0.04)'}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:20,paddingBottom:14,borderBottom:`1px solid ${C.grey200}`}}>
+              <div style={{width:30,height:30,background:C.red600,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}}><XCircle size={17} color={C.white}/></div>
+              <h3 style={{color:C.red600,margin:0,fontSize:'1.18rem'}}>What is NOT covered</h3>
+            </div>
+            <ul style={{listStyle:'none',padding:0,margin:0}}>
+              {notCovered.map((c,i)=>(
+                <li key={i} style={{paddingLeft:18,marginBottom:11,position:'relative',color:C.grey700,fontSize:'0.91rem',lineHeight:1.55}}>
+                  <span style={{position:'absolute',left:0,top:8,width:6,height:6,background:C.red600,borderRadius:'50%'}}/>
+                  {c}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* FESTIVAL EXCLUSION CALLOUT */}
+        <div style={{marginTop:24,padding:'20px 24px',background:C.red50,borderLeft:`4px solid ${C.red600}`,borderRadius:4,display:'flex',gap:14,alignItems:'flex-start'}}>
+          <Ban size={22} color={C.red600} style={{marginTop:3,flexShrink:0}}/>
+          <div>
+            <div style={{fontWeight:700,color:C.red600,marginBottom:6,fontSize:'0.98rem'}}>Festival and high-attendance event exclusion</div>
+            <div style={{color:C.grey700,fontSize:'0.91rem',lineHeight:1.65,marginBottom:8}}>The Standard Shield does not apply to any event with <strong>500+ expected attendees within 25 miles</strong> of the vehicle. Named exclusions: Burning Man, Coachella, Stagecoach, King of the Hammers, EDC, and any event designated by Stress Free RVs at booking.</div>
+            <div style={{color:C.grey700,fontSize:'0.91rem',lineHeight:1.65,fontStyle:'italic'}}>Planning an event trip? Ask about <strong>Premium Event Coverage</strong> — available separately.</div>
+          </div>
+        </div>
+      </div>
+      <style>{`@media(max-width:768px){.shield-cov-grid{grid-template-columns:1fr!important}}`}</style>
+    </section>
+
+    {/* WHY SHIELD */}
+    <section style={{padding:'clamp(60px,8vw,100px) 0',background:C.white}}>
+      <div style={sWrap}>
+        <SectionHeader overline="Why Shield" title="Six Reasons Shield is Different" accent="purple"/>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:0,borderTop:`1px solid ${C.grey200}`}}>
+          {[
+            {icon:Lock,title:'Standalone product',desc:'Works independently of any platform. No bundling required, no marketplace lock-in.'},
+            {icon:CircleDot,title:'Pre-screened vendors',desc:'San Diego: DeCo Fleet Management Services and Coachwerx SD as preferred repair vendors.'},
+            {icon:Ban,title:'Festival events excluded',desc:'High-attendance events (500+ within 25 miles) excluded by design. Premium Event Coverage available separately.'},
+            {icon:Star,title:'Capped exposure',desc:'$2,500 maximum coverage per occurrence. $250 deductible. Predictable risk for hosts.'},
+            {icon:Clock,title:'Strict claim windows',desc:'24-hour damage notification. 5 business day claim submission. 7-day review window.'},
+            {icon:FileText,title:'Clear legal terms',desc:'Defined coverage, exclusions, and processes. Not insurance — a contractual reimbursement program.'},
+          ].map((f,i)=>(
+            <div key={i} style={{padding:'28px 32px',borderBottom:`1px solid ${C.grey200}`,borderRight:i%3<2?`1px solid ${C.grey200}`:'none',borderLeft:`4px solid ${C.green500}`}}>
+              <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:10}}><f.icon size={20} color={C.green600}/><h4 style={{color:C.navy800,margin:0}}>{f.title}</h4></div>
+              <p style={{fontSize:'0.88rem',color:C.grey500,lineHeight:1.65,paddingLeft:32,margin:0}}>{f.desc}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
 
-    <section style={{background:`linear-gradient(135deg, ${C.green700} 0%, ${C.green600} 40%, ${C.navy700} 100%)`,padding:'clamp(60px,8vw,100px) 0'}}>
-      <div style={{...sWrap,textAlign:'center'}}><h2 style={{color:C.white,marginBottom:16}}>Protect Your Fleet from Day One</h2><p style={{color:'rgba(255,255,255,0.8)',fontSize:'1.02rem',marginBottom:32,maxWidth:500,margin:'0 auto 32px'}}>Add Shield to your application or contact us for existing policies.</p><div style={{display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap'}}><button onClick={()=>{setPage('apply');window.scrollTo(0,0)}} style={{padding:'16px 40px',background:C.white,color:C.green700,borderRadius:6,fontWeight:700,cursor:'pointer',border:'none'}}>Start Application</button><button onClick={()=>{setPage('contact');window.scrollTo(0,0)}} style={{padding:'16px 40px',background:'transparent',border:'2px solid rgba(255,255,255,0.5)',color:C.white,borderRadius:6,fontWeight:700,cursor:'pointer'}}>Contact Us</button></div></div>
+    {/* TERMS AND CONDITIONS / LEGAL */}
+    <section style={{padding:'clamp(60px,8vw,100px) 0',background:C.navy50}}>
+      <div style={{...sWrap,maxWidth:880}}>
+        <div style={{fontSize:'0.78rem',fontWeight:700,letterSpacing:'0.14em',textTransform:'uppercase',color:C.navy600,marginBottom:14,display:'flex',alignItems:'center',gap:10}}><Scale size={15}/>Legal</div>
+        <h2 style={{color:C.navy800,marginBottom:14,fontSize:'clamp(1.8rem,3.5vw,2.6rem)'}}>Terms and Conditions</h2>
+        <p style={{color:C.grey600,fontSize:'0.96rem',lineHeight:1.7,marginBottom:32}}>Stress Free Shield Interior Accidental Damage Liability Waiver — v2.0 · March 2026 · Stress Free Group LLC (dba Stress Free RVs)</p>
+
+        <div style={{padding:'22px 26px',background:C.red50,border:`1px solid ${C.red600}`,marginBottom:28,borderRadius:4}}>
+          <div style={{fontWeight:800,color:C.red600,marginBottom:10,fontSize:'0.94rem',letterSpacing:'0.04em'}}>NOT AN INSURANCE PRODUCT</div>
+          <div style={{color:C.grey700,fontSize:'0.92rem',lineHeight:1.7}}>This waiver is not regulated by the California Department of Insurance. Stress Free Group LLC is not a licensed insurance carrier.</div>
+        </div>
+
+        <div style={{padding:'24px 28px',background:C.white,border:`1px solid ${C.grey200}`,borderRadius:4}}>
+          <div style={{fontSize:'0.74rem',fontWeight:700,letterSpacing:'0.14em',textTransform:'uppercase',color:C.navy600,marginBottom:12}}>Legal Notice</div>
+          <p style={{color:C.grey700,fontSize:'0.93rem',lineHeight:1.75,margin:0}}>The Stress Free Shield is <strong>NOT AN INSURANCE PRODUCT</strong> and is not regulated by the California Department of Insurance. It is a contractual agreement between the Renter and Stress Free Group LLC (dba Stress Free RVs), a California limited liability company. Stress Free Group LLC is not a licensed insurance carrier. Enrollment does not guarantee reimbursement. All claims are subject to review and approval. Governing law: California. Disputes: San Diego County, CA. Shield v2.0 · March 2026.</p>
+        </div>
+
+        <div style={{marginTop:28,display:'flex',gap:12,flexWrap:'wrap'}}>
+          <a href="https://stressfreeshield.vercel.app/" target="_blank" rel="noopener noreferrer" style={{padding:'12px 24px',background:C.navy700,color:C.white,borderRadius:6,fontWeight:700,fontSize:'0.9rem',textDecoration:'none',display:'inline-flex',alignItems:'center',gap:8}}>Read Full Terms at StressFreeShield.com <ExternalLink size={15}/></a>
+          <button onClick={()=>{setPage('contact');window.scrollTo(0,0)}} style={{padding:'12px 24px',background:'transparent',border:`1.5px solid ${C.grey300}`,color:C.grey700,borderRadius:6,fontWeight:700,fontSize:'0.9rem',cursor:'pointer'}}>Questions? Contact Us</button>
+        </div>
+      </div>
+    </section>
+
+    {/* FINAL CTA */}
+    <section style={{background:`linear-gradient(135deg, ${C.green700} 0%, ${C.green600} 40%, ${C.navy700} 100%)`,padding:'clamp(60px,8vw,100px) 0',position:'relative',overflow:'hidden'}}>
+      <div style={{position:'absolute',inset:0,opacity:0.04,backgroundImage:`radial-gradient(${C.white} 1px, transparent 1px)`,backgroundSize:'28px 28px'}}/>
+      <div style={{...sWrap,textAlign:'center',position:'relative'}}>
+        <h2 style={{color:C.white,marginBottom:16}}>Add Shield to Your Coverage</h2>
+        <p style={{color:'rgba(255,255,255,0.85)',fontSize:'1.04rem',marginBottom:32,maxWidth:540,margin:'0 auto 32px',lineHeight:1.65}}>Combine real commercial insurance from North Arrow with standalone interior damage protection from Shield — the complete fleet coverage stack.</p>
+        <div style={{display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap'}}>
+          <button onClick={()=>{setPage('apply');window.scrollTo(0,0)}} style={{padding:'16px 40px',background:C.white,color:C.green700,borderRadius:6,fontWeight:700,cursor:'pointer',border:'none',fontSize:'0.97rem',display:'inline-flex',alignItems:'center',gap:8}}>Start Application <ArrowRight size={17}/></button>
+          <button onClick={()=>{setPage('contact');window.scrollTo(0,0)}} style={{padding:'16px 40px',background:'transparent',border:'2px solid rgba(255,255,255,0.5)',color:C.white,borderRadius:6,fontWeight:700,cursor:'pointer',fontSize:'0.97rem'}}>Contact Us</button>
+        </div>
+      </div>
     </section>
   </>)
 }
@@ -281,11 +452,65 @@ function AboutPage(){
     <section style={{padding:'clamp(60px,8vw,120px) 0',background:C.grey50}}>
       <div style={sWrap}>
         <SectionHeader overline="The Full Stack" title="The Only Vertically Integrated Platform" accent="purple"/>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:0,borderTop:`1px solid ${C.grey200}`,borderLeft:`1px solid ${C.grey200}`}}>
-          {[{icon:Shield,name:'North Arrow',desc:'Commercial liability and physical damage from A-rated carriers.',color:C.navy700},{icon:Lock,name:'Stress Free Shield',desc:'Standalone accidental damage waiver. $25/day, $2,500 max.',color:C.green600},{icon:Users,name:'P2PRVS',desc:'Peer-to-peer RV rental marketplace. Book direct.',color:C.purple600}].map((s,i)=><div key={i} style={{padding:'clamp(32px,4vw,48px)',background:C.white,borderRight:`1px solid ${C.grey200}`,borderBottom:`1px solid ${C.grey200}`,borderTop:`4px solid ${s.color}`}}><s.icon size={28} color={s.color} style={{marginBottom:16}}/><h3 style={{color:C.navy800,marginBottom:10}}>{s.name}</h3><p style={{color:C.grey500,fontSize:'0.9rem',lineHeight:1.65}}>{s.desc}</p></div>)}
+        <p style={{textAlign:'center',color:C.grey600,fontSize:'1rem',maxWidth:680,margin:'-12px auto 40px',lineHeight:1.65}}>Three companies. One owner. Insurance + damage protection + marketplace — all under one roof. No competitor offers all three.</p>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:18}} className="stack-grid">
+          {/* NORTH ARROW — NAVY */}
+          <div style={{background:C.white,padding:0,border:`1px solid ${C.grey200}`,borderTop:`5px solid ${C.navy700}`,boxShadow:'0 2px 14px rgba(15,34,64,0.05)',display:'flex',flexDirection:'column',overflow:'hidden'}}>
+            <div style={{padding:'32px 28px 16px',background:`linear-gradient(180deg, ${C.navy50} 0%, ${C.white} 100%)`,minHeight:140,display:'flex',alignItems:'center',justifyContent:'center'}}>
+              <img src="/north-arrow-logo.png" alt="North Arrow Commercial Insurance Services" style={{maxWidth:'100%',maxHeight:100,objectFit:'contain'}}/>
+            </div>
+            <div style={{padding:'18px 28px 28px',flex:1,display:'flex',flexDirection:'column'}}>
+              <div style={{display:'inline-flex',alignSelf:'flex-start',alignItems:'center',gap:6,padding:'4px 10px',background:C.navy50,color:C.navy700,fontSize:'0.7rem',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',borderRadius:99,marginBottom:14}}><Shield size={11}/>Commercial Insurance</div>
+              <h3 style={{color:C.navy800,marginBottom:10,fontSize:'1.3rem'}}>North Arrow</h3>
+              <p style={{color:C.grey600,fontSize:'0.9rem',lineHeight:1.65,marginBottom:18,flex:1}}>Real commercial liability and physical damage insurance from A-rated carriers. Built specifically for peer-to-peer RV rental fleet operators.</p>
+              <div style={{display:'flex',alignItems:'center',gap:6,fontSize:'0.83rem',fontWeight:700,color:C.navy700}}>This site <ArrowRight size={13}/></div>
+            </div>
+          </div>
+
+          {/* STRESS FREE SHIELD — GREEN */}
+          <div style={{background:C.white,padding:0,border:`1px solid ${C.grey200}`,borderTop:`5px solid ${C.green600}`,boxShadow:'0 2px 14px rgba(15,34,64,0.05)',display:'flex',flexDirection:'column',overflow:'hidden'}}>
+            <div style={{padding:'32px 28px 16px',background:`linear-gradient(180deg, ${C.green50} 0%, ${C.white} 100%)`,minHeight:140,display:'flex',alignItems:'center',justifyContent:'center'}}>
+              {/* Inline Shield SVG mark */}
+              <svg width="84" height="100" viewBox="0 0 84 100" xmlns="http://www.w3.org/2000/svg" style={{display:'block'}}>
+                <defs>
+                  <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor={C.green500}/>
+                    <stop offset="100%" stopColor={C.green700}/>
+                  </linearGradient>
+                </defs>
+                <path d="M42 4 L78 18 L78 50 Q78 78 42 96 Q6 78 6 50 L6 18 Z" fill="url(#shieldGrad)"/>
+                <path d="M42 12 L70 22 L70 50 Q70 72 42 86 Q14 72 14 50 L14 22 Z" fill="none" stroke={C.white} strokeWidth="1.5" opacity="0.4"/>
+                <path d="M28 50 L38 60 L58 38" fill="none" stroke={C.white} strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <div style={{padding:'18px 28px 28px',flex:1,display:'flex',flexDirection:'column'}}>
+              <div style={{display:'inline-flex',alignSelf:'flex-start',alignItems:'center',gap:6,padding:'4px 10px',background:C.green50,color:C.green700,fontSize:'0.7rem',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',borderRadius:99,marginBottom:14}}><ShieldCheck size={11}/>Damage Waiver · Not Insurance</div>
+              <h3 style={{color:C.green700,marginBottom:6,fontSize:'1.3rem'}}>Stress Free Shield</h3>
+              <div style={{fontSize:'0.78rem',color:C.grey500,marginBottom:10,fontStyle:'italic'}}>Interior Accidental Damage Liability Waiver</div>
+              <p style={{color:C.grey600,fontSize:'0.9rem',lineHeight:1.65,marginBottom:18,flex:1}}>Standalone interior damage waiver. <strong>$25/day</strong> per vehicle (capped at $199/trip). $250 deductible, $2,500 max per occurrence.</p>
+              <button onClick={()=>{setPage('shield');window.scrollTo(0,0)}} style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:'0.83rem',fontWeight:700,color:C.green700,background:'transparent',border:'none',padding:0,cursor:'pointer',alignSelf:'flex-start'}}>Learn more <ArrowRight size={13}/></button>
+            </div>
+          </div>
+
+          {/* P2PRVS — PURPLE */}
+          <div style={{background:C.white,padding:0,border:`1px solid ${C.grey200}`,borderTop:`5px solid ${C.purple600}`,boxShadow:'0 2px 14px rgba(15,34,64,0.05)',display:'flex',flexDirection:'column',overflow:'hidden'}}>
+            <div style={{padding:'32px 28px 16px',background:`linear-gradient(180deg, ${C.purple100} 0%, ${C.white} 100%)`,minHeight:140,display:'flex',alignItems:'center',justifyContent:'center'}}>
+              <img src="/p2prvs-logo.png" alt="P2PRVS — Peer to Peer RV Rental Marketplace" style={{maxWidth:'100%',maxHeight:90,objectFit:'contain'}}/>
+            </div>
+            <div style={{padding:'18px 28px 28px',flex:1,display:'flex',flexDirection:'column'}}>
+              <div style={{display:'inline-flex',alignSelf:'flex-start',alignItems:'center',gap:6,padding:'4px 10px',background:C.purple100,color:C.purple700,fontSize:'0.7rem',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',borderRadius:99,marginBottom:14}}><Users size={11}/>Marketplace</div>
+              <h3 style={{color:C.purple700,marginBottom:10,fontSize:'1.3rem'}}>P2PRVS</h3>
+              <p style={{color:C.grey600,fontSize:'0.9rem',lineHeight:1.65,marginBottom:18,flex:1}}>Peer-to-peer RV rental marketplace. Book direct, no platform middleman fees. Hosts retain control of pricing, policies, and guest relationships.</p>
+              <a href="https://www.p2prvs.com" target="_blank" rel="noopener noreferrer" style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:'0.83rem',fontWeight:700,color:C.purple700,textDecoration:'none'}}>Visit P2PRVS.com <ExternalLink size={12}/></a>
+            </div>
+          </div>
         </div>
-        <div style={{textAlign:'center',marginTop:24,color:C.grey500,fontSize:'0.95rem'}}>No competitor offers all three. Insurance + damage protection + marketplace = complete fleet coverage.</div>
+        <div style={{textAlign:'center',marginTop:32,padding:'20px 28px',background:C.white,border:`1px solid ${C.grey200}`,borderRadius:6,maxWidth:760,margin:'32px auto 0'}}>
+          <div style={{fontSize:'0.78rem',fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase',color:C.purple600,marginBottom:6}}>The Big Win</div>
+          <div style={{color:C.grey700,fontSize:'0.97rem',lineHeight:1.65}}>No competitor offers all three. <strong style={{color:C.navy800}}>Insurance + damage protection + marketplace</strong> — complete fleet coverage, all under one roof.</div>
+        </div>
       </div>
+      <style>{`@media(max-width:880px){.stack-grid{grid-template-columns:1fr!important}}`}</style>
     </section>
   </>)
 }
@@ -330,25 +555,7 @@ function ContactPage(){
 }
 
 function ApplyPage(){
-  const[step,setStep]=useState(1)
-  const steps=[{num:1,title:'Fleet Owner',desc:'Entity, contact, prior insurance'},{num:2,title:'Vehicles',desc:'Vehicle details, liens, condition'},{num:3,title:'Operations',desc:'Rental, renter, employee info'},{num:4,title:'Safety',desc:'Maintenance and safety systems'},{num:5,title:'Coverage',desc:'Tier, add-ons, review, submit'}]
-  return(<>
-    <section style={{background:`linear-gradient(135deg, ${C.navy800}, ${C.navy700})`,paddingTop:'clamp(120px,14vw,160px)',paddingBottom:40}}><div style={sWrap}><div style={{fontSize:'0.78rem',fontWeight:700,letterSpacing:'0.15em',textTransform:'uppercase',color:C.navy300,marginBottom:12}}>Application</div><h1 style={{color:C.white,marginBottom:8}}>Apply for Coverage</h1><p style={{color:C.navy200,fontSize:'1rem'}}>Complete all 5 steps to submit your application.</p></div></section>
-    <section style={{background:C.grey50,padding:'clamp(40px,5vw,60px) 0 clamp(80px,10vw,120px)'}}>
-      <div style={{...sWrap,display:'grid',gridTemplateColumns:'260px 1fr',gap:32}}>
-        <div style={{position:'sticky',top:100,alignSelf:'start'}}>
-          {steps.map(s=><div key={s.num} onClick={()=>setStep(s.num)} style={{display:'flex',gap:14,padding:'14px 18px',cursor:'pointer',background:step===s.num?C.navy800:'transparent',marginBottom:2,transition:'all 0.2s'}}><div style={{width:34,height:34,display:'flex',alignItems:'center',justifyContent:'center',background:step===s.num?C.green600:step>s.num?C.green100:C.grey200,color:step===s.num?C.white:step>s.num?C.green700:C.grey500,fontWeight:800,fontSize:'0.83rem',flexShrink:0}}>{step>s.num?<Check size={15}/>:s.num}</div><div><div style={{fontWeight:700,fontSize:'0.88rem',color:step===s.num?C.white:C.navy800}}>{s.title}</div><div style={{fontSize:'0.75rem',color:step===s.num?C.navy300:C.grey400,marginTop:2}}>{s.desc}</div></div></div>)}
-          <div style={{marginTop:20,padding:'0 18px'}}><div style={{display:'flex',justifyContent:'space-between',fontSize:'0.78rem',fontWeight:600,marginBottom:6}}><span style={{color:C.grey500}}>Progress</span><span style={{color:C.green600}}>{Math.round(((step-1)/4)*100)}%</span></div><div style={{height:5,background:C.grey200,overflow:'hidden'}}><div style={{width:`${((step-1)/4)*100}%`,height:'100%',background:C.green600,transition:'width 0.3s'}}/></div></div>
-        </div>
-        <div style={{background:C.white,padding:'clamp(32px,4vw,48px)',minHeight:500}}>
-          <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:32}}><div style={{width:38,height:38,background:C.navy800,color:C.white,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,fontSize:'0.88rem'}}>{step}</div><div><h3 style={{color:C.navy800,margin:0}}>Step {step}: {steps[step-1].title}</h3><div style={{fontSize:'0.83rem',color:C.grey400}}>{steps[step-1].desc}</div></div></div>
-          <div style={{padding:'40px',background:C.grey50,textAlign:'center'}}><Clipboard size={44} color={C.grey300} style={{marginBottom:16}}/><h4 style={{color:C.grey500,marginBottom:8}}>Form Step {step} Content</h4><p style={{color:C.grey400,fontSize:'0.88rem',maxWidth:400,margin:'0 auto'}}>Full form fields will be integrated here per the 5-step specification.</p></div>
-          <div style={{display:'flex',justifyContent:'space-between',marginTop:32}}><button onClick={()=>step>1&&setStep(step-1)} style={{padding:'12px 28px',fontWeight:700,cursor:'pointer',background:'transparent',border:step>1?`2px solid ${C.grey300}`:'2px solid transparent',color:step>1?C.grey600:'transparent',borderRadius:6}}>Previous</button><button onClick={()=>step<5&&setStep(step+1)} style={{padding:'12px 28px',background:step<5?C.navy700:C.green600,color:C.white,borderRadius:6,fontWeight:700,cursor:'pointer',border:'none',display:'inline-flex',alignItems:'center',gap:8}}>{step<5?'Next Step':'Submit Application'} <ArrowRight size={15}/></button></div>
-        </div>
-      </div>
-      <style>{`@media(max-width:768px){div[style*="grid-template-columns: 260px"]{grid-template-columns:1fr!important}}`}</style>
-    </section>
-  </>)
+  return <ApplicationForm/>
 }
 
 function LoginPage(){
