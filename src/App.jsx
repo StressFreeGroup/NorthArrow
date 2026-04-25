@@ -2,10 +2,9 @@ import { useState, useEffect } from 'react'
 import { Shield, Phone, Mail, MapPin, Menu, X, Check, AlertTriangle, TrendingUp, DollarSign, FileText, Users, Truck, Clock, Star, ArrowRight, ChevronDown, ChevronUp, Lock, Zap, Eye, Heart, Wrench, CircleDot, Scale, BadgeCheck, Clipboard, Send, LogIn, Layers, AlertOctagon, TriangleAlert, Ban, Info, ShieldCheck, ExternalLink, XCircle } from 'lucide-react'
 import ApplicationForm from './ApplicationForm.jsx'
 
-const C={navy900:'#0A1628',navy800:'#0F2240',navy700:'#132D5E',navy600:'#1A3F7A',navy500:'#2558A3',navy400:'#3B7DD8',navy300:'#6FA3E8',navy200:'#A8C8F0',navy100:'#D4E4F8',navy50:'#EBF2FB',green700:'#1B6E3D',green600:'#238B4E',green500:'#2EA663',green400:'#4CC07E',green100:'#D6F0E2',purple700:'#4A2D7A',purple600:'#5E3B99',purple500:'#7349B8',purple400:'#8F6DD0',purple100:'#E6DCF5',white:'#FFFFFF',grey50:'#F7F8FA',grey100:'#F0F2F5',grey200:'#E2E6EB',grey300:'#CDD3DB',grey400:'#9CA5B2',grey500:'#6B7685',grey600:'#4A5568',grey700:'#2D3748',red600:'#DC2626',red700:'#B91C1C',red50:'#FEF2F2',amber600:'#D97706',amber50:'#FFFBEB'}
+const C={navy900:'#0A1628',navy800:'#0F2240',navy700:'#132D5E',navy600:'#1A3F7A',navy500:'#2558A3',navy400:'#3B7DD8',navy300:'#6FA3E8',navy200:'#A8C8F0',navy100:'#D4E4F8',navy50:'#EBF2FB',green700:'#1B6E3D',green600:'#238B4E',green500:'#2EA663',green400:'#4CC07E',green100:'#D6F0E2',green50:'#F0FAF4',purple700:'#4A2D7A',purple600:'#5E3B99',purple500:'#7349B8',purple400:'#8F6DD0',purple100:'#E6DCF5',white:'#FFFFFF',grey50:'#F7F8FA',grey100:'#F0F2F5',grey200:'#E2E6EB',grey300:'#CDD3DB',grey400:'#9CA5B2',grey500:'#6B7685',grey600:'#4A5568',grey700:'#2D3748',red600:'#DC2626',red700:'#B91C1C',red50:'#FEF2F2',amber600:'#D97706',amber50:'#FFFBEB',amber200:'#FDE68A'}
 const sWrap={maxWidth:1200,margin:'0 auto',padding:'0 clamp(20px,4vw,40px)'}
 const sWide={...sWrap,maxWidth:1400}
-const LogoSVG=({size=42})=><svg width={size} height={size} viewBox="0 0 42 42" fill="none"><rect width="42" height="42" rx="8" fill={C.navy800}/><path d="M21 8L28 20H14L21 8Z" fill="#fff" opacity="0.9"/><path d="M21 14L26 22H16L21 14Z" fill={C.navy400}/><rect x="19" y="20" width="4" height="14" rx="1" fill="#fff" opacity="0.9"/><path d="M15 28L21 34L27 28" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.5"/></svg>
 
 function Nav({page,setPage}){
   const[open,setOpen]=useState(false)
@@ -14,14 +13,10 @@ function Nav({page,setPage}){
   const links=[{id:'home',label:'Home'},{id:'coverage',label:'Coverage'},{id:'shield',label:'Shield ADW'},{id:'about',label:'About'},{id:'claims',label:'Claims'},{id:'faq',label:'FAQ'},{id:'contact',label:'Contact'}]
   const go=(id)=>{setPage(id);setOpen(false);window.scrollTo(0,0)}
   return(
-    <nav style={{position:'fixed',top:0,left:0,right:0,zIndex:1000,background:scrolled?'rgba(255,255,255,0.97)':'rgba(255,255,255,0.92)',backdropFilter:'blur(12px)',borderBottom:scrolled?`1px solid ${C.grey200}`:'1px solid transparent',transition:'all 0.3s ease'}}>
-      <div style={{...sWide,display:'flex',alignItems:'center',justifyContent:'space-between',height:72}}>
-        <div style={{display:'flex',alignItems:'center',gap:12,cursor:'pointer'}} onClick={()=>go('home')}>
-          <LogoSVG size={42}/>
-          <div>
-            <div style={{fontFamily:'var(--font-display)',fontWeight:800,fontSize:'1.2rem',color:C.navy800,lineHeight:1.1,letterSpacing:'-0.02em'}}>NORTH ARROW</div>
-            <div style={{fontSize:'0.62rem',fontWeight:700,letterSpacing:'0.14em',color:C.grey400,textTransform:'uppercase'}}>Insurance Program</div>
-          </div>
+    <nav style={{position:'fixed',top:0,left:0,right:0,zIndex:1000,background:scrolled?'rgba(255,255,255,0.97)':'rgba(255,255,255,0.94)',backdropFilter:'blur(12px)',borderBottom:scrolled?`1px solid ${C.grey200}`:'1px solid transparent',transition:'all 0.3s ease'}}>
+      <div style={{...sWide,display:'flex',alignItems:'center',justifyContent:'space-between',height:78}}>
+        <div style={{display:'flex',alignItems:'center',cursor:'pointer'}} onClick={()=>go('home')}>
+          <img src="/north-arrow-lockup.png" alt="North Arrow Commercial Insurance Services" style={{height:48,width:'auto',display:'block'}}/>
         </div>
         <div style={{display:'flex',alignItems:'center',gap:4}} className="nav-desktop">
           {links.map(l=><button key={l.id} onClick={()=>go(l.id)} style={{padding:'8px 14px',fontSize:'0.87rem',fontWeight:600,color:page===l.id?C.navy700:C.grey600,background:page===l.id?C.navy50:'transparent',borderRadius:6,transition:'all 0.2s'}}>{l.label}</button>)}
@@ -38,7 +33,7 @@ function Nav({page,setPage}){
           <button onClick={()=>go('apply')} style={{flex:1,padding:'12px',background:C.green600,color:C.white,borderRadius:6,fontWeight:700,border:'none'}}>Get Started</button>
         </div>
       </div>}
-      <style>{`@media(max-width:960px){.nav-desktop{display:none!important}.nav-mobile-toggle{display:flex!important}}`}</style>
+      <style>{`@media(max-width:960px){.nav-desktop{display:none!important}.nav-mobile-toggle{display:flex!important}}@media(max-width:480px){nav img{height:38px!important}}`}</style>
     </nav>
   )
 }
@@ -49,7 +44,7 @@ function Footer({setPage}){
     <footer style={{background:C.navy900,color:C.white,padding:'clamp(50px,6vw,80px) 0 0'}}>
       <div style={sWrap}>
         <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:40,marginBottom:50}}>
-          <div><div style={{display:'flex',alignItems:'center',gap:10,marginBottom:20}}><LogoSVG size={32}/><div style={{fontFamily:'var(--font-display)',fontWeight:800,fontSize:'1rem'}}>NORTH ARROW</div></div><p style={{color:C.navy300,fontSize:'0.88rem',lineHeight:1.7,maxWidth:280}}>Purpose-built commercial insurance for peer-to-peer RV rental fleets.</p></div>
+          <div><div style={{marginBottom:18}}><img src="/north-arrow-lockup.png" alt="North Arrow Commercial Insurance Services" style={{height:50,width:'auto',display:'block',filter:'brightness(0) invert(1)'}}/></div><p style={{color:C.navy300,fontSize:'0.88rem',lineHeight:1.7,maxWidth:280}}>Purpose-built commercial insurance for peer-to-peer RV rental fleets.</p></div>
           <div><h4 style={{fontSize:'0.8rem',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:16,color:C.navy300}}>Products</h4>{['Coverage Plans','Shield ADW','Fleet Insurance','Add-On Coverage'].map(t=><div key={t} style={{color:C.navy200,fontSize:'0.88rem',padding:'5px 0',cursor:'pointer'}}>{t}</div>)}</div>
           <div><h4 style={{fontSize:'0.8rem',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:16,color:C.navy300}}>Company</h4>{[['About','about'],['Claims','claims'],['FAQ','faq'],['Contact','contact']].map(([t,p])=><div key={t} onClick={()=>go(p)} style={{color:C.navy200,fontSize:'0.88rem',padding:'5px 0',cursor:'pointer'}}>{t}</div>)}</div>
           <div><h4 style={{fontSize:'0.8rem',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:16,color:C.navy300}}>Contact</h4><div style={{display:'flex',flexDirection:'column',gap:10}}><div style={{display:'flex',alignItems:'center',gap:10,color:C.navy200,fontSize:'0.88rem'}}><Phone size={15} color={C.navy300}/> (619) 599-6882</div><div style={{display:'flex',alignItems:'center',gap:10,color:C.navy200,fontSize:'0.88rem'}}><Mail size={15} color={C.navy300}/> info@northarrowins.com</div><div style={{display:'flex',alignItems:'center',gap:10,color:C.navy200,fontSize:'0.88rem'}}><MapPin size={15} color={C.navy300}/> San Diego, CA</div></div></div>
@@ -376,26 +371,42 @@ function ShieldPage({setPage}){
       <style>{`@media(max-width:768px){.shield-cov-grid{grid-template-columns:1fr!important}}`}</style>
     </section>
 
-    {/* WHY SHIELD */}
-    <section style={{padding:'clamp(60px,8vw,100px) 0',background:C.white}}>
-      <div style={sWrap}>
-        <SectionHeader overline="Why Shield" title="Six Reasons Shield is Different" accent="purple"/>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:0,borderTop:`1px solid ${C.grey200}`}}>
-          {[
-            {icon:Lock,title:'Standalone product',desc:'Works independently of any platform. No bundling required, no marketplace lock-in.'},
-            {icon:CircleDot,title:'Pre-screened vendors',desc:'San Diego: DeCo Fleet Management Services and Coachwerx SD as preferred repair vendors.'},
-            {icon:Ban,title:'Festival events excluded',desc:'High-attendance events (500+ within 25 miles) excluded by design. Premium Event Coverage available separately.'},
-            {icon:Star,title:'Capped exposure',desc:'$2,500 maximum coverage per occurrence. $250 deductible. Predictable risk for hosts.'},
-            {icon:Clock,title:'Strict claim windows',desc:'24-hour damage notification. 5 business day claim submission. 7-day review window.'},
-            {icon:FileText,title:'Clear legal terms',desc:'Defined coverage, exclusions, and processes. Not insurance — a contractual reimbursement program.'},
-          ].map((f,i)=>(
-            <div key={i} style={{padding:'28px 32px',borderBottom:`1px solid ${C.grey200}`,borderRight:i%3<2?`1px solid ${C.grey200}`:'none',borderLeft:`4px solid ${C.green500}`}}>
-              <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:10}}><f.icon size={20} color={C.green600}/><h4 style={{color:C.navy800,margin:0}}>{f.title}</h4></div>
-              <p style={{fontSize:'0.88rem',color:C.grey500,lineHeight:1.65,paddingLeft:32,margin:0}}>{f.desc}</p>
-            </div>
-          ))}
+    {/* WHY SHIELD - ELOQUENT LIST */}
+    <section style={{padding:'clamp(70px,9vw,120px) 0',background:C.white,position:'relative',overflow:'hidden'}}>
+      <div style={{position:'absolute',top:0,right:0,width:'45%',height:'100%',background:`linear-gradient(135deg, ${C.green50} 0%, transparent 70%)`,opacity:0.6,pointerEvents:'none'}}/>
+      <div style={{...sWrap,position:'relative',display:'grid',gridTemplateColumns:'1fr 1.4fr',gap:'clamp(40px,6vw,90px)',alignItems:'start'}} className="why-shield-grid">
+        {/* LEFT: Header pillar */}
+        <div style={{position:'sticky',top:120}}>
+          <div style={{fontFamily:'var(--font-body)',fontSize:'0.78rem',fontWeight:700,letterSpacing:'0.15em',textTransform:'uppercase',color:C.green600,marginBottom:18}}>Why Shield</div>
+          <h2 style={{color:C.navy800,marginBottom:22,fontSize:'clamp(2rem,3.8vw,2.8rem)',lineHeight:1.1}}>Six reasons Shield is fundamentally different.</h2>
+          <p style={{color:C.grey600,fontSize:'1.04rem',lineHeight:1.75,marginBottom:30}}>Most damage protection programs were built for short-term housing or shoehorned from auto rental. Shield was built from the ground up for peer-to-peer RV fleet operators — by people running an actual fleet.</p>
+          <div style={{display:'inline-flex',alignItems:'center',gap:8,padding:'10px 16px',background:C.green50,border:`1px solid ${C.green100}`,borderRadius:99,fontSize:'0.85rem',fontWeight:700,color:C.green700}}><ShieldCheck size={15}/>Built by an active fleet operator</div>
         </div>
+
+        {/* RIGHT: Numbered list */}
+        <ol style={{listStyle:'none',padding:0,margin:0,counterReset:'shield-count'}}>
+          {[
+            {title:'Standalone product — no platform lock-in',desc:'Shield works independently of any marketplace, booking platform, or insurance carrier. No bundling. No "we only cover bookings made through our partner." If you accept a booking, Shield can ride along.',accent:'first'},
+            {title:'Pre-screened vendor network',desc:'San Diego hosts have access to DeCo Fleet Management Services and Coachwerx SD as preferred repair vendors — both vetted technicians who understand the rental fleet workflow. Vendor expansion ongoing.'},
+            {title:'Festival events excluded by design — not by surprise',desc:'High-attendance events (500+ attendees within 25 miles) are explicitly excluded. Burning Man, Coachella, Stagecoach, KOH, EDC are named in the policy. Premium Event Coverage is available separately, transparently priced.'},
+            {title:'Capped exposure that hosts can underwrite against',desc:'$2,500 maximum coverage per occurrence with a $250 deductible. Predictable risk windows. Hosts can model exposure on a spreadsheet — no buried per-claim escalators or vague maximums.'},
+            {title:'Strict claim windows that protect everyone',desc:'24-hour damage notification. 5 business day claim submission. 7-day review window. Hard deadlines mean hosts get answers fast and renters can\'t resurrect claims weeks after the fact.'},
+            {title:'Clear legal terms — and an honest label',desc:'Shield is NOT an insurance product. It\'s a contractual reimbursement program between Stress Free Group LLC and the renter. Defined coverage, defined exclusions, defined process. No hiding behind insurance regulatory shields it doesn\'t qualify for.',accent:'last'},
+          ].map((r,i)=>(
+            <li key={i} style={{display:'grid',gridTemplateColumns:'auto 1fr',gap:24,paddingBottom:32,marginBottom:32,borderBottom:i<5?`1px solid ${C.grey200}`:'none',position:'relative'}}>
+              <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:8}}>
+                <div style={{width:54,height:54,borderRadius:'50%',background:`linear-gradient(135deg, ${C.green500}, ${C.green700})`,color:C.white,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'var(--font-display)',fontSize:'1.4rem',fontWeight:800,boxShadow:`0 4px 14px ${C.green500}40`,flexShrink:0}}>{String(i+1).padStart(2,'0')}</div>
+                {i<5&&<div style={{flex:1,width:2,background:`linear-gradient(${C.green100}, transparent)`,minHeight:30}}/>}
+              </div>
+              <div style={{paddingTop:8}}>
+                <h3 style={{color:C.navy800,marginBottom:10,fontSize:'1.18rem',fontFamily:'var(--font-display)',fontWeight:700,lineHeight:1.3}}>{r.title}</h3>
+                <p style={{color:C.grey600,fontSize:'0.95rem',lineHeight:1.7,margin:0}}>{r.desc}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
       </div>
+      <style>{`@media(max-width:880px){.why-shield-grid{grid-template-columns:1fr!important}.why-shield-grid>div:first-child{position:static!important}}`}</style>
     </section>
 
     {/* TERMS AND CONDITIONS / LEGAL */}
@@ -452,65 +463,137 @@ function AboutPage(){
     <section style={{padding:'clamp(60px,8vw,120px) 0',background:C.grey50}}>
       <div style={sWrap}>
         <SectionHeader overline="The Full Stack" title="The Only Vertically Integrated Platform" accent="purple"/>
-        <p style={{textAlign:'center',color:C.grey600,fontSize:'1rem',maxWidth:680,margin:'-12px auto 40px',lineHeight:1.65}}>Three companies. One owner. Insurance + damage protection + marketplace — all under one roof. No competitor offers all three.</p>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:18}} className="stack-grid">
-          {/* NORTH ARROW — NAVY */}
-          <div style={{background:C.white,padding:0,border:`1px solid ${C.grey200}`,borderTop:`5px solid ${C.navy700}`,boxShadow:'0 2px 14px rgba(15,34,64,0.05)',display:'flex',flexDirection:'column',overflow:'hidden'}}>
-            <div style={{padding:'32px 28px 16px',background:`linear-gradient(180deg, ${C.navy50} 0%, ${C.white} 100%)`,minHeight:140,display:'flex',alignItems:'center',justifyContent:'center'}}>
-              <img src="/north-arrow-logo.png" alt="North Arrow Commercial Insurance Services" style={{maxWidth:'100%',maxHeight:100,objectFit:'contain'}}/>
+        <p style={{textAlign:'center',color:C.grey600,fontSize:'1rem',maxWidth:680,margin:'-12px auto 50px',lineHeight:1.65}}>Three companies. One owner. Insurance + damage protection + marketplace — all under one roof.</p>
+
+        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:24}} className="stack-grid">
+
+          {/* NORTH ARROW CARD */}
+          <div style={{background:C.white,borderRadius:14,overflow:'hidden',boxShadow:'0 6px 28px rgba(15,34,64,0.08)',display:'flex',flexDirection:'column',transition:'transform 0.3s, box-shadow 0.3s',cursor:'default',border:`1px solid ${C.grey100}`}} onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-6px)';e.currentTarget.style.boxShadow='0 14px 40px rgba(15,34,64,0.14)'}} onMouseLeave={e=>{e.currentTarget.style.transform='translateY(0)';e.currentTarget.style.boxShadow='0 6px 28px rgba(15,34,64,0.08)'}}>
+            <div style={{padding:'40px 28px 28px',background:`radial-gradient(circle at 30% 0%, ${C.navy100} 0%, ${C.white} 75%)`,minHeight:170,display:'flex',alignItems:'center',justifyContent:'center'}}>
+              <img src="/north-arrow-logo.png" alt="North Arrow Commercial Insurance Services" style={{maxWidth:'88%',maxHeight:130,objectFit:'contain',display:'block'}}/>
             </div>
-            <div style={{padding:'18px 28px 28px',flex:1,display:'flex',flexDirection:'column'}}>
-              <div style={{display:'inline-flex',alignSelf:'flex-start',alignItems:'center',gap:6,padding:'4px 10px',background:C.navy50,color:C.navy700,fontSize:'0.7rem',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',borderRadius:99,marginBottom:14}}><Shield size={11}/>Commercial Insurance</div>
-              <h3 style={{color:C.navy800,marginBottom:10,fontSize:'1.3rem'}}>North Arrow</h3>
-              <p style={{color:C.grey600,fontSize:'0.9rem',lineHeight:1.65,marginBottom:18,flex:1}}>Real commercial liability and physical damage insurance from A-rated carriers. Built specifically for peer-to-peer RV rental fleet operators.</p>
-              <div style={{display:'flex',alignItems:'center',gap:6,fontSize:'0.83rem',fontWeight:700,color:C.navy700}}>This site <ArrowRight size={13}/></div>
+            <div style={{padding:'24px 30px 30px',flex:1,display:'flex',flexDirection:'column',background:C.white}}>
+              <div style={{display:'inline-flex',alignSelf:'flex-start',alignItems:'center',gap:6,padding:'5px 12px',background:C.navy700,color:C.white,fontSize:'0.7rem',fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase',borderRadius:99,marginBottom:16}}><Shield size={11}/>Commercial Insurance</div>
+              <h3 style={{color:C.navy800,marginBottom:10,fontSize:'1.4rem',fontFamily:'var(--font-display)'}}>North Arrow</h3>
+              <p style={{color:C.grey600,fontSize:'0.92rem',lineHeight:1.7,marginBottom:22,flex:1}}>Real commercial liability and physical damage insurance from A-rated carriers. Built specifically for peer-to-peer RV rental fleet operators.</p>
+              <div style={{display:'inline-flex',alignItems:'center',gap:6,padding:'10px 16px',background:C.navy50,color:C.navy700,fontSize:'0.84rem',fontWeight:700,borderRadius:6,alignSelf:'flex-start'}}><Check size={14}/>You're here</div>
             </div>
           </div>
 
-          {/* STRESS FREE SHIELD — GREEN */}
-          <div style={{background:C.white,padding:0,border:`1px solid ${C.grey200}`,borderTop:`5px solid ${C.green600}`,boxShadow:'0 2px 14px rgba(15,34,64,0.05)',display:'flex',flexDirection:'column',overflow:'hidden'}}>
-            <div style={{padding:'32px 28px 16px',background:`linear-gradient(180deg, ${C.green50} 0%, ${C.white} 100%)`,minHeight:140,display:'flex',alignItems:'center',justifyContent:'center'}}>
-              {/* Inline Shield SVG mark */}
-              <svg width="84" height="100" viewBox="0 0 84 100" xmlns="http://www.w3.org/2000/svg" style={{display:'block'}}>
+          {/* STRESS FREE SHIELD CARD */}
+          <div style={{background:C.white,borderRadius:14,overflow:'hidden',boxShadow:'0 6px 28px rgba(15,34,64,0.08)',display:'flex',flexDirection:'column',transition:'transform 0.3s, box-shadow 0.3s',cursor:'pointer',border:`1px solid ${C.grey100}`}} onClick={()=>{setPage('shield');window.scrollTo(0,0)}} onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-6px)';e.currentTarget.style.boxShadow='0 14px 40px rgba(35,139,78,0.18)'}} onMouseLeave={e=>{e.currentTarget.style.transform='translateY(0)';e.currentTarget.style.boxShadow='0 6px 28px rgba(15,34,64,0.08)'}}>
+            <div style={{padding:'40px 28px 28px',background:`radial-gradient(circle at 30% 0%, ${C.green100} 0%, ${C.white} 75%)`,minHeight:170,display:'flex',alignItems:'center',justifyContent:'center'}}>
+              <svg width="110" height="130" viewBox="0 0 84 100" xmlns="http://www.w3.org/2000/svg" style={{display:'block',filter:'drop-shadow(0 6px 14px rgba(35,139,78,0.3))'}}>
                 <defs>
-                  <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <linearGradient id="shieldGradStack" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" stopColor={C.green500}/>
                     <stop offset="100%" stopColor={C.green700}/>
                   </linearGradient>
                 </defs>
-                <path d="M42 4 L78 18 L78 50 Q78 78 42 96 Q6 78 6 50 L6 18 Z" fill="url(#shieldGrad)"/>
+                <path d="M42 4 L78 18 L78 50 Q78 78 42 96 Q6 78 6 50 L6 18 Z" fill="url(#shieldGradStack)"/>
                 <path d="M42 12 L70 22 L70 50 Q70 72 42 86 Q14 72 14 50 L14 22 Z" fill="none" stroke={C.white} strokeWidth="1.5" opacity="0.4"/>
                 <path d="M28 50 L38 60 L58 38" fill="none" stroke={C.white} strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <div style={{padding:'18px 28px 28px',flex:1,display:'flex',flexDirection:'column'}}>
-              <div style={{display:'inline-flex',alignSelf:'flex-start',alignItems:'center',gap:6,padding:'4px 10px',background:C.green50,color:C.green700,fontSize:'0.7rem',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',borderRadius:99,marginBottom:14}}><ShieldCheck size={11}/>Damage Waiver · Not Insurance</div>
-              <h3 style={{color:C.green700,marginBottom:6,fontSize:'1.3rem'}}>Stress Free Shield</h3>
-              <div style={{fontSize:'0.78rem',color:C.grey500,marginBottom:10,fontStyle:'italic'}}>Interior Accidental Damage Liability Waiver</div>
-              <p style={{color:C.grey600,fontSize:'0.9rem',lineHeight:1.65,marginBottom:18,flex:1}}>Standalone interior damage waiver. <strong>$25/day</strong> per vehicle (capped at $199/trip). $250 deductible, $2,500 max per occurrence.</p>
-              <button onClick={()=>{setPage('shield');window.scrollTo(0,0)}} style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:'0.83rem',fontWeight:700,color:C.green700,background:'transparent',border:'none',padding:0,cursor:'pointer',alignSelf:'flex-start'}}>Learn more <ArrowRight size={13}/></button>
+            <div style={{padding:'24px 30px 30px',flex:1,display:'flex',flexDirection:'column',background:C.white}}>
+              <div style={{display:'inline-flex',alignSelf:'flex-start',alignItems:'center',gap:6,padding:'5px 12px',background:C.green600,color:C.white,fontSize:'0.7rem',fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase',borderRadius:99,marginBottom:16}}><ShieldCheck size={11}/>Damage Waiver · Not Insurance</div>
+              <h3 style={{color:C.green700,marginBottom:6,fontSize:'1.4rem',fontFamily:'var(--font-display)'}}>Stress Free Shield</h3>
+              <div style={{fontSize:'0.78rem',color:C.grey500,marginBottom:12,fontStyle:'italic'}}>Interior Accidental Damage Liability Waiver</div>
+              <p style={{color:C.grey600,fontSize:'0.92rem',lineHeight:1.7,marginBottom:22,flex:1}}>Standalone interior damage waiver. <strong style={{color:C.navy800}}>$25/day</strong> per vehicle (capped at $199/trip). $250 deductible, $2,500 max per occurrence.</p>
+              <div style={{display:'inline-flex',alignItems:'center',gap:6,padding:'10px 16px',background:C.green50,color:C.green700,fontSize:'0.84rem',fontWeight:700,borderRadius:6,alignSelf:'flex-start'}}>Learn more <ArrowRight size={14}/></div>
             </div>
           </div>
 
-          {/* P2PRVS — PURPLE */}
-          <div style={{background:C.white,padding:0,border:`1px solid ${C.grey200}`,borderTop:`5px solid ${C.purple600}`,boxShadow:'0 2px 14px rgba(15,34,64,0.05)',display:'flex',flexDirection:'column',overflow:'hidden'}}>
-            <div style={{padding:'32px 28px 16px',background:`linear-gradient(180deg, ${C.purple100} 0%, ${C.white} 100%)`,minHeight:140,display:'flex',alignItems:'center',justifyContent:'center'}}>
-              <img src="/p2prvs-logo.png" alt="P2PRVS — Peer to Peer RV Rental Marketplace" style={{maxWidth:'100%',maxHeight:90,objectFit:'contain'}}/>
+          {/* P2PRVS CARD */}
+          <a href="https://www.p2prvs.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',color:'inherit',background:C.white,borderRadius:14,overflow:'hidden',boxShadow:'0 6px 28px rgba(15,34,64,0.08)',display:'flex',flexDirection:'column',transition:'transform 0.3s, box-shadow 0.3s',cursor:'pointer',border:`1px solid ${C.grey100}`}} onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-6px)';e.currentTarget.style.boxShadow='0 14px 40px rgba(94,59,153,0.18)'}} onMouseLeave={e=>{e.currentTarget.style.transform='translateY(0)';e.currentTarget.style.boxShadow='0 6px 28px rgba(15,34,64,0.08)'}}>
+            <div style={{padding:'40px 28px 28px',background:`radial-gradient(circle at 30% 0%, ${C.purple100} 0%, ${C.white} 75%)`,minHeight:170,display:'flex',alignItems:'center',justifyContent:'center'}}>
+              <img src="/p2prvs-logo.png" alt="P2PRVS — Peer to Peer RV Rental Marketplace" style={{maxWidth:'88%',maxHeight:120,objectFit:'contain',display:'block'}}/>
             </div>
-            <div style={{padding:'18px 28px 28px',flex:1,display:'flex',flexDirection:'column'}}>
-              <div style={{display:'inline-flex',alignSelf:'flex-start',alignItems:'center',gap:6,padding:'4px 10px',background:C.purple100,color:C.purple700,fontSize:'0.7rem',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',borderRadius:99,marginBottom:14}}><Users size={11}/>Marketplace</div>
-              <h3 style={{color:C.purple700,marginBottom:10,fontSize:'1.3rem'}}>P2PRVS</h3>
-              <p style={{color:C.grey600,fontSize:'0.9rem',lineHeight:1.65,marginBottom:18,flex:1}}>Peer-to-peer RV rental marketplace. Book direct, no platform middleman fees. Hosts retain control of pricing, policies, and guest relationships.</p>
-              <a href="https://www.p2prvs.com" target="_blank" rel="noopener noreferrer" style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:'0.83rem',fontWeight:700,color:C.purple700,textDecoration:'none'}}>Visit P2PRVS.com <ExternalLink size={12}/></a>
+            <div style={{padding:'24px 30px 30px',flex:1,display:'flex',flexDirection:'column',background:C.white}}>
+              <div style={{display:'inline-flex',alignSelf:'flex-start',alignItems:'center',gap:6,padding:'5px 12px',background:C.purple600,color:C.white,fontSize:'0.7rem',fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase',borderRadius:99,marginBottom:16}}><Users size={11}/>Marketplace</div>
+              <h3 style={{color:C.purple700,marginBottom:10,fontSize:'1.4rem',fontFamily:'var(--font-display)'}}>P2PRVS</h3>
+              <p style={{color:C.grey600,fontSize:'0.92rem',lineHeight:1.7,marginBottom:22,flex:1}}>Peer-to-peer RV rental marketplace. Book direct, no platform middleman fees. Hosts retain control of pricing, policies, and guest relationships.</p>
+              <div style={{display:'inline-flex',alignItems:'center',gap:6,padding:'10px 16px',background:C.purple100,color:C.purple700,fontSize:'0.84rem',fontWeight:700,borderRadius:6,alignSelf:'flex-start'}}>Visit P2PRVS.com <ExternalLink size={13}/></div>
             </div>
-          </div>
-        </div>
-        <div style={{textAlign:'center',marginTop:32,padding:'20px 28px',background:C.white,border:`1px solid ${C.grey200}`,borderRadius:6,maxWidth:760,margin:'32px auto 0'}}>
-          <div style={{fontSize:'0.78rem',fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase',color:C.purple600,marginBottom:6}}>The Big Win</div>
-          <div style={{color:C.grey700,fontSize:'0.97rem',lineHeight:1.65}}>No competitor offers all three. <strong style={{color:C.navy800}}>Insurance + damage protection + marketplace</strong> — complete fleet coverage, all under one roof.</div>
+          </a>
         </div>
       </div>
       <style>{`@media(max-width:880px){.stack-grid{grid-template-columns:1fr!important}}`}</style>
+    </section>
+
+    {/* THE BIG WIN — full bleed prominent section */}
+    <section style={{position:'relative',padding:'clamp(70px,9vw,120px) 0',background:`linear-gradient(135deg, ${C.navy900} 0%, ${C.navy700} 50%, ${C.purple700} 100%)`,overflow:'hidden'}}>
+      {/* Decorative pattern */}
+      <div style={{position:'absolute',inset:0,opacity:0.06,backgroundImage:`radial-gradient(${C.white} 1.5px, transparent 1.5px)`,backgroundSize:'32px 32px'}}/>
+      {/* Decorative gradient orbs */}
+      <div style={{position:'absolute',top:-120,right:-80,width:480,height:480,borderRadius:'50%',background:`radial-gradient(circle, ${C.purple500}40 0%, transparent 65%)`,pointerEvents:'none'}}/>
+      <div style={{position:'absolute',bottom:-150,left:-100,width:520,height:520,borderRadius:'50%',background:`radial-gradient(circle, ${C.green500}30 0%, transparent 65%)`,pointerEvents:'none'}}/>
+
+      <div style={{...sWrap,position:'relative'}}>
+        <div style={{textAlign:'center',marginBottom:50}}>
+          <div style={{display:'inline-flex',alignItems:'center',gap:10,padding:'10px 20px',background:'rgba(255,255,255,0.1)',border:'1px solid rgba(255,255,255,0.2)',borderRadius:99,fontSize:'0.78rem',fontWeight:700,letterSpacing:'0.18em',textTransform:'uppercase',color:C.white,marginBottom:24,backdropFilter:'blur(8px)'}}>
+            <span style={{width:8,height:8,background:C.green400,borderRadius:'50%',boxShadow:`0 0 12px ${C.green400}`}}/>
+            The Big Win
+          </div>
+          <h2 style={{color:C.white,fontSize:'clamp(2.4rem,5.5vw,4.4rem)',lineHeight:1.05,marginBottom:24,fontFamily:'var(--font-display)',fontWeight:800,letterSpacing:'-0.02em',maxWidth:1000,margin:'0 auto 24px'}}>
+            <span style={{display:'block',color:'rgba(255,255,255,0.65)',fontSize:'0.5em',fontWeight:600,letterSpacing:'0.04em',marginBottom:14,textTransform:'uppercase'}}>No competitor offers all three.</span>
+            Insurance. Damage Protection.<br/>Marketplace.<br/>
+            <span style={{background:`linear-gradient(135deg, ${C.green400} 0%, ${C.purple400} 100%)`,WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>One stack.</span>
+          </h2>
+          <p style={{color:'rgba(255,255,255,0.85)',fontSize:'1.18rem',lineHeight:1.65,maxWidth:760,margin:'0 auto 8px'}}>The only fully integrated coverage stack in the peer-to-peer RV rental industry. Built by an active fleet operator. Owned, controlled, and aligned end-to-end.</p>
+        </div>
+
+        {/* Comparison grid */}
+        <div style={{maxWidth:1080,margin:'0 auto'}}>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:0,background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:14,overflow:'hidden',backdropFilter:'blur(10px)'}} className="bigwin-grid">
+            <div style={{padding:'18px 20px',background:'rgba(255,255,255,0.04)',borderRight:'1px solid rgba(255,255,255,0.08)'}}>
+              <div style={{fontSize:'0.7rem',fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.5)'}}>Provider</div>
+            </div>
+            <div style={{padding:'18px 20px',textAlign:'center',background:'rgba(255,255,255,0.04)',borderRight:'1px solid rgba(255,255,255,0.08)'}}>
+              <div style={{fontSize:'0.7rem',fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase',color:C.navy300}}>Insurance</div>
+            </div>
+            <div style={{padding:'18px 20px',textAlign:'center',background:'rgba(255,255,255,0.04)',borderRight:'1px solid rgba(255,255,255,0.08)'}}>
+              <div style={{fontSize:'0.7rem',fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase',color:C.green400}}>Damage Waiver</div>
+            </div>
+            <div style={{padding:'18px 20px',textAlign:'center',background:'rgba(255,255,255,0.04)'}}>
+              <div style={{fontSize:'0.7rem',fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase',color:C.purple400}}>Marketplace</div>
+            </div>
+
+            {[
+              {name:'Outdoorsy',ins:'Roamly only',dam:'IMG (3rd party)',mkt:'Yes — required',insOk:false,damOk:false,mktOk:'partial'},
+              {name:'RVShare',ins:'No standalone',dam:'Mandates own',mkt:'Yes — required',insOk:false,damOk:false,mktOk:'partial'},
+              {name:'MBA Insurance',ins:'Yes (higher rates)',dam:'Never offered',mkt:'No',insOk:'partial',damOk:false,mktOk:false},
+              {name:'Truvi',ins:'No',dam:'STVR only — not RVs',mkt:'No',insOk:false,damOk:false,mktOk:false},
+            ].map((row,i)=>(
+              <div key={i} style={{display:'contents'}}>
+                <div style={{padding:'16px 20px',color:'rgba(255,255,255,0.85)',fontWeight:600,fontSize:'0.92rem',borderTop:'1px solid rgba(255,255,255,0.06)',borderRight:'1px solid rgba(255,255,255,0.08)'}}>{row.name}</div>
+                <div style={{padding:'16px 20px',textAlign:'center',color:row.insOk===true?C.green400:row.insOk==='partial'?C.amber200:'rgba(255,255,255,0.5)',fontSize:'0.85rem',borderTop:'1px solid rgba(255,255,255,0.06)',borderRight:'1px solid rgba(255,255,255,0.08)'}}>{row.insOk===true?<Check size={18}/>:row.insOk==='partial'?row.ins:row.ins}</div>
+                <div style={{padding:'16px 20px',textAlign:'center',color:row.damOk===true?C.green400:'rgba(255,255,255,0.5)',fontSize:'0.85rem',borderTop:'1px solid rgba(255,255,255,0.06)',borderRight:'1px solid rgba(255,255,255,0.08)'}}>{row.damOk===true?<Check size={18}/>:row.dam}</div>
+                <div style={{padding:'16px 20px',textAlign:'center',color:row.mktOk===true?C.green400:row.mktOk==='partial'?C.amber200:'rgba(255,255,255,0.5)',fontSize:'0.85rem',borderTop:'1px solid rgba(255,255,255,0.06)'}}>{row.mktOk===true?<Check size={18}/>:row.mktOk==='partial'?row.mkt:row.mkt}</div>
+              </div>
+            ))}
+
+            {/* OUR STACK ROW — highlighted */}
+            <div style={{padding:'22px 20px',background:`linear-gradient(90deg, ${C.green700}, ${C.purple700})`,color:C.white,fontWeight:800,fontSize:'1rem',borderTop:'1px solid rgba(255,255,255,0.2)',borderRight:'1px solid rgba(255,255,255,0.15)',display:'flex',alignItems:'center',gap:8}}>
+              <Star size={16} color={C.amber200}/>Our Stack
+            </div>
+            <div style={{padding:'22px 20px',textAlign:'center',background:`linear-gradient(90deg, ${C.green700}, ${C.purple700})`,borderTop:'1px solid rgba(255,255,255,0.2)',borderRight:'1px solid rgba(255,255,255,0.15)'}}>
+              <div style={{display:'inline-flex',alignItems:'center',gap:6,padding:'5px 12px',background:'rgba(255,255,255,0.18)',color:C.white,fontWeight:700,fontSize:'0.82rem',borderRadius:99}}><Check size={13}/>North Arrow</div>
+            </div>
+            <div style={{padding:'22px 20px',textAlign:'center',background:`linear-gradient(90deg, ${C.green700}, ${C.purple700})`,borderTop:'1px solid rgba(255,255,255,0.2)',borderRight:'1px solid rgba(255,255,255,0.15)'}}>
+              <div style={{display:'inline-flex',alignItems:'center',gap:6,padding:'5px 12px',background:'rgba(255,255,255,0.18)',color:C.white,fontWeight:700,fontSize:'0.82rem',borderRadius:99}}><Check size={13}/>Stress Free Shield</div>
+            </div>
+            <div style={{padding:'22px 20px',textAlign:'center',background:`linear-gradient(90deg, ${C.green700}, ${C.purple700})`,borderTop:'1px solid rgba(255,255,255,0.2)'}}>
+              <div style={{display:'inline-flex',alignItems:'center',gap:6,padding:'5px 12px',background:'rgba(255,255,255,0.18)',color:C.white,fontWeight:700,fontSize:'0.82rem',borderRadius:99}}><Check size={13}/>P2PRVS</div>
+            </div>
+          </div>
+          <div style={{marginTop:36,textAlign:'center'}}>
+            <button onClick={()=>{setPage('apply');window.scrollTo(0,0)}} style={{padding:'18px 44px',background:C.white,color:C.navy800,borderRadius:8,fontWeight:800,fontSize:'1rem',border:'none',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:10,boxShadow:'0 8px 24px rgba(0,0,0,0.25)',transition:'transform 0.2s'}} onMouseEnter={e=>e.currentTarget.style.transform='scale(1.04)'} onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'}>Get the Whole Stack <ArrowRight size={18}/></button>
+            <div style={{marginTop:16,fontSize:'0.85rem',color:'rgba(255,255,255,0.65)'}}>One application. Three integrated programs. Complete fleet coverage.</div>
+          </div>
+        </div>
+      </div>
+      <style>{`@media(max-width:880px){.bigwin-grid{grid-template-columns:1fr!important}.bigwin-grid>div{border-right:none!important}}`}</style>
     </section>
   </>)
 }
@@ -562,7 +645,7 @@ function LoginPage(){
   return(
     <section style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:`linear-gradient(135deg, ${C.grey50}, ${C.navy50})`,paddingTop:72}}>
       <div style={{width:'100%',maxWidth:420,padding:'44px clamp(24px,4vw,44px)',background:C.white,border:`1px solid ${C.grey200}`}}>
-        <div style={{textAlign:'center',marginBottom:32}}><LogoSVG size={44}/><div style={{marginTop:14}}><h3 style={{color:C.navy800,marginBottom:4}}>Owner Portal Login</h3><p style={{color:C.grey400,fontSize:'0.88rem'}}>Access your policy, claims, and fleet dashboard.</p></div></div>
+        <div style={{textAlign:'center',marginBottom:32}}><img src="/north-arrow-lockup.png" alt="North Arrow Commercial Insurance Services" style={{height:54,width:'auto',display:'inline-block'}}/><div style={{marginTop:18}}><h3 style={{color:C.navy800,marginBottom:4}}>Owner Portal Login</h3><p style={{color:C.grey400,fontSize:'0.88rem'}}>Access your policy, claims, and fleet dashboard.</p></div></div>
         <div style={{display:'flex',flexDirection:'column',gap:16}}><div><label style={{display:'block',fontSize:'0.83rem',fontWeight:600,color:C.grey600,marginBottom:6}}>Email Address</label><input type="email" placeholder="you@example.com" style={{width:'100%',padding:'13px 16px',border:`1px solid ${C.grey200}`,borderRadius:6,fontSize:'0.93rem',fontFamily:'var(--font-body)',outline:'none'}}/></div><div><label style={{display:'flex',justifyContent:'space-between',fontSize:'0.83rem',fontWeight:600,color:C.grey600,marginBottom:6}}>Password <span style={{color:C.navy400,cursor:'pointer',fontWeight:400}}>Forgot password?</span></label><input type="password" placeholder="Enter your password" style={{width:'100%',padding:'13px 16px',border:`1px solid ${C.grey200}`,borderRadius:6,fontSize:'0.93rem',fontFamily:'var(--font-body)',outline:'none'}}/></div><button style={{width:'100%',padding:'15px',background:C.navy700,color:C.white,borderRadius:6,fontWeight:700,cursor:'pointer',fontSize:'0.98rem',marginTop:6,border:'none'}}>Sign In</button></div>
         <div style={{textAlign:'center',marginTop:22,fontSize:'0.86rem',color:C.grey400}}>Don't have an account? <span style={{color:C.green600,fontWeight:600,cursor:'pointer'}}>Apply now</span></div>
       </div>
