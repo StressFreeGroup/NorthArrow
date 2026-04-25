@@ -167,7 +167,7 @@ function HomePage({setPage}){
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px 32px',maxWidth:600}}>{['Real commercial coverage from A-rated carriers','No renter addendums or hidden charges','Standalone Shield ADW for damage protection','Fleet-operator-first program design'].map((t,i)=><div key={i} style={{display:'flex',alignItems:'flex-start',gap:8}}><Check size={16} color={C.green600} style={{marginTop:3,flexShrink:0}}/><span style={{fontSize:'0.88rem',color:C.grey700}}>{t}</span></div>)}</div>
         </div>
 
-        <div style={{textAlign:'center',marginTop:40}}><button onClick={()=>{setPage('coverage');window.scrollTo(0,0)}} style={{padding:'16px 40px',background:C.navy700,color:C.white,borderRadius:6,fontWeight:700,fontSize:'1rem',cursor:'pointer',border:'none',display:'inline-flex',alignItems:'center',gap:10}}>See How We Compare <ArrowRight size={18}/></button></div>
+        <div style={{textAlign:'center',marginTop:40}}><button onClick={()=>{setPage('coverage');setTimeout(()=>{const el=document.getElementById('competitor-comparison');if(el)el.scrollIntoView({behavior:'smooth',block:'start'})},100)}} style={{padding:'16px 40px',background:C.navy700,color:C.white,borderRadius:6,fontWeight:700,fontSize:'1rem',cursor:'pointer',border:'none',display:'inline-flex',alignItems:'center',gap:10}}>See How We Compare <ArrowRight size={18}/></button></div>
       </div>
     </section>
 
@@ -227,6 +227,109 @@ function CoveragePage({setPage}){
         <SectionHeader overline="Optional Add-Ons" title="Customize Your Protection" accent="purple"/>
         <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:0,borderTop:`1px solid ${C.grey200}`,borderLeft:`1px solid ${C.grey200}`}}>
           {[{name:'Supplemental Liability (SLI)',price:'$18/mo',icon:Scale,desc:'Additional liability beyond base tier.'},{name:'Personal Accident',price:'$10/mo',icon:Heart,desc:'Medical coverage for rental accidents.'},{name:'Personal Effects',price:'$7/mo',icon:Layers,desc:'Protection for belongings inside the RV.'},{name:'Roadside Assistance',price:'$6/mo',icon:Truck,desc:'Towing, flat tire, lockout, fuel delivery.'}].map((a,i)=><div key={i} style={{padding:'clamp(24px,3vw,32px)',background:C.white,borderRight:`1px solid ${C.grey200}`,borderBottom:`1px solid ${C.grey200}`,borderLeft:`4px solid ${C.purple500}`}}><div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12}}><a.icon size={22} color={C.purple600}/><span style={{fontFamily:'var(--font-display)',fontWeight:800,fontSize:'1.2rem',color:C.navy800}}>{a.price}</span></div><h4 style={{fontSize:'1rem',marginBottom:8,color:C.navy800}}>{a.name}</h4><p style={{fontSize:'0.84rem',color:C.grey500,lineHeight:1.6}}>{a.desc}</p></div>)}
+        </div>
+      </div>
+    </section>
+
+    {/* COMPETITOR COMPARISON — head-to-head against MBA, Roamly, Triad */}
+    <section id="competitor-comparison" style={{padding:'clamp(70px,9vw,120px) 0',background:C.white,scrollMarginTop:90}}>
+      <div style={sWrap}>
+        <SectionHeader overline="Head to Head" title="North Arrow vs. The Alternatives" accent="navy"/>
+        <p style={{textAlign:'center',color:C.grey600,fontSize:'1rem',maxWidth:720,margin:'-12px auto 40px',lineHeight:1.65}}>The four main commercial coverage options for peer-to-peer RV rental fleets — and where each one falls short for fleet operators.</p>
+
+        <div style={{overflowX:'auto',background:C.white,boxShadow:'0 6px 28px rgba(15,34,64,0.08)',borderRadius:10,border:`1px solid ${C.grey100}`}}>
+          <table style={{width:'100%',borderCollapse:'collapse',fontSize:'0.9rem',minWidth:780}}>
+            <thead>
+              <tr>
+                <th style={{textAlign:'left',padding:'18px 22px',background:C.grey50,color:C.grey700,fontWeight:700,fontSize:'0.78rem',letterSpacing:'0.08em',textTransform:'uppercase',width:'24%',borderBottom:`2px solid ${C.grey200}`}}>Feature</th>
+                <th style={{textAlign:'center',padding:'18px 18px',background:`linear-gradient(135deg, ${C.navy700}, ${C.navy800})`,color:C.white,position:'relative',width:'19%',borderBottom:`2px solid ${C.green500}`}}>
+                  <div style={{position:'absolute',top:0,left:0,right:0,height:4,background:C.green500}}/>
+                  <div style={{display:'inline-flex',alignItems:'center',gap:6,padding:'3px 10px',background:C.green500,color:C.white,fontSize:'0.66rem',fontWeight:800,letterSpacing:'0.1em',borderRadius:99,marginBottom:8}}><Star size={10} fill={C.white}/>OUR PROGRAM</div>
+                  <div style={{fontFamily:'var(--font-display)',fontWeight:800,fontSize:'1.15rem'}}>North Arrow</div>
+                </th>
+                <th style={{textAlign:'center',padding:'18px 18px',background:C.grey100,color:C.grey700,width:'19%',borderBottom:`2px solid ${C.grey200}`}}>
+                  <div style={{fontSize:'0.66rem',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',color:C.grey500,marginBottom:8}}>Restructured 2024</div>
+                  <div style={{fontFamily:'var(--font-display)',fontWeight:800,fontSize:'1.15rem',color:C.navy800}}>MBA</div>
+                </th>
+                <th style={{textAlign:'center',padding:'18px 18px',background:C.grey100,color:C.grey700,width:'19%',borderBottom:`2px solid ${C.grey200}`}}>
+                  <div style={{fontSize:'0.66rem',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',color:C.grey500,marginBottom:8}}>Outdoorsy-owned</div>
+                  <div style={{fontFamily:'var(--font-display)',fontWeight:800,fontSize:'1.15rem',color:C.navy800}}>ROAMLY</div>
+                </th>
+                <th style={{textAlign:'center',padding:'18px 18px',background:C.grey100,color:C.grey700,width:'19%',borderBottom:`2px solid ${C.grey200}`}}>
+                  <div style={{fontSize:'0.66rem',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',color:C.grey500,marginBottom:8}}>Specialty Lines</div>
+                  <div style={{fontFamily:'var(--font-display)',fontWeight:800,fontSize:'1.15rem',color:C.navy800}}>Triad</div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                {label:'Monthly Premium (per vehicle)',na:{v:'$68 – $124',ok:true},mba:{v:'$125 – $367',ok:false},rm:{v:'$140 – $300+',ok:false},tr:{v:'Quote-only · high',ok:false}},
+                {label:'Bodily Injury Limits',na:{v:'Up to $300K / $500K',ok:true},mba:{v:'$15K / $30K (statutory)',ok:false},rm:{v:'State minimums',ok:false},tr:{v:'Customizable',ok:'partial'}},
+                {label:'Property Damage',na:{v:'Up to $100K',ok:true},mba:{v:'$5K',ok:false},rm:{v:'$25K standard',ok:false},tr:{v:'Customizable',ok:'partial'}},
+                {label:'Per-Vehicle Deposit',na:{v:'$0',ok:true},mba:{v:'$399 / vehicle',ok:false},rm:{v:'Varies',ok:false},tr:{v:'Required',ok:false}},
+                {label:'Renter Addendum Charges',na:{v:'Eliminated',ok:true},mba:{v:'Eliminated 2024',ok:false},rm:{v:'Per-rental fees',ok:false},tr:{v:'N/A',ok:'partial'}},
+                {label:'Monthly Fees (transparent)',na:{v:'$33 flat ($15+$10+$8)',ok:true},mba:{v:'Bundled / opaque',ok:false},rm:{v:'Bundled',ok:false},tr:{v:'Bundled',ok:false}},
+                {label:'Damage Waiver Available',na:{v:'Shield ADW · $25/day',ok:true},mba:{v:'Never offered',ok:false},rm:{v:'Outdoorsy IMG only',ok:false},tr:{v:'Not available',ok:false}},
+                {label:'Add / Drop Coverage',na:{v:'Anytime',ok:true},mba:{v:'Limited',ok:'partial'},rm:{v:'Monthly cycle',ok:'partial'},tr:{v:'No flexibility',ok:false}},
+                {label:'Carrier Rating',na:{v:'A-rated carriers',ok:true},mba:{v:'A+ via NatGen (non-admitted)',ok:'partial'},rm:{v:'A-rated',ok:true},tr:{v:'Varies',ok:'partial'}},
+                {label:'Designed For',na:{v:'P2P RV fleet operators',ok:true},mba:{v:'Traditional rental',ok:false},rm:{v:'Outdoorsy listings',ok:false},tr:{v:'Mixed specialty fleet',ok:false}},
+                {label:'Platform Lock-in',na:{v:'None',ok:true},mba:{v:'None',ok:true},rm:{v:'Outdoorsy ecosystem',ok:false},tr:{v:'None',ok:true}},
+                {label:'Vertically Integrated',na:{v:'Stack: Insurance + Shield + P2PRVS',ok:true},mba:{v:'Insurance only',ok:false},rm:{v:'Insurance + marketplace',ok:'partial'},tr:{v:'Insurance only',ok:false}},
+              ].map((row,i)=>{
+                const cellStyle={padding:'14px 16px',textAlign:'center',fontSize:'0.85rem',borderBottom:`1px solid ${C.grey100}`,verticalAlign:'middle'}
+                const renderCell=(cell,isOurs)=>{
+                  const okColor=cell.ok===true?C.green600:cell.ok==='partial'?C.amber600:C.red600
+                  const Icon=cell.ok===true?Check:cell.ok==='partial'?Info:X
+                  return(
+                    <td style={{...cellStyle,background:isOurs?'rgba(35,139,78,0.04)':C.white,fontWeight:isOurs?700:500,color:isOurs?C.navy800:C.grey700,borderLeft:isOurs?`3px solid ${C.green500}`:'none',borderRight:isOurs?`3px solid ${C.green500}`:'none'}}>
+                      <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>
+                        <Icon size={14} color={okColor} style={{flexShrink:0}}/>
+                        <span>{cell.v}</span>
+                      </div>
+                    </td>
+                  )
+                }
+                return(
+                  <tr key={i} style={{background:i%2===0?C.white:C.grey50}}>
+                    <td style={{padding:'14px 22px',fontWeight:700,color:C.navy800,fontSize:'0.86rem',borderBottom:`1px solid ${C.grey100}`,background:i%2===0?C.white:C.grey50}}>{row.label}</td>
+                    {renderCell(row.na,true)}
+                    {renderCell(row.mba,false)}
+                    {renderCell(row.rm,false)}
+                    {renderCell(row.tr,false)}
+                  </tr>
+                )
+              })}
+              {/* Final summary row */}
+              <tr>
+                <td style={{padding:'18px 22px',background:C.navy900,color:C.white,fontWeight:700,fontSize:'0.86rem'}}>The Bottom Line</td>
+                <td style={{padding:'18px 16px',textAlign:'center',background:`linear-gradient(135deg, ${C.green600}, ${C.green700})`,color:C.white,borderLeft:`3px solid ${C.green500}`,borderRight:`3px solid ${C.green500}`}}>
+                  <div style={{fontWeight:800,fontSize:'0.9rem',marginBottom:3}}>Better coverage</div>
+                  <div style={{fontSize:'0.78rem',opacity:0.9}}>Lower rates, $0 deposits, full stack</div>
+                </td>
+                <td style={{padding:'18px 16px',textAlign:'center',background:C.navy900,color:'rgba(255,255,255,0.6)',fontSize:'0.82rem'}}>
+                  <div style={{fontWeight:600,marginBottom:3}}>More for less</div>
+                  <div style={{fontSize:'0.74rem'}}>Higher premiums, lower limits</div>
+                </td>
+                <td style={{padding:'18px 16px',textAlign:'center',background:C.navy900,color:'rgba(255,255,255,0.6)',fontSize:'0.82rem'}}>
+                  <div style={{fontWeight:600,marginBottom:3}}>Platform locked</div>
+                  <div style={{fontSize:'0.74rem'}}>Outdoorsy ecosystem only</div>
+                </td>
+                <td style={{padding:'18px 16px',textAlign:'center',background:C.navy900,color:'rgba(255,255,255,0.6)',fontSize:'0.82rem'}}>
+                  <div style={{fontWeight:600,marginBottom:3}}>Inflexible & costly</div>
+                  <div style={{fontSize:'0.74rem'}}>No fleet-specific design</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Source notes */}
+        <div style={{marginTop:24,padding:'16px 20px',background:C.grey50,fontSize:'0.78rem',color:C.grey600,lineHeight:1.6,borderRadius:6}}>
+          <strong style={{color:C.navy800}}>Sources:</strong> MBA pricing reflects 2024 restructured program (per actual quote received for 15-vehicle California fleet — rates $124.70 to $366.82/mo per vehicle, $5,985 in deposits on $2,988 annual premium). Roamly pricing reflects standalone monthly rates. Triad Underwriters does not publish standardized rates and operates as quote-only without revenue share or add/drop flexibility. Limits and features confirmed against current public-facing program documentation as of 2026.
+        </div>
+
+        <div style={{textAlign:'center',marginTop:36}}>
+          <button onClick={()=>{setPage('apply');window.scrollTo(0,0)}} style={{padding:'16px 40px',background:C.green600,color:C.white,borderRadius:6,fontWeight:700,fontSize:'1rem',cursor:'pointer',border:'none',display:'inline-flex',alignItems:'center',gap:10}}>Apply Now <ArrowRight size={18}/></button>
         </div>
       </div>
     </section>
