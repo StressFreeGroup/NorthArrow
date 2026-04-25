@@ -336,8 +336,7 @@ const ADDONS=[
 function Step5({tier,setTier,addons,setAddons,shield,setShield,terms,setTerms,vehicles,owner}){
   const totalPerVehicle=tier?TIERS.find(t=>t.id===tier).price:0
   const addonTotal=addons.reduce((s,id)=>s+ADDONS.find(a=>a.id===id).price,0)
-  const shieldDays=30 // estimate per month
-  const shieldMonthly=shield?Math.min(25*shieldDays,199*4):0
+  const shieldMonthly=shield?199:0  // capped at $199/month for estimation purposes
   const fleetCount=vehicles.length||1
   return(<>
     <Section icon={ShieldCheck} title="Choose Your Coverage Tier" defaultOpen>
@@ -393,8 +392,8 @@ function Step5({tier,setTier,addons,setAddons,shield,setShield,terms,setTerms,ve
           <div style={{color:C.navy200}}>Add-Ons ({addons.length})</div>
           <div style={{textAlign:'right',fontWeight:700}}>${addonTotal}/mo per vehicle</div>
           {shield&&<>
-            <div style={{color:C.navy200}}>Stress Free Shield (waiver, est.)</div>
-            <div style={{textAlign:'right',fontWeight:700}}>~${shieldMonthly}/mo per vehicle</div>
+            <div style={{color:C.navy200}}>Stress Free Shield (waiver, capped)</div>
+            <div style={{textAlign:'right',fontWeight:700}}>up to ${shieldMonthly}/mo per vehicle</div>
           </>}
           <div style={{gridColumn:'1 / -1',height:1,background:'rgba(255,255,255,0.12)',margin:'8px 0'}}/>
           <div style={{color:C.white,fontWeight:700}}>Per Vehicle (estimated)</div>
@@ -402,7 +401,7 @@ function Step5({tier,setTier,addons,setAddons,shield,setShield,terms,setTerms,ve
           <div style={{color:C.white,fontWeight:700}}>Fleet of {fleetCount}</div>
           <div style={{textAlign:'right',fontWeight:800,fontSize:'1.3rem',color:C.green400}}>${(totalPerVehicle+addonTotal+shieldMonthly)*fleetCount}/mo</div>
         </div>
-        <div style={{marginTop:16,fontSize:'0.76rem',color:C.navy300,lineHeight:1.55}}>Final premium subject to underwriting review. Per-vehicle pricing varies by declared value, type, and model year. Shield waiver pricing is not insurance and is billed by occurrence at $25/day capped at $199/trip.</div>
+        <div style={{marginTop:16,fontSize:'0.76rem',color:C.navy300,lineHeight:1.55}}>Final premium subject to underwriting review. Per-vehicle pricing varies by declared value, type, and model year. Shield waiver is not insurance and is billed by occurrence at $25/day, capped at $199/trip — shown here at the monthly cap as the high-end estimate.</div>
       </div>
 
       <div style={{marginTop:18,padding:18,background:C.grey50,fontSize:'0.86rem',color:C.grey700,lineHeight:1.6}}>
