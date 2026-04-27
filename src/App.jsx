@@ -62,21 +62,70 @@ function SectionHeader({overline,title,subtitle,light,center=true,accent='green'
 }
 
 function ComparisonTable({setPage}){
-  const rows=[['Bodily Injury Limits','$15K / $30K','$100K / $300K','$300K / $500K'],['Property Damage Limit','$5K','$50K','$100K'],['Deductible','$2,500','$2,000','$1,500'],['Monthly Premium','$68','$89','$124'],['Monthly Fees','$33 flat','$33 flat','$33 flat'],['Renter Addendums','$0','$0','$0'],['Per-Vehicle Deposits','$0','$0','$0'],['Shield ADW Eligible','Yes','Yes','Yes'],['A-Rated Carrier','Yes','Yes','Yes'],['SLI Available','+$18/mo','+$18/mo','+$18/mo'],['Personal Accident','+$10/mo','+$10/mo','+$10/mo'],['Personal Effects','+$7/mo','+$7/mo','+$7/mo'],['Roadside Assistance','+$6/mo','+$6/mo','+$6/mo']]
+  const tiers=[
+    {key:'Bronze',sublabel:'Basic',headerBg:C.navy800,topStripe:null,accentColor:C.navy300,ctaBg:C.navy700},
+    {key:'Silver',sublabel:'Standard - Most Popular',headerBg:C.navy700,topStripe:C.green500,accentColor:C.green400,ctaBg:C.green600,popular:true},
+    {key:'Gold',sublabel:'Premium',headerBg:C.navy800,topStripe:C.purple500,accentColor:C.purple400,ctaBg:C.purple600},
+    {key:'Platinum',sublabel:'Elite',headerBg:C.navy600,topStripe:C.navy400,accentColor:C.navy200,ctaBg:C.navy500},
+  ]
+  const deposits=['$499','$399','$299','$0']
+  const rows=[
+    ['Bodily Injury Limits','$15K / $30K','$100K / $300K','$300K / $500K','$1M / $2M'],
+    ['Property Damage Limit','$5K','$50K','$100K','$250K'],
+    ['Deductible','$2,500','$2,000','$1,500','$500'],
+    ['__divider__'],
+    ['Sample Travel Trailer ($35K, CA, 2022)','$84/mo','$106/mo','$132/mo','$179/mo'],
+    ['Sample Class C ($40K, CA, 2022)','$126/mo','$166/mo','$213/mo','$300/mo'],
+    ['__divider__'],
+    ['Roadside Assistance','+$6/mo','Included','Included','Included'],
+    ['Personal Accident','+$10/mo','+$10/mo','Included','Included'],
+    ['Personal Effects','+$7/mo','+$7/mo','Included','Included'],
+    ['Supplemental Liability','+$18/mo','+$18/mo','Included','Included'],
+    ['__divider__'],
+    ['Renter Addendum Charges','$0','$0','$0','$0'],
+    ['Monthly Service Fee','$33 flat','$33 flat','$33 flat','$33 flat'],
+    ['Shield ADW Eligible','Yes','Yes','Yes','Yes'],
+    ['Cancel Anytime','Yes','Yes','Yes','Yes'],
+  ]
   return(
     <div style={{overflowX:'auto'}}>
-      <table style={{width:'100%',borderCollapse:'collapse',background:C.white,fontSize:'0.92rem'}}>
+      <table style={{width:'100%',borderCollapse:'collapse',background:C.white,fontSize:'0.9rem',minWidth:880}}>
         <thead><tr>
-          <th style={{textAlign:'left',padding:'18px 24px',background:C.navy800,color:C.white,fontWeight:700,width:'28%'}}>Coverage Detail</th>
-          <th style={{textAlign:'center',padding:'18px 24px',background:C.navy800,color:C.white,borderLeft:'1px solid rgba(255,255,255,0.1)'}}><div style={{fontSize:'0.7rem',letterSpacing:'0.1em',textTransform:'uppercase',color:C.navy300,marginBottom:4}}>Basic</div><div style={{fontFamily:'var(--font-display)',fontSize:'1.6rem',fontWeight:800}}>$101<span style={{fontSize:'0.7rem',fontWeight:400}}>/mo</span></div></th>
-          <th style={{textAlign:'center',padding:'18px 24px',background:C.navy700,color:C.white,borderLeft:'1px solid rgba(255,255,255,0.1)',position:'relative'}}><div style={{position:'absolute',top:0,left:0,right:0,height:4,background:C.green500}}/><div style={{fontSize:'0.7rem',letterSpacing:'0.1em',textTransform:'uppercase',color:C.green400,marginBottom:4}}>Standard - Most Popular</div><div style={{fontFamily:'var(--font-display)',fontSize:'1.6rem',fontWeight:800}}>$122<span style={{fontSize:'0.7rem',fontWeight:400}}>/mo</span></div></th>
-          <th style={{textAlign:'center',padding:'18px 24px',background:C.navy800,color:C.white,borderLeft:'1px solid rgba(255,255,255,0.1)'}}><div style={{fontSize:'0.7rem',letterSpacing:'0.1em',textTransform:'uppercase',color:C.purple400,marginBottom:4}}>Premium</div><div style={{fontFamily:'var(--font-display)',fontSize:'1.6rem',fontWeight:800}}>$157<span style={{fontSize:'0.7rem',fontWeight:400}}>/mo</span></div></th>
+          <th style={{textAlign:'left',padding:'18px 22px',background:C.navy800,color:C.white,fontWeight:700,width:'24%'}}>Coverage Detail</th>
+          {tiers.map(t=>(
+            <th key={t.key} style={{textAlign:'center',padding:'22px 16px 18px',background:t.headerBg,color:C.white,borderLeft:'1px solid rgba(255,255,255,0.1)',position:'relative',width:'19%'}}>
+              {t.topStripe&&<div style={{position:'absolute',top:0,left:0,right:0,height:4,background:t.topStripe}}/>}
+              <div style={{fontSize:'0.66rem',letterSpacing:'0.1em',textTransform:'uppercase',color:t.accentColor,marginBottom:6,fontWeight:700}}>{t.sublabel}</div>
+              <div style={{fontFamily:'var(--font-display)',fontSize:'1.4rem',fontWeight:800,marginBottom:6}}>{t.key}</div>
+              <div style={{fontSize:'0.74rem',color:'rgba(255,255,255,0.8)',fontWeight:600}}>{deposits[tiers.indexOf(t)]} deposit</div>
+            </th>
+          ))}
         </tr></thead>
         <tbody>
-          {rows.map(([label,b,s,p],i)=><tr key={i} style={{background:i%2===0?C.white:C.grey50}}><td style={{padding:'14px 24px',fontWeight:600,color:C.navy800,borderBottom:`1px solid ${C.grey200}`}}>{label}</td><td style={{padding:'14px 24px',textAlign:'center',color:C.grey700,borderBottom:`1px solid ${C.grey200}`,borderLeft:`1px solid ${C.grey200}`}}>{b}</td><td style={{padding:'14px 24px',textAlign:'center',color:C.navy800,fontWeight:600,borderBottom:`1px solid ${C.grey200}`,borderLeft:`1px solid ${C.grey200}`}}>{s}</td><td style={{padding:'14px 24px',textAlign:'center',color:C.grey700,borderBottom:`1px solid ${C.grey200}`,borderLeft:`1px solid ${C.grey200}`}}>{p}</td></tr>)}
-          <tr><td style={{padding:'20px 24px'}}></td>{[{label:'Select Basic',bg:C.navy700},{label:'Select Standard',bg:C.green600},{label:'Select Premium',bg:C.purple600}].map((cta,i)=><td key={i} style={{padding:'20px 24px',textAlign:'center',borderLeft:`1px solid ${C.grey200}`}}><button onClick={()=>{setPage('apply');window.scrollTo(0,0)}} style={{width:'100%',padding:'14px 20px',background:cta.bg,color:C.white,fontWeight:700,fontSize:'0.92rem',cursor:'pointer',border:'none',borderRadius:6}}>{cta.label} <ArrowRight size={15} style={{marginLeft:6,verticalAlign:-2}}/></button></td>)}</tr>
+          {rows.map((row,i)=>{
+            if(row[0]==='__divider__')return(<tr key={i}><td colSpan={5} style={{padding:0,height:6,background:C.navy50,borderTop:`1px solid ${C.grey200}`,borderBottom:`1px solid ${C.grey200}`}}></td></tr>)
+            const[label,...vals]=row
+            return(<tr key={i} style={{background:i%2===0?C.white:C.grey50}}>
+              <td style={{padding:'13px 22px',fontWeight:600,color:C.navy800,borderBottom:`1px solid ${C.grey200}`,fontSize:'0.86rem'}}>{label}</td>
+              {vals.map((v,j)=>{
+                const isPop=tiers[j].popular
+                const isIncluded=v==='Included'
+                return(<td key={j} style={{padding:'13px 16px',textAlign:'center',color:isIncluded?C.green700:(isPop?C.navy800:C.grey700),fontWeight:isPop||isIncluded?700:500,borderBottom:`1px solid ${C.grey200}`,borderLeft:`1px solid ${C.grey200}`,background:isPop?'rgba(35,139,78,0.04)':'transparent',fontSize:'0.86rem'}}>{isIncluded?<span style={{display:'inline-flex',alignItems:'center',gap:4}}><Check size={14} color={C.green600}/>Included</span>:v}</td>)
+              })}
+            </tr>)
+          })}
+          <tr><td style={{padding:'22px 22px',background:C.navy900,color:C.white,fontWeight:700,fontSize:'0.86rem'}}>Choose Your Tier</td>
+            {tiers.map(t=>(
+              <td key={t.key} style={{padding:'18px 12px',textAlign:'center',background:C.navy900,borderLeft:'1px solid rgba(255,255,255,0.1)'}}>
+                <button onClick={()=>{setPage('quote');window.scrollTo(0,0)}} style={{width:'100%',padding:'12px 14px',background:t.ctaBg,color:C.white,fontWeight:700,fontSize:'0.85rem',cursor:'pointer',border:'none',borderRadius:6,display:'inline-flex',alignItems:'center',justifyContent:'center',gap:6}}>Get {t.key} Quote <ArrowRight size={14}/></button>
+              </td>
+            ))}
+          </tr>
         </tbody>
       </table>
+      <div style={{marginTop:18,padding:'14px 18px',background:C.green50,border:`1px solid ${C.green100}`,borderRadius:6,fontSize:'0.83rem',color:C.grey700,lineHeight:1.6}}>
+        <strong style={{color:C.green700}}>Sample rates above</strong> are illustrative for typical CA fleet operators. Your actual premium depends on RV type, value, year, fleet size, and bundled discounts. <span onClick={()=>{setPage('quote');window.scrollTo(0,0)}} style={{color:C.green700,fontWeight:700,cursor:'pointer',textDecoration:'underline'}}>Get your exact quote in 60 seconds →</span>
+      </div>
     </div>
   )
 }
@@ -207,9 +256,16 @@ function HomePage({setPage}){
 
 function CoveragePage({setPage}){
   return(<>
-    <section style={{background:`linear-gradient(135deg, ${C.navy800}, ${C.navy700})`,paddingTop:'clamp(140px,16vw,200px)',paddingBottom:'clamp(60px,8vw,100px)'}}><div style={sWrap}><div style={{fontSize:'0.78rem',fontWeight:700,letterSpacing:'0.15em',textTransform:'uppercase',color:C.navy300,marginBottom:16}}>Coverage Plans</div><h1 style={{color:C.white,marginBottom:16,maxWidth:600}}>Commercial Coverage Built for Fleets</h1><p style={{color:C.navy200,fontSize:'1.05rem',lineHeight:1.7,maxWidth:540}}>Three tiers of real commercial insurance with transparent $33/mo fees.</p></div></section>
+    <section style={{background:`linear-gradient(135deg, ${C.navy800}, ${C.navy700})`,paddingTop:'clamp(140px,16vw,200px)',paddingBottom:'clamp(60px,8vw,100px)'}}><div style={sWrap}><div style={{fontSize:'0.78rem',fontWeight:700,letterSpacing:'0.15em',textTransform:'uppercase',color:C.navy300,marginBottom:16}}>Coverage Plans</div><h1 style={{color:C.white,marginBottom:16,maxWidth:600}}>Commercial Coverage Built for Fleets</h1><p style={{color:C.navy200,fontSize:'1.05rem',lineHeight:1.7,maxWidth:540}}>Four tiers of real commercial insurance — Bronze, Silver, Gold, and Platinum — with transparent $33/mo fees and no per-rental addendums.</p></div></section>
 
-    <section style={{padding:'clamp(60px,8vw,120px) 0',background:C.grey50}}><div style={sWrap}><SectionHeader overline="Compare Plans" title="Coverage Comparison Chart" accent="navy"/><ComparisonTable setPage={setPage}/></div></section>
+    <section style={{padding:'clamp(60px,8vw,120px) 0',background:C.grey50}}><div style={sWrap}>
+      <SectionHeader overline="Compare Plans" title="Coverage Comparison Chart" subtitle="Four tiers — pick the level of coverage that fits your fleet. All tiers include the same $33/mo transparent service fee, monthly cancellation, and Shield ADW eligibility." accent="navy"/>
+      <div style={{textAlign:'center',marginBottom:32,marginTop:-12}}>
+        <button onClick={()=>{setPage('quote');window.scrollTo(0,0)}} style={{padding:'14px 32px',background:C.green600,color:C.white,borderRadius:6,fontWeight:700,fontSize:'0.95rem',cursor:'pointer',border:'none',display:'inline-flex',alignItems:'center',gap:10,boxShadow:'0 4px 14px rgba(35,139,78,0.25)'}}>Get Your Exact Quote in 60 Seconds <ArrowRight size={17}/></button>
+        <div style={{fontSize:'0.82rem',color:C.grey500,marginTop:10}}>No email required · See your real per-vehicle rate before you apply</div>
+      </div>
+      <ComparisonTable setPage={setPage}/>
+    </div></section>
 
     {/* Fee Breakdown */}
     <section style={{padding:'clamp(60px,8vw,120px) 0',background:C.white}}>
@@ -264,10 +320,10 @@ function CoveragePage({setPage}){
             </thead>
             <tbody>
               {[
-                {label:'Monthly Premium (per vehicle)',na:{v:'$68 – $124',ok:true},mba:{v:'$125 – $367',ok:false},rm:{v:'$140 – $300+',ok:false},tr:{v:'Quote-only · high',ok:false}},
-                {label:'Bodily Injury Limits',na:{v:'Up to $300K / $500K',ok:true},mba:{v:'$15K / $30K (statutory)',ok:false},rm:{v:'State minimums',ok:false},tr:{v:'Customizable',ok:'partial'}},
-                {label:'Property Damage',na:{v:'Up to $100K',ok:true},mba:{v:'$5K',ok:false},rm:{v:'$25K standard',ok:false},tr:{v:'Customizable',ok:'partial'}},
-                {label:'Per-Vehicle Deposit',na:{v:'$0',ok:true},mba:{v:'$399 / vehicle',ok:false},rm:{v:'Varies',ok:false},tr:{v:'Required',ok:false}},
+                {label:'Monthly Premium (per vehicle)',na:{v:'$84 – $327 across tiers',ok:true},mba:{v:'$125 – $367',ok:false},rm:{v:'$140 – $300+',ok:false},tr:{v:'Quote-only · high',ok:false}},
+                {label:'Bodily Injury Limits',na:{v:'Up to $1M / $2M',ok:true},mba:{v:'$30K / $60K + $1M excess',ok:'partial'},rm:{v:'State minimums',ok:false},tr:{v:'Customizable',ok:'partial'}},
+                {label:'Property Damage',na:{v:'Up to $250K',ok:true},mba:{v:'$15K',ok:false},rm:{v:'$25K standard',ok:false},tr:{v:'Customizable',ok:'partial'}},
+                {label:'Per-Vehicle Deposit',na:{v:'$0 – $499 by tier',ok:true},mba:{v:'$399 / vehicle',ok:false},rm:{v:'Varies',ok:false},tr:{v:'Required',ok:false}},
                 {label:'Renter Addendum Charges',na:{v:'Eliminated',ok:true},mba:{v:'Eliminated 2024',ok:false},rm:{v:'Per-rental fees',ok:false},tr:{v:'N/A',ok:'partial'}},
                 {label:'Monthly Fees (transparent)',na:{v:'$33 flat ($15+$10+$8)',ok:true},mba:{v:'Bundled / opaque',ok:false},rm:{v:'Bundled',ok:false},tr:{v:'Bundled',ok:false}},
                 {label:'Damage Waiver Available',na:{v:'Shield ADW · $25/day',ok:true},mba:{v:'Never offered',ok:false},rm:{v:'Outdoorsy IMG only',ok:false},tr:{v:'Not available',ok:false}},
@@ -305,7 +361,7 @@ function CoveragePage({setPage}){
                 <td style={{padding:'18px 22px',background:C.navy900,color:C.white,fontWeight:700,fontSize:'0.86rem'}}>The Bottom Line</td>
                 <td style={{padding:'18px 16px',textAlign:'center',background:`linear-gradient(135deg, ${C.green600}, ${C.green700})`,color:C.white,borderLeft:`3px solid ${C.green500}`,borderRight:`3px solid ${C.green500}`}}>
                   <div style={{fontWeight:800,fontSize:'0.9rem',marginBottom:3}}>Better coverage</div>
-                  <div style={{fontSize:'0.78rem',opacity:0.9}}>Lower rates, $0 deposits, full stack</div>
+                  <div style={{fontSize:'0.78rem',opacity:0.9}}>Lower rates, deposits as low as $0, full stack</div>
                 </td>
                 <td style={{padding:'18px 16px',textAlign:'center',background:C.navy900,color:'rgba(255,255,255,0.6)',fontSize:'0.82rem'}}>
                   <div style={{fontWeight:600,marginBottom:3}}>More for less</div>
