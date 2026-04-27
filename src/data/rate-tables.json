@@ -1,0 +1,184 @@
+{
+  "_metadata": {
+    "version": "v5 — canonical",
+    "generated": "2026-04-27",
+    "purpose": "Rate engine inputs for northarrow.com quote tool — CA-first launch, target-aligned RV type pricing",
+    "supersedes": "All prior versions"
+  },
+
+  "_rv_type_priority": {
+    "_description": "Lower priority # = preferred target = competitive base rates. Higher # = priced defensively.",
+    "1_Travel_Trailer": "PRIMARY TARGET — lowest repair cost",
+    "2_Toy_Hauler": "PRIMARY TARGET — slight premium for garage compartment",
+    "3_Class_B": "PRIMARY TARGET — Sprinter-based mid-tier",
+    "4_Class_C": "PRIMARY TARGET — common rental class",
+    "5_Class_A": "NOT A TARGET — priced defensively to discourage adverse selection",
+    "6_Fifth_Wheel": "NOT A TARGET — higher repair cost than TT"
+  },
+
+  "TIER_RATE": {
+    "_description": "Monthly premium component (premium ONLY, NOT including the $33 NA fee). Entry-level value (~$30-50K replacement). Multiply by value/state/age multipliers to scale.",
+    "_units": "USD per month",
+    "Bronze": {
+      "Travel Trailer": 68,
+      "Toy Hauler": 78,
+      "Class B": 130,
+      "Class C": 175,
+      "Class A": 280,
+      "Fifth Wheel": 110,
+      "Pop Up": 42,
+      "Park Model": 54,
+      "Truck Camper": 60
+    },
+    "Silver": {
+      "Travel Trailer": 89,
+      "Toy Hauler": 102,
+      "Class B": 175,
+      "Class C": 235,
+      "Class A": 380,
+      "Fifth Wheel": 150,
+      "Pop Up": 55,
+      "Park Model": 71,
+      "Truck Camper": 78
+    },
+    "Gold": {
+      "Travel Trailer": 124,
+      "Toy Hauler": 142,
+      "Class B": 240,
+      "Class C": 320,
+      "Class A": 525,
+      "Fifth Wheel": 210,
+      "Pop Up": 76,
+      "Park Model": 99,
+      "Truck Camper": 108
+    },
+    "Platinum": {
+      "Travel Trailer": 175,
+      "Toy Hauler": 200,
+      "Class B": 335,
+      "Class C": 450,
+      "Class A": 740,
+      "Fifth Wheel": 295,
+      "Pop Up": null,
+      "Park Model": null,
+      "Truck Camper": null
+    }
+  },
+
+  "VALUE_MULT": {
+    "_description": "Multiplier based on replacement value. Higher value = higher claim severity = higher premium.",
+    "bands": [
+      {"min": 0,        "max": 30000,    "mult": 0.85, "label": "Under $30K"},
+      {"min": 30000,    "max": 75000,    "mult": 1.00, "label": "$30K-$75K (baseline)"},
+      {"min": 75000,    "max": 150000,   "mult": 1.20, "label": "$75K-$150K"},
+      {"min": 150000,   "max": 300000,   "mult": 1.50, "label": "$150K-$300K"},
+      {"min": 300000,   "max": 500000,   "mult": 1.85, "label": "$300K-$500K"},
+      {"min": 500000,   "max": 750000,   "mult": 2.30, "label": "$500K-$750K"},
+      {"min": 750000,   "max": 1000000,  "mult": 2.80, "label": "$750K-$1M"},
+      {"min": 1000000,  "max": 99999999, "mult": 3.50, "label": "$1M+"}
+    ]
+  },
+
+  "STATE_MULT": {
+    "_description": "State-level rate multiplier. CA = 1.10 (PRIMARY MARKET). Hawaii / territories declined.",
+    "AL": 1.00, "AK": 0.85, "AZ": 1.00, "AR": 1.00, "CA": 1.10, "CO": 1.00,
+    "CT": 1.10, "DE": 1.00, "DC": 1.00, "FL": 1.15, "GA": 1.00, "HI": null,
+    "ID": 0.85, "IL": 1.10, "IN": 1.00, "IA": 1.00, "KS": 1.00, "KY": 1.00,
+    "LA": 1.00, "ME": 1.00, "MD": 1.00, "MA": 1.10, "MI": 1.00, "MN": 1.00,
+    "MS": 1.00, "MO": 1.00, "MT": 0.85, "NE": 1.00, "NV": 1.20, "NH": 1.00,
+    "NJ": 1.10, "NM": 1.00, "NY": 1.20, "NC": 1.00, "ND": 0.85, "OH": 1.00,
+    "OK": 1.00, "OR": 1.00, "PA": 1.00, "RI": 1.00, "SC": 1.00, "SD": 0.85,
+    "TN": 1.00, "TX": 1.15, "UT": 1.00, "VT": 1.00, "VA": 1.00, "WA": 1.00,
+    "WV": 1.00, "WI": 1.00, "WY": 0.85
+  },
+
+  "AGE_MULT": {
+    "_description": "Multiplier based on vehicle age (current_year - vehicle_year). 11+ years = decline per current 10-year exclusion.",
+    "bands": [
+      {"min_age": 0,  "max_age": 2,  "mult": 0.95, "label": "0-2 years"},
+      {"min_age": 3,  "max_age": 5,  "mult": 1.00, "label": "3-5 years (baseline)"},
+      {"min_age": 6,  "max_age": 10, "mult": 1.10, "label": "6-10 years"}
+    ]
+  },
+
+  "TIER_DEPOSIT": {
+    "_description": "One-time deposit at binding. Inverse to tier — encourages tier-up.",
+    "Bronze":   499,
+    "Silver":   399,
+    "Gold":     299,
+    "Platinum": 0
+  },
+
+  "FLEET_DISCOUNT": {
+    "_description": "Multi-unit discount based on number of units in fleet under same insured.",
+    "bands": [
+      {"min_units": 1,  "max_units": 2,   "discount": 0.000, "label": "1-2 units"},
+      {"min_units": 3,  "max_units": 4,   "discount": 0.050, "label": "3-4 units"},
+      {"min_units": 5,  "max_units": 9,   "discount": 0.100, "label": "5-9 units"},
+      {"min_units": 10, "max_units": 24,  "discount": 0.125, "label": "10-24 units"},
+      {"min_units": 25, "max_units": 999, "discount": 0.150, "label": "25+ units"}
+    ],
+    "max_stacked_discount": 0.30
+  },
+
+  "OTHER_DISCOUNTS": {
+    "premier_owner_pct_50plus": 0.030,
+    "tenure_3yr_plus":          0.050,
+    "multi_line_auto":          0.050,
+    "multi_line_home":          0.050,
+    "multi_line_life":          0.025,
+    "affiliate_referral":       0.025
+  },
+
+  "ADD_ONS": {
+    "_description": "Optional add-on coverage. Already included in higher tiers as noted.",
+    "sli_supplemental_liability":  {"price_mo": 18, "included_in": ["Gold","Platinum"]},
+    "personal_accident_insurance": {"price_mo": 10, "included_in": ["Gold","Platinum"]},
+    "personal_effects_coverage":   {"price_mo": 7,  "included_in": ["Gold","Platinum"]},
+    "roadside_assistance":         {"price_mo": 6,  "included_in": ["Silver","Gold","Platinum"]},
+    "shield_adw":                  {"price_day": 25, "renter_pays": true, "cap": 199, "deductible": 250}
+  },
+
+  "SURCHARGES": {
+    "prior_claim_1": 1.10,
+    "prior_claim_2": 1.25,
+    "prior_claim_3plus": 1.50,
+    "salvage_title": 1.30,
+    "no_prior_commercial_insurance": 1.10,
+    "credit_score_below_600": 1.15
+  },
+
+  "DECLINE_CONDITIONS": [
+    "owner_age < 25",
+    "vin_title == flood",
+    "vehicle_age >= 11 (per 10-year exclusion policy)",
+    "prior_claim_3plus AND fleet_size < 5",
+    "state IN ['HI','PR','GU','VI']"
+  ],
+
+  "NA_FLAT_FEE_PER_MONTH": 33,
+  "NA_FEE_BREAKDOWN": {
+    "program_admin": 15,
+    "claims_management": 10,
+    "telematics": 8
+  },
+
+  "PHASE_1_TARGET_STATES": ["CA"],
+  "PHASE_2_TARGET_STATES": ["CA","NV","AZ","OR","WA"],
+  "PHASE_3_TARGET_STATES": ["CA","NV","AZ","OR","WA","FL","GA","NC","SC","TX"],
+
+  "PRIMARY_TARGET_RV_TYPES": ["Travel Trailer","Toy Hauler","Class B","Class C"],
+
+  "EXAMPLE_QUOTES": [
+    {
+      "name": "CA Travel Trailer fleet (3 units, primary target)",
+      "inputs": {"rv_type":"Travel Trailer","replacement_value":45000,"vehicle_year":2020,"state":"CA","tier":"Silver","fleet_size":3,"multi_line_home":true},
+      "calc": {"base":89,"value_mult":1.00,"state_mult":1.10,"age_mult":1.10,"pre_disc":108,"disc":0.10,"post_disc":97,"monthly_total":130,"annual":1560,"deposit":399,"first_payment":529}
+    },
+    {
+      "name": "CA Toy Hauler fleet (5 units, primary target)",
+      "inputs": {"rv_type":"Toy Hauler","replacement_value":75000,"vehicle_year":2022,"state":"CA","tier":"Gold","fleet_size":5,"multi_line_home":true,"multi_line_auto":true},
+      "calc": {"base":142,"value_mult":1.20,"state_mult":1.10,"age_mult":1.00,"pre_disc":187,"disc":0.20,"post_disc":150,"monthly_total":183,"annual":2196,"deposit":299,"first_payment":482}
+    }
+  ]
+}
