@@ -1,14 +1,13 @@
 import { useState, useMemo } from 'react'
-import { Calculator, ArrowRight, Check, Info, AlertCircle, ChevronDown, ChevronUp, Shield, MapPin, Calendar, DollarSign, Truck, Users } from 'lucide-react'
+import { ArrowRight, Check, Info, AlertCircle, ChevronDown, ChevronUp, Shield, DollarSign, Truck, Users } from 'lucide-react'
 import rateTables from './data/rate-tables.json'
 import { generateQuote } from './lib/rateEngine.js'
 
 const C = { navy900:'#0A1628', navy800:'#0F2240', navy700:'#132D5E', navy600:'#1A3F7A', navy500:'#2558A3', navy400:'#3B7DD8', navy300:'#6FA3E8', navy200:'#A8C8F0', navy100:'#D4E4F8', navy50:'#EBF2FB', green700:'#1B6E3D', green600:'#238B4E', green500:'#2EA663', green400:'#4CC07E', green100:'#D6F0E2', green50:'#F0FAF4', purple700:'#4A2D7A', purple600:'#5E3B99', purple500:'#7349B8', purple400:'#8F6DD0', purple100:'#E6DCF5', white:'#FFFFFF', grey50:'#F7F8FA', grey100:'#F0F2F5', grey200:'#E2E6EB', grey300:'#CDD3DB', grey400:'#9CA5B2', grey500:'#6B7685', grey600:'#4A5568', grey700:'#2D3748', red600:'#DC2626', red700:'#B91C1C', red50:'#FEF2F2', amber600:'#D97706', amber50:'#FFFBEB', amber200:'#FDE68A' }
 const sWrap = { maxWidth: 1200, margin: '0 auto', padding: '0 clamp(20px,4vw,40px)' }
 
-// US States list (CA highlighted as Phase 1)
 const STATES = [
-  ['CA','California — Phase 1 Launch'],
+  ['CA','California'],
   ['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],['CO','Colorado'],
   ['CT','Connecticut'],['DE','Delaware'],['DC','District of Columbia'],['FL','Florida'],
   ['GA','Georgia'],['ID','Idaho'],['IL','Illinois'],['IN','Indiana'],['IA','Iowa'],
@@ -23,15 +22,15 @@ const STATES = [
 ]
 
 const RV_TYPES = [
-  { key: 'Travel Trailer', priority: 1, label: 'Travel Trailer', target: true },
-  { key: 'Toy Hauler',     priority: 2, label: 'Toy Hauler',     target: true },
-  { key: 'Class B',        priority: 3, label: 'Class B (Sprinter Van)', target: true },
-  { key: 'Class C',        priority: 4, label: 'Class C',        target: true },
-  { key: 'Class A',        priority: 5, label: 'Class A',        target: false },
-  { key: 'Fifth Wheel',    priority: 6, label: 'Fifth Wheel',    target: false },
-  { key: 'Pop Up',         priority: 7, label: 'Pop Up',         target: null },
-  { key: 'Truck Camper',   priority: 8, label: 'Truck Camper',   target: null },
-  { key: 'Park Model',     priority: 9, label: 'Park Model',     target: null },
+  { key: 'Travel Trailer', label: 'Travel Trailer' },
+  { key: 'Toy Hauler',     label: 'Toy Hauler' },
+  { key: 'Fifth Wheel',    label: 'Fifth Wheel' },
+  { key: 'Class A',        label: 'Class A' },
+  { key: 'Class B',        label: 'Class B (Sprinter Van)' },
+  { key: 'Class C',        label: 'Class C' },
+  { key: 'Pop Up',         label: 'Pop Up' },
+  { key: 'Truck Camper',   label: 'Truck Camper' },
+  { key: 'Park Model',     label: 'Park Model' },
 ]
 
 const TIERS = [
@@ -41,20 +40,30 @@ const TIERS = [
   { key: 'Platinum', label: 'Platinum', sublabel: 'Elite',    deposit: 0,   color: C.navy900,   bgAccent: C.grey100,   desc: '$1M/$2M BI · $250K PD · $500 ded · Direct adjuster · No deposit' },
 ]
 
-// Currency formatter
 const $ = (n) => n != null ? `$${Math.round(n).toLocaleString()}` : '—'
 
+// Default DOB = 35 years before today (sensible default landing)
+const defaultDOB = (() => {
+  const d = new Date()
+  d.setFullYear(d.getFullYear() - 35)
+  return d.toISOString().slice(0, 10)
+})()
+
+// Today's date for max constraint on DOB
+const todayISO = new Date().toISOString().slice(0, 10)
+// 1900-01-01 minimum
+const minDOB = '1900-01-01'
+
 export default function QuotePage({ setPage }) {
-  // Form state with sensible CA-default values
   const [form, setForm] = useState({
     rv_type: 'Travel Trailer',
-    replacement_value: 45000,
+    replacement_value: 35000,
     vehicle_year: 2022,
     vehicle_state: 'CA',
     coverage_tier: 'Silver',
     fleet_size: 1,
-    owner_age: 35,
-    odometer_miles: 35000,
+    owner_birthdate: defaultDOB,
+    odometer_miles: 25000,
     prior_claims_3yr: 0,
     vin_title_status: 'clean',
     credit_score_band: '700+',
@@ -73,15 +82,13 @@ export default function QuotePage({ setPage }) {
 
   const [showBreakdown, setShowBreakdown] = useState(false)
 
-  // Calculate live quote on every form change
   const quote = useMemo(() => generateQuote(form, rateTables), [form])
 
   const update = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
-  // Section card helper styles
   const cardSx = { background: C.white, borderRadius: 10, padding: 28, border: `1px solid ${C.grey200}`, boxShadow: '0 2px 12px rgba(15,34,64,0.04)', marginBottom: 24 }
   const labelSx = { display: 'block', fontSize: '0.82rem', fontWeight: 700, color: C.grey700, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }
-  const inputSx = { width: '100%', padding: '12px 14px', fontSize: '0.95rem', border: `1.5px solid ${C.grey300}`, borderRadius: 6, background: C.white, color: C.navy800, fontFamily: 'inherit', outline: 'none', transition: 'border 0.15s' }
+  const inputSx = { width: '100%', padding: '12px 14px', fontSize: '0.95rem', border: `1.5px solid ${C.grey300}`, borderRadius: 6, background: C.white, color: C.navy800, fontFamily: 'inherit', outline: 'none', transition: 'border 0.15s', boxSizing: 'border-box' }
   const sectionTitle = { fontSize: '1.1rem', fontWeight: 700, color: C.navy800, marginBottom: 18, display: 'flex', alignItems: 'center', gap: 10 }
 
   return (
@@ -105,14 +112,13 @@ export default function QuotePage({ setPage }) {
         </div>
       </section>
 
-      {/* Quote Builder */}
       <section style={{ padding: 'clamp(40px,5vw,60px) 0' }}>
         <div style={sWrap}>
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 380px', gap: 32 }} className="quote-grid">
 
-            {/* LEFT COLUMN — FORM */}
+            {/* LEFT — FORM */}
             <div>
-              {/* Section 1: Vehicle */}
+              {/* Vehicle */}
               <div style={cardSx}>
                 <div style={sectionTitle}><Truck size={20} color={C.green600}/>Vehicle Details</div>
 
@@ -134,22 +140,17 @@ export default function QuotePage({ setPage }) {
                           cursor: 'pointer',
                           textAlign: 'left',
                           transition: 'all 0.15s',
-                          position: 'relative',
                         }}
                       >
-                        {t.target === true && <span style={{ position: 'absolute', top: 4, right: 6, fontSize: '0.65rem', color: C.green600, fontWeight: 700 }}>★</span>}
                         {t.label}
                       </button>
                     ))}
-                  </div>
-                  <div style={{ fontSize: '0.78rem', color: C.grey500, marginTop: 8 }}>
-                    <span style={{ color: C.green600, fontWeight: 700 }}>★</span> = preferred (lower repair cost / favorable underwriting)
                   </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 18 }}>
                   <div>
-                    <label style={labelSx}>Replacement Value</label>
+                    <label style={labelSx}>Stated Value</label>
                     <div style={{ position: 'relative' }}>
                       <DollarSign size={16} color={C.grey400} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)' }}/>
                       <input
@@ -159,7 +160,7 @@ export default function QuotePage({ setPage }) {
                         style={{ ...inputSx, paddingLeft: 32 }}
                         min={5000}
                         max={2500000}
-                        step={5000}
+                        step={500}
                       />
                     </div>
                   </div>
@@ -170,7 +171,7 @@ export default function QuotePage({ setPage }) {
                       value={form.vehicle_year}
                       onChange={e => update('vehicle_year', Number(e.target.value) || 0)}
                       style={inputSx}
-                      min={1990}
+                      min={2016}
                       max={2027}
                     />
                   </div>
@@ -198,7 +199,7 @@ export default function QuotePage({ setPage }) {
                 </div>
               </div>
 
-              {/* Section 2: Coverage Tier */}
+              {/* Coverage Tier */}
               <div style={cardSx}>
                 <div style={sectionTitle}><Shield size={20} color={C.green600}/>Coverage Tier</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
@@ -217,7 +218,6 @@ export default function QuotePage({ setPage }) {
                           borderRadius: 8,
                           cursor: 'pointer',
                           transition: 'all 0.15s',
-                          position: 'relative',
                         }}
                       >
                         <div style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: isSelected ? 'rgba(255,255,255,0.85)' : t.color, marginBottom: 4 }}>
@@ -236,7 +236,7 @@ export default function QuotePage({ setPage }) {
                 </div>
               </div>
 
-              {/* Section 3: Fleet & Operator */}
+              {/* Fleet & Operator */}
               <div style={cardSx}>
                 <div style={sectionTitle}><Users size={20} color={C.green600}/>Fleet & Operator</div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 18 }}>
@@ -252,14 +252,14 @@ export default function QuotePage({ setPage }) {
                     />
                   </div>
                   <div>
-                    <label style={labelSx}>Owner Age</label>
+                    <label style={labelSx}>Owner Date of Birth</label>
                     <input
-                      type="number"
-                      value={form.owner_age}
-                      onChange={e => update('owner_age', Number(e.target.value) || 0)}
+                      type="date"
+                      value={form.owner_birthdate}
+                      onChange={e => update('owner_birthdate', e.target.value)}
                       style={inputSx}
-                      min={18}
-                      max={99}
+                      min={minDOB}
+                      max={todayISO}
                     />
                   </div>
                   <div>
@@ -314,7 +314,7 @@ export default function QuotePage({ setPage }) {
                 </label>
               </div>
 
-              {/* Section 4: Discounts */}
+              {/* Discounts */}
               <div style={cardSx}>
                 <div style={sectionTitle}><Check size={20} color={C.green600}/>Bundle Discounts (optional)</div>
                 <div style={{ fontSize: '0.85rem', color: C.grey500, marginBottom: 14 }}>
@@ -325,7 +325,7 @@ export default function QuotePage({ setPage }) {
                     ['multi_line_auto', 'Personal Auto Bundle', '5%'],
                     ['multi_line_home', 'Homeowners Bundle', '5%'],
                     ['multi_line_life', 'Life Insurance Bundle', '2.5%'],
-                    ['affiliate_referral', 'Referral / P2PRVS Affiliate', '2.5%'],
+                    ['affiliate_referral', 'Referral / Affiliate', '2.5%'],
                   ].map(([key, label, pct]) => (
                     <label key={key} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', border: `1.5px solid ${form[key] ? C.green600 : C.grey300}`, background: form[key] ? C.green50 : C.white, borderRadius: 6, cursor: 'pointer', transition: 'all 0.15s' }}>
                       <input
@@ -343,7 +343,7 @@ export default function QuotePage({ setPage }) {
                 </div>
               </div>
 
-              {/* Section 5: Add-Ons */}
+              {/* Add-Ons */}
               <div style={cardSx}>
                 <div style={sectionTitle}><Info size={20} color={C.green600}/>Optional Add-Ons</div>
                 <div style={{ fontSize: '0.85rem', color: C.grey500, marginBottom: 14 }}>
@@ -382,7 +382,7 @@ export default function QuotePage({ setPage }) {
               </div>
             </div>
 
-            {/* RIGHT COLUMN — STICKY QUOTE PANEL */}
+            {/* RIGHT — STICKY QUOTE PANEL */}
             <div>
               <div style={{ position: 'sticky', top: 100, ...cardSx, padding: 0, overflow: 'hidden', marginBottom: 0 }}>
                 {quote.declined ? (
@@ -398,16 +398,14 @@ export default function QuotePage({ setPage }) {
                 )}
               </div>
 
-              {/* Disclosure */}
               <div style={{ fontSize: '0.78rem', color: C.grey500, lineHeight: 1.65, marginTop: 16, padding: '0 4px' }}>
-                <strong style={{ color: C.grey700 }}>Disclosure:</strong> This is an indicative quote based on the inputs provided. Final premium subject to underwriting review, vehicle inspection, and verification of driving history. Coverage subject to state availability. North Arrow is currently launching in California with expansion to NV, AZ, OR, WA in 2027.
+                <strong style={{ color: C.grey700 }}>Disclosure:</strong> This is an indicative quote based on the inputs provided. Final premium subject to underwriting review, vehicle inspection, and verification of driving history. Coverage subject to state availability.
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Mobile responsive override */}
       <style>{`
         @media (max-width: 980px) {
           .quote-grid {
@@ -419,7 +417,6 @@ export default function QuotePage({ setPage }) {
   )
 }
 
-// ───────── DECLINED PANEL ─────────
 function DeclinedPanel({ reason, setPage }) {
   return (
     <div>
@@ -445,13 +442,10 @@ function DeclinedPanel({ reason, setPage }) {
   )
 }
 
-// ───────── APPROVED PANEL ─────────
 function ApprovedPanel({ quote, form, showBreakdown, setShowBreakdown, setPage }) {
   const tier = TIERS.find(t => t.key === form.coverage_tier)
-
   return (
     <div>
-      {/* Tier banner */}
       <div style={{ background: `linear-gradient(135deg, ${tier.color} 0%, ${tier.color}DD 100%)`, padding: '20px 24px', color: C.white }}>
         <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.85, marginBottom: 4 }}>
           Your Quote · {tier.label} Tier
@@ -461,7 +455,6 @@ function ApprovedPanel({ quote, form, showBreakdown, setShowBreakdown, setPage }
         </div>
       </div>
 
-      {/* Headline price */}
       <div style={{ padding: '32px 24px 20px', textAlign: 'center', borderBottom: `1px solid ${C.grey200}` }}>
         <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: C.grey500, marginBottom: 8 }}>
           Per-Vehicle Monthly
@@ -474,7 +467,6 @@ function ApprovedPanel({ quote, form, showBreakdown, setShowBreakdown, setPage }
         </div>
       </div>
 
-      {/* Detail line items */}
       <div style={{ padding: '20px 24px' }}>
         {[
           ['Annual Premium (per vehicle)', $(quote.annual_premium)],
@@ -504,7 +496,6 @@ function ApprovedPanel({ quote, form, showBreakdown, setShowBreakdown, setPage }
         )}
       </div>
 
-      {/* Toggle breakdown */}
       <button
         onClick={() => setShowBreakdown(b => !b)}
         style={{ width: '100%', padding: '12px 24px', background: C.grey50, color: C.grey700, border: 'none', borderTop: `1px solid ${C.grey200}`, borderBottom: showBreakdown ? `1px solid ${C.grey200}` : 'none', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
@@ -516,15 +507,17 @@ function ApprovedPanel({ quote, form, showBreakdown, setShowBreakdown, setPage }
       {showBreakdown && (
         <div style={{ padding: '16px 24px', background: C.grey50, fontSize: '0.82rem' }}>
           {[
-            ['Base rate', $(quote.breakdown.base_rate)],
-            ['× Value multiplier', `× ${quote.breakdown.value_mult.toFixed(2)}`],
+            [`Value-based (${(quote.breakdown.value_pct * 100).toFixed(2)}% of $${form.replacement_value.toLocaleString()})`, $(quote.breakdown.value_based_monthly)],
+            quote.breakdown.floor_applied ? ['Min floor applied', $(quote.breakdown.min_floor)] : null,
+            ['Silver baseline', $(quote.breakdown.silver_baseline)],
+            ['× Tier multiplier', `× ${quote.breakdown.tier_mult.toFixed(2)}`],
             ['× State multiplier', `× ${quote.breakdown.state_mult.toFixed(2)}`],
             ['× Age multiplier', `× ${quote.breakdown.age_mult.toFixed(2)}`],
-            ['Subtotal (pre-discount)', $(quote.breakdown.pre_discount_monthly)],
-            ['Discount applied', `-${(quote.breakdown.total_discount_pct * 100).toFixed(1)}%`],
-            ['Surcharge multiplier', `× ${quote.breakdown.surcharge_mult.toFixed(2)}`],
+            ['Subtotal (pre-discount)', $(quote.breakdown.pre_discount)],
+            quote.breakdown.total_discount_pct > 0 ? ['Discounts applied', `-${(quote.breakdown.total_discount_pct * 100).toFixed(1)}%`] : null,
+            quote.breakdown.surcharge_mult !== 1 ? ['Surcharge multiplier', `× ${quote.breakdown.surcharge_mult.toFixed(2)}`] : null,
             ['+ NA service fee', `+ $33`],
-          ].map(([label, val]) => (
+          ].filter(Boolean).map(([label, val]) => (
             <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', color: C.grey600 }}>
               <span>{label}</span>
               <span style={{ fontFamily: 'ui-monospace, monospace', color: C.navy800 }}>{val}</span>
@@ -533,7 +526,6 @@ function ApprovedPanel({ quote, form, showBreakdown, setShowBreakdown, setPage }
         </div>
       )}
 
-      {/* CTA */}
       <div style={{ padding: 24, borderTop: `1px solid ${C.grey200}` }}>
         <button
           onClick={() => { setPage('apply'); window.scrollTo(0, 0) }}
