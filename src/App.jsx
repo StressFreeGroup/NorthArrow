@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Shield, Phone, Mail, MapPin, Menu, X, Check, AlertTriangle, TrendingUp, DollarSign, FileText, Users, Truck, Clock, Star, ArrowRight, ChevronDown, ChevronUp, Lock, Zap, Eye, Heart, Wrench, CircleDot, Scale, BadgeCheck, Clipboard, Send, LogIn, Layers, AlertOctagon, TriangleAlert, Ban, Info, ShieldCheck, ExternalLink, XCircle } from 'lucide-react'
 import ApplicationForm from './ApplicationForm.jsx'
+import QuotePage from './QuotePage.jsx'
 
 const C={navy900:'#0A1628',navy800:'#0F2240',navy700:'#132D5E',navy600:'#1A3F7A',navy500:'#2558A3',navy400:'#3B7DD8',navy300:'#6FA3E8',navy200:'#A8C8F0',navy100:'#D4E4F8',navy50:'#EBF2FB',green700:'#1B6E3D',green600:'#238B4E',green500:'#2EA663',green400:'#4CC07E',green100:'#D6F0E2',green50:'#F0FAF4',purple700:'#4A2D7A',purple600:'#5E3B99',purple500:'#7349B8',purple400:'#8F6DD0',purple100:'#E6DCF5',white:'#FFFFFF',grey50:'#F7F8FA',grey100:'#F0F2F5',grey200:'#E2E6EB',grey300:'#CDD3DB',grey400:'#9CA5B2',grey500:'#6B7685',grey600:'#4A5568',grey700:'#2D3748',red600:'#DC2626',red700:'#B91C1C',red50:'#FEF2F2',amber600:'#D97706',amber50:'#FFFBEB',amber200:'#FDE68A'}
 const sWrap={maxWidth:1200,margin:'0 auto',padding:'0 clamp(20px,4vw,40px)'}
@@ -10,7 +11,7 @@ function Nav({page,setPage}){
   const[open,setOpen]=useState(false)
   const[scrolled,setScrolled]=useState(false)
   useEffect(()=>{const h=()=>setScrolled(window.scrollY>20);window.addEventListener('scroll',h);return()=>window.removeEventListener('scroll',h)},[])
-  const links=[{id:'home',label:'Home'},{id:'coverage',label:'Coverage'},{id:'shield',label:'Shield ADW'},{id:'about',label:'About'},{id:'claims',label:'Claims'},{id:'faq',label:'FAQ'},{id:'contact',label:'Contact'}]
+  const links=[{id:'home',label:'Home'},{id:'quote',label:'Get Quote'},{id:'coverage',label:'Coverage'},{id:'shield',label:'Shield ADW'},{id:'about',label:'About'},{id:'claims',label:'Claims'},{id:'faq',label:'FAQ'},{id:'contact',label:'Contact'}]
   const go=(id)=>{setPage(id);setOpen(false);window.scrollTo(0,0)}
   return(
     <nav style={{position:'fixed',top:0,left:0,right:0,zIndex:1000,background:scrolled?'rgba(255,255,255,0.97)':'rgba(255,255,255,0.94)',backdropFilter:'blur(12px)',borderBottom:scrolled?`1px solid ${C.grey200}`:'1px solid transparent',transition:'all 0.3s ease'}}>
@@ -22,7 +23,7 @@ function Nav({page,setPage}){
           {links.map(l=><button key={l.id} onClick={()=>go(l.id)} style={{padding:'8px 14px',fontSize:'0.87rem',fontWeight:600,color:page===l.id?C.navy700:C.grey600,background:page===l.id?C.navy50:'transparent',borderRadius:6,transition:'all 0.2s'}}>{l.label}</button>)}
           <div style={{width:1,height:28,background:C.grey200,margin:'0 6px'}}/>
           <button onClick={()=>go('login')} style={{padding:'8px 14px',fontSize:'0.87rem',fontWeight:600,color:C.grey600}}><LogIn size={15} style={{marginRight:5,verticalAlign:-2}}/>Login</button>
-          <button onClick={()=>go('apply')} style={{padding:'10px 22px',fontSize:'0.87rem',background:C.green600,color:C.white,borderRadius:6,fontWeight:700,border:'none',cursor:'pointer'}}>Get Started</button>
+          <button onClick={()=>go('quote')} style={{padding:'10px 22px',fontSize:'0.87rem',background:C.green600,color:C.white,borderRadius:6,fontWeight:700,border:'none',cursor:'pointer'}}>Get Quote</button>
         </div>
         <button style={{display:'none'}} className="nav-mobile-toggle" onClick={()=>setOpen(!open)}>{open?<X size={24}/>:<Menu size={24}/>}</button>
       </div>
@@ -30,7 +31,7 @@ function Nav({page,setPage}){
         {links.map(l=><button key={l.id} onClick={()=>go(l.id)} style={{display:'block',width:'100%',textAlign:'left',padding:'12px 0',fontWeight:600,fontSize:'1rem',color:page===l.id?C.navy700:C.grey600,borderBottom:`1px solid ${C.grey100}`}}>{l.label}</button>)}
         <div style={{display:'flex',gap:12,marginTop:16}}>
           <button onClick={()=>go('login')} style={{flex:1,padding:'12px',border:`2px solid ${C.navy700}`,borderRadius:6,fontWeight:700,color:C.navy700,background:'transparent'}}>Login</button>
-          <button onClick={()=>go('apply')} style={{flex:1,padding:'12px',background:C.green600,color:C.white,borderRadius:6,fontWeight:700,border:'none'}}>Get Started</button>
+          <button onClick={()=>go('quote')} style={{flex:1,padding:'12px',background:C.green600,color:C.white,borderRadius:6,fontWeight:700,border:'none'}}>Get Quote</button>
         </div>
       </div>}
       <style>{`@media(max-width:960px){.nav-desktop{display:none!important}.nav-mobile-toggle{display:flex!important}}@media(max-width:480px){nav img{height:38px!important}}`}</style>
@@ -91,7 +92,7 @@ function HomePage({setPage}){
           <h1 style={{color:C.navy800,marginBottom:24}}>Commercial RV Insurance, <span style={{color:C.green600}}>Reimagined</span></h1>
           <p style={{fontSize:'1.15rem',color:C.grey600,lineHeight:1.75,marginBottom:36,maxWidth:520}}>North Arrow is the only insurance program purpose-built for peer-to-peer RV rental fleets. Real commercial coverage. Transparent pricing. No hidden fees or renter addendums.</p>
           <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>
-            <button onClick={()=>{setPage('apply');window.scrollTo(0,0)}} style={{display:'inline-flex',alignItems:'center',gap:10,padding:'16px 36px',background:C.green600,color:C.white,borderRadius:6,fontWeight:700,fontSize:'1rem',cursor:'pointer',border:'none'}}>Get a Quote <ArrowRight size={18}/></button>
+            <button onClick={()=>{setPage('quote');window.scrollTo(0,0)}} style={{display:'inline-flex',alignItems:'center',gap:10,padding:'16px 36px',background:C.green600,color:C.white,borderRadius:6,fontWeight:700,fontSize:'1rem',cursor:'pointer',border:'none'}}>Get a Quote <ArrowRight size={18}/></button>
             <button onClick={()=>{setPage('coverage');window.scrollTo(0,0)}} style={{padding:'16px 36px',borderRadius:6,fontWeight:700,fontSize:'1rem',border:`2px solid ${C.navy700}`,color:C.navy700,background:'transparent',cursor:'pointer'}}>View Plans</button>
           </div>
         </div>
@@ -800,6 +801,6 @@ function LoginPage(){
 
 export default function App(){
   const[page,setPage]=useState('home')
-  const renderPage=()=>{switch(page){case'home':return<HomePage setPage={setPage}/>;case'coverage':return<CoveragePage setPage={setPage}/>;case'shield':return<ShieldPage setPage={setPage}/>;case'about':return<AboutPage/>;case'claims':return<ClaimsPage/>;case'faq':return<FAQPage/>;case'contact':return<ContactPage/>;case'apply':return<ApplyPage/>;case'login':return<LoginPage/>;default:return<HomePage setPage={setPage}/>}}
+  const renderPage=()=>{switch(page){case'home':return<HomePage setPage={setPage}/>;case'quote':return<QuotePage setPage={setPage}/>;case'coverage':return<CoveragePage setPage={setPage}/>;case'shield':return<ShieldPage setPage={setPage}/>;case'about':return<AboutPage/>;case'claims':return<ClaimsPage/>;case'faq':return<FAQPage/>;case'contact':return<ContactPage/>;case'apply':return<ApplyPage/>;case'login':return<LoginPage/>;default:return<HomePage setPage={setPage}/>}}
   return(<><Nav page={page} setPage={setPage}/><main>{renderPage()}</main>{page!=='login'&&<Footer setPage={setPage}/>}</>)
 }
