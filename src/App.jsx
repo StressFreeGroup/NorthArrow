@@ -3,6 +3,8 @@ import { Shield, Phone, Mail, MapPin, Menu, X, Check, AlertTriangle, TrendingUp,
 import ApplicationForm from './ApplicationForm.jsx'
 import QuotePage from './QuotePage.jsx'
 import CoverageEstimator from './CoverageEstimator.jsx'
+import rateTables from './data/rate-tables.json'
+import { generateQuote } from './lib/rateEngine.js'
 
 const C={navy900:'#0A1628',navy800:'#0F2240',navy700:'#132D5E',navy600:'#1A3F7A',navy500:'#2558A3',navy400:'#3B7DD8',navy300:'#6FA3E8',navy200:'#A8C8F0',navy100:'#D4E4F8',navy50:'#EBF2FB',green700:'#1B6E3D',green600:'#238B4E',green500:'#2EA663',green400:'#4CC07E',green100:'#D6F0E2',green50:'#F0FAF4',purple700:'#4A2D7A',purple600:'#5E3B99',purple500:'#7349B8',purple400:'#8F6DD0',purple100:'#E6DCF5',white:'#FFFFFF',grey50:'#F7F8FA',grey100:'#F0F2F5',grey200:'#E2E6EB',grey300:'#CDD3DB',grey400:'#9CA5B2',grey500:'#6B7685',grey600:'#4A5568',grey700:'#2D3748',red600:'#DC2626',red700:'#B91C1C',red50:'#FEF2F2',amber600:'#D97706',amber50:'#FFFBEB',amber200:'#FDE68A'}
 const sWrap={maxWidth:1200,margin:'0 auto',padding:'0 clamp(20px,4vw,40px)'}
@@ -62,6 +64,109 @@ function SectionHeader({overline,title,subtitle,light,center=true,accent='green'
   return(<div style={{textAlign:center?'center':'left',marginBottom:48,maxWidth:center?680:'none',margin:center?'0 auto 48px':'0 0 48px'}}>{overline&&<div style={{fontFamily:'var(--font-body)',fontSize:'0.78rem',fontWeight:700,letterSpacing:'0.15em',textTransform:'uppercase',color:ac,marginBottom:12}}>{overline}</div>}<h2 style={{color:light?C.white:C.navy800,marginBottom:subtitle?16:0}}>{title}</h2>{subtitle&&<p style={{fontSize:'1.05rem',color:light?C.navy200:C.grey500,lineHeight:1.7}}>{subtitle}</p>}</div>)
 }
 
+// Live sample quote — uses real rate engine so numbers stay in sync with the quote tool
+function SampleQuotePanel({setPage}){
+  // Sample fleet operator with one 2022 Travel Trailer at $35K stated value in CA — typical use case
+  const baseInputs={
+    rv_type:'Travel Trailer',replacement_value:35000,vehicle_year:2022,vehicle_state:'CA',
+    fleet_size:1,owner_birthdate:'1990-06-15',odometer_miles:0,prior_claims_3yr:0,
+    vin_title_status:'clean',credit_score_band:'700+',has_prior_commercial_insurance:true,
+    multi_line_auto:false,multi_line_home:false,multi_line_life:false,affiliate_referral:false,
+    add_sli:false,add_personal_accident:false,add_personal_effects:false,add_roadside:false,
+    premier_owner_pct:0,years_in_operation:0,
+  }
+  const tiers=[
+    {key:'Bronze',sublabel:'Basic',color:C.navy500,bg:C.navy50},
+    {key:'Silver',sublabel:'Standard',color:C.green600,bg:C.green50},
+    {key:'Gold',sublabel:'Premium',color:C.purple600,bg:C.purple100,popular:true},
+    {key:'Platinum',sublabel:'Elite',color:C.navy900,bg:C.grey100},
+  ].map(t=>{
+    const q=generateQuote({...baseInputs,coverage_tier:t.key},rateTables)
+    return {...t,monthly:q.monthly_total,deposit:q.deposit}
+  })
+  return(
+    <div style={{background:C.white,border:`2px solid ${C.navy800}`,overflow:'hidden',borderRadius:6,boxShadow:'0 8px 32px rgba(15,34,64,0.12)'}}>
+      {/* Header */}
+      <div style={{background:C.navy800,padding:'14px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:12}}>
+        <div style={{display:'flex',alignItems:'center',gap:10}}>
+          <div style={{width:8,height:8,borderRadius:'50%',background:C.green400,boxShadow:`0 0 10px ${C.green400}`}}/>
+          <span style={{color:C.white,fontSize:'0.74rem',fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase'}}>Live Sample Quote</span>
+        </div>
+        <span style={{color:C.navy300,fontSize:'0.7rem',fontWeight:600}}>Updated in real-time</span>
+      </div>
+
+      {/* Vehicle context */}
+      <div style={{padding:'18px 24px',background:C.navy900,color:C.white,borderBottom:`1px solid rgba(255,255,255,0.06)`}}>
+        <div style={{fontSize:'0.7rem',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',color:C.navy300,marginBottom:4}}>Example Vehicle</div>
+        <div style={{fontFamily:'var(--font-display)',fontSize:'1.1rem',fontWeight:700,lineHeight:1.3}}>2022 Travel Trailer · $35,000 stated value</div>
+        <div style={{fontSize:'0.82rem',color:C.navy300,marginTop:2}}>California · Single vehicle · Clean record</div>
+      </div>
+
+      {/* 4 tier rows with live prices */}
+      <div style={{padding:'10px 12px 14px'}}>
+        {tiers.map(t=>(
+          <div key={t.key} style={{
+            display:'grid',gridTemplateColumns:'auto 1fr auto',alignItems:'center',gap:12,
+            padding:'12px 14px',borderRadius:6,position:'relative',
+            background:t.popular?t.bg:'transparent',
+            border:t.popular?`1.5px solid ${t.color}`:'none',
+            margin:'4px 0',
+          }}>
+            <div style={{width:8,height:24,borderRadius:2,background:t.color,flexShrink:0}}/>
+            <div style={{minWidth:0}}>
+              <div style={{display:'flex',alignItems:'center',gap:8}}>
+                <span style={{fontFamily:'var(--font-display)',fontWeight:800,fontSize:'1rem',color:C.navy800}}>{t.key}</span>
+                {t.popular&&(
+                  <span style={{fontSize:'0.6rem',fontWeight:800,letterSpacing:'0.1em',padding:'2px 7px',background:t.color,color:C.white,borderRadius:99}}>MOST POPULAR</span>
+                )}
+              </div>
+              <div style={{fontSize:'0.74rem',color:C.grey500,marginTop:1}}>{t.sublabel} · ${t.deposit} deposit</div>
+            </div>
+            <div style={{textAlign:'right'}}>
+              <div style={{fontFamily:'var(--font-display)',fontSize:'1.45rem',fontWeight:800,color:C.navy800,lineHeight:1}}>${t.monthly}<span style={{fontSize:'0.74rem',fontWeight:600,color:C.grey500}}>/mo</span></div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Value props inline */}
+      <div style={{padding:'14px 24px',background:C.grey50,borderTop:`1px solid ${C.grey200}`,borderBottom:`1px solid ${C.grey200}`}}>
+        {[
+          'All tiers: $33/mo flat fee, no hidden charges',
+          'Zero per-rental renter addendums',
+          'Add or drop units anytime — no lock-in',
+        ].map((line,i)=>(
+          <div key={i} style={{display:'flex',alignItems:'center',gap:8,padding:'4px 0',fontSize:'0.82rem',color:C.grey700}}>
+            <Check size={14} color={C.green600} style={{flexShrink:0}}/>
+            <span>{line}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* CTA */}
+      <button onClick={()=>{setPage('quote');window.scrollTo(0,0)}} style={{
+        width:'100%',padding:'16px',background:C.green600,color:C.white,border:'none',cursor:'pointer',
+        fontWeight:700,fontSize:'0.95rem',display:'flex',alignItems:'center',justifyContent:'center',gap:10,
+        transition:'background 0.15s',
+      }} onMouseEnter={e=>e.currentTarget.style.background=C.green700} onMouseLeave={e=>e.currentTarget.style.background=C.green600}>
+        Run Your Real Quote <ArrowRight size={16}/>
+      </button>
+
+      {/* Featured add-on */}
+      <div style={{background:C.navy800,padding:'14px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:12}}>
+        <div>
+          <div style={{fontSize:'0.66rem',fontWeight:700,color:C.green400,textTransform:'uppercase',letterSpacing:'0.12em'}}>Featured Add-On</div>
+          <div style={{fontWeight:700,color:C.white,fontSize:'0.92rem',marginTop:2}}>Shield Accidental Damage Waiver</div>
+        </div>
+        <div style={{textAlign:'right'}}>
+          <div style={{fontSize:'1.3rem',fontWeight:800,color:C.white,lineHeight:1}}>$25<span style={{fontSize:'0.7rem',fontWeight:400,color:C.navy300}}>/day</span></div>
+          <div style={{fontSize:'0.66rem',color:C.navy300,marginTop:2}}>capped $199/trip</div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function HomePage({setPage}){
   return(<>
     {/* HERO */}
@@ -77,13 +182,9 @@ function HomePage({setPage}){
             <button onClick={()=>{setPage('coverage');window.scrollTo(0,0)}} style={{padding:'16px 36px',borderRadius:6,fontWeight:700,fontSize:'1rem',border:`2px solid ${C.navy700}`,color:C.navy700,background:'transparent',cursor:'pointer'}}>View Plans</button>
           </div>
         </div>
-        {/* Data panel — WHITE bg, no green on blue */}
+        {/* Sample Quote panel — REAL rates from rate engine */}
         <div>
-          <div style={{background:C.white,border:`2px solid ${C.navy800}`,overflow:'hidden'}}>
-            <div style={{background:C.navy800,padding:'16px 28px',display:'flex',alignItems:'center',gap:10}}><div style={{width:8,height:8,borderRadius:'50%',background:C.white}}/><span style={{color:C.white,fontSize:'0.78rem',fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase'}}>Program Overview</span></div>
-            <div style={{padding:'24px 28px'}}>{[{val:'$101',label:'Starting Monthly',sub:'Basic tier'},{val:'$33',label:'Total Monthly Fees',sub:'Transparent, flat rate'},{val:'3 Tiers',label:'Coverage Options',sub:'Basic, Standard, Premium'},{val:'$0',label:'Renter Addendums',sub:'Completely eliminated'}].map((m,i)=><div key={i} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'16px 0',borderBottom:i<3?`1px solid ${C.grey200}`:'none'}}><div><div style={{fontWeight:600,fontSize:'0.9rem',color:C.navy800}}>{m.label}</div><div style={{fontSize:'0.78rem',color:C.grey400}}>{m.sub}</div></div><div style={{fontFamily:'var(--font-display)',fontSize:'1.5rem',fontWeight:800,color:C.navy800}}>{m.val}</div></div>)}</div>
-            <div style={{background:C.green600,padding:'16px 28px',display:'flex',alignItems:'center',justifyContent:'space-between'}}><div><div style={{fontSize:'0.72rem',fontWeight:700,color:'rgba(255,255,255,0.8)',textTransform:'uppercase',letterSpacing:'0.08em'}}>Featured Add-On</div><div style={{fontWeight:700,color:C.white}}>Shield Accidental Damage Waiver</div></div><div style={{fontSize:'1.3rem',fontWeight:800,color:C.white}}>$25<span style={{fontSize:'0.7rem',fontWeight:400}}>/day</span></div></div>
-          </div>
+          <SampleQuotePanel setPage={setPage}/>
         </div>
       </div>
       <style>{`@media(max-width:768px){section>div{grid-template-columns:1fr!important}}`}</style>
