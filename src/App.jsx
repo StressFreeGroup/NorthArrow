@@ -124,9 +124,9 @@ function HomePage({setPage}){
         {/* MBA Warning */}
         <div style={{background:C.red50,borderLeft:`5px solid ${C.red600}`,padding:'clamp(24px,3vw,36px)',marginBottom:20}}>
           <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:14}}><AlertOctagon size={20} color={C.red600}/><span style={{fontSize:'0.82rem',fontWeight:700,color:C.red700,textTransform:'uppercase',letterSpacing:'0.08em'}}>Warning: MBA Restructured Program</span></div>
-          <h3 style={{color:C.navy800,marginBottom:10,fontSize:'clamp(1.2rem,2vw,1.5rem)'}}>Higher Premiums, Lower Coverage Limits</h3>
-          <p style={{color:C.grey600,fontSize:'0.92rem',lineHeight:1.7,marginBottom:20,maxWidth:720}}>The industry legacy program now charges more for less. Coverage limits dropped across the board, renter addendums were restructured, and new $399 per-vehicle deposits are required.</p>
-          <div style={{display:'flex',gap:'clamp(20px,4vw,48px)',flexWrap:'wrap'}}>{[{val:'$399',label:'New Deposit Per Vehicle'},{val:'Reduced',label:'Coverage Limits'},{val:'Increased',label:'Premium Costs'}].map((m,i)=><div key={i}><div style={{fontFamily:'var(--font-display)',fontSize:'1.4rem',fontWeight:800,color:C.red600}}>{m.val}</div><div style={{fontSize:'0.78rem',color:C.grey500,marginTop:2}}>{m.label}</div></div>)}</div>
+          <h3 style={{color:C.navy800,marginBottom:10,fontSize:'clamp(1.2rem,2vw,1.5rem)'}}>Higher Premiums, Lower Limits, Locked-In Units</h3>
+          <p style={{color:C.grey600,fontSize:'0.92rem',lineHeight:1.7,marginBottom:20,maxWidth:720}}>The industry legacy program now charges more for less. Coverage limits dropped across the board, renter addendums were restructured, $399 per-vehicle deposits are required, and every unit added to the policy is locked in for a 3-month minimum — even if it sells, breaks down, or sits idle.</p>
+          <div style={{display:'flex',gap:'clamp(20px,4vw,40px)',flexWrap:'wrap'}}>{[{val:'$399',label:'New Deposit Per Vehicle'},{val:'Reduced',label:'Coverage Limits'},{val:'Increased',label:'Premium Costs'},{val:'3 Months',label:'Per-Unit Lock-In'}].map((m,i)=><div key={i}><div style={{fontFamily:'var(--font-display)',fontSize:'1.4rem',fontWeight:800,color:C.red600}}>{m.val}</div><div style={{fontSize:'0.78rem',color:C.grey500,marginTop:2}}>{m.label}</div></div>)}</div>
         </div>
 
         {/* Truvi Caution */}
@@ -312,7 +312,7 @@ function CoveragePage({setPage}){
                 {label:'Renter Addendum Charges',na:{v:'Eliminated',ok:true},mba:{v:'Eliminated 2024',ok:false},rm:{v:'Per-rental fees',ok:false},tr:{v:'No per-rental fees',ok:'partial'}},
                 {label:'Monthly Fees (transparent)',na:{v:'$33 flat ($15+$10+$8)',ok:true},mba:{v:'Bundled / opaque',ok:false},rm:{v:'Bundled',ok:false},tr:{v:'Bundled',ok:false}},
                 {label:'Damage Waiver Available',na:{v:'Shield ADW · $25/day',ok:true},mba:{v:'Never offered',ok:false},rm:{v:'Outdoorsy IMG only',ok:false},tr:{v:'Not offered',ok:false}},
-                {label:'Add / Drop Coverage',na:{v:'Anytime',ok:true},mba:{v:'Limited',ok:'partial'},rm:{v:'Monthly cycle',ok:'partial'},tr:{v:'30-day minimum on every unit',ok:false}},
+                {label:'Add / Drop Coverage',na:{v:'Anytime',ok:true},mba:{v:'3-month minimum on every unit',ok:false},rm:{v:'Monthly cycle',ok:'partial'},tr:{v:'30-day minimum on every unit',ok:false}},
                 {label:'Fleet Discount',na:{v:'Up to 15% (50+ units)',ok:true},mba:{v:'Volume only',ok:'partial'},rm:{v:'None',ok:false},tr:{v:'Volume by negotiation',ok:'partial'}},
                 {label:'Carrier Rating',na:{v:'A-rated carriers',ok:true},mba:{v:'A+ via NatGen (non-admitted)',ok:'partial'},rm:{v:'A-rated',ok:true},tr:{v:'A-rated · Accelerant National',ok:true}},
                 {label:'Designed For',na:{v:'P2P RV fleet operators',ok:true},mba:{v:'Traditional rental',ok:false},rm:{v:'Outdoorsy listings',ok:false},tr:{v:'Mixed specialty fleet',ok:false}},
@@ -350,8 +350,8 @@ function CoveragePage({setPage}){
                   <div style={{fontSize:'0.78rem',opacity:0.9}}>Lower rates, deposits as low as $0, full stack</div>
                 </td>
                 <td style={{padding:'18px 16px',textAlign:'center',background:C.navy900,color:'rgba(255,255,255,0.6)',fontSize:'0.82rem'}}>
-                  <div style={{fontWeight:600,marginBottom:3}}>More for less</div>
-                  <div style={{fontSize:'0.74rem'}}>Higher premiums, lower limits</div>
+                  <div style={{fontWeight:600,marginBottom:3}}>More for less, locked in</div>
+                  <div style={{fontSize:'0.74rem'}}>Higher premiums, lower limits, 3-mo unit lock</div>
                 </td>
                 <td style={{padding:'18px 16px',textAlign:'center',background:C.navy900,color:'rgba(255,255,255,0.6)',fontSize:'0.82rem'}}>
                   <div style={{fontWeight:600,marginBottom:3}}>Platform locked</div>
@@ -368,7 +368,7 @@ function CoveragePage({setPage}){
 
         {/* Source notes */}
         <div style={{marginTop:24,padding:'16px 20px',background:C.grey50,fontSize:'0.78rem',color:C.grey600,lineHeight:1.6,borderRadius:6}}>
-          <strong style={{color:C.navy800}}>Sources:</strong> MBA pricing reflects 2024 restructured program (actual quote received for 15-vehicle California fleet — rates $124.70 to $366.82/mo per vehicle, $5,985 in deposits on $2,988 annual premium). Roamly pricing reflects standalone monthly rates. Triad data sourced from a current Triad Insurance Management and Services Agency quote (April 2026): policy written through Accelerant National Insurance Company (A-rated), 24-unit fleet at $3,393 total monthly ($141 average per vehicle), $7,000 premium escrow deposit, 30-day minimum on every unit, $1M owner / 30/60/15 rentee liability split, $1,000 deductible, no off-road, salvage, livery, conversion, or Mexico coverage. Limits and features confirmed against current public-facing program documentation as of 2026.
+          <strong style={{color:C.navy800}}>Sources:</strong> MBA pricing reflects 2024 restructured program (actual quote received for 15-vehicle California fleet — rates $124.70 to $366.82/mo per vehicle, $5,985 in deposits on $2,988 annual premium, 3-month minimum on every unit added to the policy). Roamly pricing reflects standalone monthly rates. Triad data sourced from a current Triad Insurance Management and Services Agency quote (April 2026): policy written through Accelerant National Insurance Company (A-rated), 24-unit fleet at $3,393 total monthly ($141 average per vehicle), $7,000 premium escrow deposit, 30-day minimum on every unit, $1M owner / 30/60/15 rentee liability split, $1,000 deductible, no off-road, salvage, livery, conversion, or Mexico coverage. Limits and features confirmed against current public-facing program documentation as of 2026.
         </div>
 
         <div style={{textAlign:'center',marginTop:36}}>
