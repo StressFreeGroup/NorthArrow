@@ -203,7 +203,7 @@ function Estimator({ availableTypes, defaultType, setPage }) {
               max={50}
             />
             <div style={{ fontSize: '0.74rem', color: C.grey500, marginTop: 6 }}>
-              Fleet discounts apply at 3+ units (5%), 5+ (10%), 10+ (12.5%), 25+ (15%)
+              Fleet discounts: 3-4 units 5% · 5-10 units 6% · 11-24 units 8% · 25-49 units 10% · 50+ units 15%
             </div>
           </div>
         </div>
@@ -369,26 +369,26 @@ function TierDetailCards({ setPage }) {
     },
     {
       name: 'Silver',
-      sublabel: 'Standard · Most Popular',
+      sublabel: 'Standard',
       color: C.green600,
-      popular: true,
       deposit: 399,
       bi: '$100K / $300K',
       pd: '$50K',
       ded: '$2,000',
-      fits: 'Most fleet operators — strong liability limits at competitive pricing. Our recommended tier.',
+      fits: 'Strong liability limits at competitive pricing — solid baseline for active fleets.',
       includes: ['Liability ($100K/$300K)', 'Physical damage', 'Roadside Assistance', '$33/mo flat fee'],
       addOns: ['PAI +$10/mo', 'PEC +$7/mo', 'SLI +$18/mo'],
     },
     {
       name: 'Gold',
-      sublabel: 'Premium',
+      sublabel: 'Premium · Most Popular',
       color: C.purple600,
+      popular: true,
       deposit: 299,
       bi: '$300K / $500K',
       pd: '$100K',
       ded: '$1,500',
-      fits: 'Serious fleets that want broader limits and bundled add-ons in one package.',
+      fits: 'Our recommended tier. Broader limits, all add-ons bundled, and the lowest deposit on a fully-loaded plan.',
       includes: ['Liability ($300K/$500K)', 'Physical damage', 'Roadside, PAI, PEC, SLI all included', '$33/mo flat fee'],
       addOns: ['No additional add-ons needed'],
     },
