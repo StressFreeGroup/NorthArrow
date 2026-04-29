@@ -323,9 +323,10 @@ function Step4({maint,setMaint,fleet,setFleet,preChecks,setPreChecks}){
 
 // ─── STEP 5: COVERAGE AND REVIEW ──────────────────────────
 const TIERS=[
-  {id:'basic',name:'Basic',price:101,prem:68,limits:'BI $15K/$30K · PD $5K · Ded $2,500',color:C.navy700},
-  {id:'standard',name:'Standard',price:122,prem:89,limits:'BI $100K/$300K · PD $50K · Ded $2,000',color:C.green600,popular:true},
-  {id:'premium',name:'Premium',price:157,prem:124,limits:'BI $300K/$500K · PD $100K · Ded $1,500',color:C.purple600},
+  {id:'basic',   name:'Bronze · Basic',     price:80,  prem:47,  limits:'BI $15K/$30K · PD $5K · Ded $2,500',         color:C.navy700},
+  {id:'standard',name:'Silver · Standard',  price:100, prem:67,  limits:'BI $100K/$300K · PD $50K · Ded $2,000',      color:C.green600},
+  {id:'premium', name:'Gold · Premium',     price:124, prem:91,  limits:'BI $300K/$500K · PD $100K · Ded $1,500',     color:C.purple600,popular:true},
+  {id:'platinum',name:'Platinum · Elite',   price:167, prem:134, limits:'BI $1M/$2M · PD $250K · Ded $500',           color:C.navy900},
 ]
 const ADDONS=[
   {id:'sli',name:'Supplemental Liability Insurance',price:18,desc:'Additional liability coverage above base limits.'},
@@ -424,10 +425,17 @@ function Step5({tier,setTier,addons,setAddons,shield,setShield,terms,setTerms,ve
 }
 
 // ─── MAIN APPLICATION FORM ────────────────────────────────
+// Tier mapping: Quote uses Bronze/Silver/Gold/Platinum; Application uses basic/standard/premium/platinum
+const QUOTE_TIER_MAP={Bronze:'basic',Silver:'standard',Gold:'premium',Platinum:'platinum'}
+// Vehicle category mapping: Quote rv_category 'towable'/'driveable' → Application type 'towable'/'driveable'
+// Add-on key mapping
+const ADDON_KEY_MAP={add_sli:'sli',add_personal_accident:'pai',add_personal_effects:'pec',add_roadside:'roadside'}
+
 export default function ApplicationForm(){
   const[profile,setProfile]=useState(null)
   const[step,setStep]=useState(1)
   const[saved,setSaved]=useState(null)
+  const[carriedQuote,setCarriedQuote]=useState(null)
 
   // Form state
   const[owner,setOwner]=useState({})
@@ -446,6 +454,71 @@ export default function ApplicationForm(){
   const[shield,setShield]=useState(false)
   const[terms,setTerms]=useState(false)
   const[submitted,setSubmitted]=useState(false)
+
+  // On mount: check sessionStorage for quote data and pre-populate
+  useEffect(()=>{
+    try{
+      const stored=sessionStorage.getItem('na_quote_data')
+      if(!stored)return
+      const data=JSON.parse(stored)
+      // Stale check — only carry if less than 24 hours old
+      if(!data.timestamp||Date.now()-data.timestamp>24*60*60*1000){
+        sessionStorage.removeItem('na_quote_data')
+        return
+      }
+      // Map vehicles from quote shape to application shape
+      if(data.vehicles&&data.vehicles.length){
+        const mapped=data.vehicles.map(v=>({
+          year:String(v.vehicle_year||''),
+          make:'',
+          model:v.rv_type||'',
+          value:String(v.replacement_value||''),
+          length:'',
+          vin:'',
+          type:v.rv_category==='driveable'?'driveable':'towable',
+          subtype:v.rv_type||'',
+          state:v.vehicle_state||'',
+          odometer:v.rv_category==='towable'?'':String(v.odometer_miles||''),
+          quoteTier:v.coverage_tier||'',
+        }))
+        setVehicles(mapped)
+      }
+      // Pick most-common tier across vehicles for Step 5 default
+      if(data.vehicles&&data.vehicles.length){
+        const tierCount={}
+        data.vehicles.forEach(v=>{
+          if(v.coverage_tier)tierCount[v.coverage_tier]=(tierCount[v.coverage_tier]||0)+1
+        })
+        const top=Object.entries(tierCount).sort((a,b)=>b[1]-a[1])[0]
+        if(top){
+          const appTier=QUOTE_TIER_MAP[top[0]]
+          if(appTier)setTier(appTier)
+        }
+      }
+      // Union of all add-ons across vehicles
+      if(data.vehicles&&data.vehicles.length){
+        const addonSet=new Set()
+        data.vehicles.forEach(v=>{
+          Object.entries(ADDON_KEY_MAP).forEach(([qKey,aKey])=>{
+            if(v[qKey])addonSet.add(aKey)
+          })
+        })
+        setAddons(Array.from(addonSet))
+      }
+      // Carry operator info into prior insurance section
+      if(data.operator?.has_prior_commercial_insurance!==undefined){
+        setPrior({hasPrior:data.operator.has_prior_commercial_insurance,years:data.operator.years_in_operation})
+      }
+      // Save reference for the banner
+      setCarriedQuote({
+        vehicleCount:data.vehicles?.length||0,
+        totalMonthly:data.summary?.totalMonthly||0,
+        timestamp:data.timestamp,
+      })
+    }catch(e){
+      console.warn('Could not read carried quote:',e)
+    }
+  },[])
 
   // Autosave indicator (triggers after Step 2 onwards)
   useEffect(()=>{
@@ -501,17 +574,47 @@ export default function ApplicationForm(){
   return(
     <>
       <section style={{background:`linear-gradient(135deg, ${C.navy800}, ${C.navy700})`,paddingTop:'clamp(120px,14vw,160px)',paddingBottom:40}}>
-        <div style={{maxWidth:1200,margin:'0 auto',padding:'0 clamp(20px,4vw,40px)',display:'flex',justifyContent:'space-between',alignItems:'flex-end',gap:24,flexWrap:'wrap'}}>
-          <div>
-            <div style={{fontSize:'0.78rem',fontWeight:700,letterSpacing:'0.15em',textTransform:'uppercase',color:C.navy300,marginBottom:12}}>Application</div>
-            <h1 style={{color:C.white,marginBottom:8,fontFamily:'var(--font-display, Georgia)',fontSize:'clamp(2rem,4vw,3rem)',fontWeight:800,lineHeight:1.15}}>Apply for Coverage</h1>
-            <p style={{color:C.navy200,fontSize:'1rem',marginBottom:0}}>Welcome back, {profile.name.split(' ')[0]}. Application <strong style={{fontFamily:'monospace',color:C.white}}>{profile.appId}</strong></p>
+        <div style={{maxWidth:1200,margin:'0 auto',padding:'0 clamp(20px,4vw,40px)'}}>
+          {/* Two-step indicator */}
+          <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18,flexWrap:'wrap'}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,padding:'8px 16px',background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.15)',borderRadius:99,opacity:0.7}}>
+              <div style={{width:22,height:22,borderRadius:'50%',background:carriedQuote?C.green500:'rgba(255,255,255,0.15)',color:carriedQuote?C.white:'rgba(255,255,255,0.7)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'0.78rem',fontWeight:800}}>
+                {carriedQuote?<Check size={12}/>:'1'}
+              </div>
+              <span style={{fontSize:'0.82rem',fontWeight:700,color:'rgba(255,255,255,0.7)',letterSpacing:'0.06em',textTransform:'uppercase'}}>Get Quote</span>
+            </div>
+            <div style={{width:28,height:1,background:'rgba(255,255,255,0.25)'}}/>
+            <div style={{display:'flex',alignItems:'center',gap:10,padding:'8px 16px',background:'rgba(76,192,126,0.15)',border:`1px solid ${C.green400}`,borderRadius:99}}>
+              <div style={{width:22,height:22,borderRadius:'50%',background:C.green500,color:C.white,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'0.78rem',fontWeight:800}}>2</div>
+              <span style={{fontSize:'0.82rem',fontWeight:700,color:C.green400,letterSpacing:'0.06em',textTransform:'uppercase'}}>Submit Application</span>
+            </div>
           </div>
-          {saved&&<div style={{display:'inline-flex',alignItems:'center',gap:8,padding:'8px 14px',background:'rgba(255,255,255,0.08)',color:C.navy200,fontSize:'0.82rem',border:'1px solid rgba(255,255,255,0.12)',borderRadius:4}}>
-            <Save size={13}/>{saved==='saving'?'Saving...':'All progress saved'}
-          </div>}
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',gap:24,flexWrap:'wrap'}}>
+            <div>
+              <h1 style={{color:C.white,marginBottom:8,fontFamily:'var(--font-display, Georgia)',fontSize:'clamp(2rem,4vw,3rem)',fontWeight:800,lineHeight:1.15}}>Step 2 — Submit Your Application</h1>
+              <p style={{color:C.navy200,fontSize:'1rem',marginBottom:0}}>Welcome back, {profile.name.split(' ')[0]}. Application <strong style={{fontFamily:'monospace',color:C.white}}>{profile.appId}</strong></p>
+            </div>
+            {saved&&<div style={{display:'inline-flex',alignItems:'center',gap:8,padding:'8px 14px',background:'rgba(255,255,255,0.08)',color:C.navy200,fontSize:'0.82rem',border:'1px solid rgba(255,255,255,0.12)',borderRadius:4}}>
+              <Save size={13}/>{saved==='saving'?'Saving...':'All progress saved'}
+            </div>}
+          </div>
         </div>
       </section>
+
+      {/* Carried-from-quote banner */}
+      {carriedQuote&&carriedQuote.vehicleCount>0&&(
+        <section style={{background:C.green50,borderBottom:`1px solid ${C.green100}`,padding:'14px 0'}}>
+          <div style={{maxWidth:1200,margin:'0 auto',padding:'0 clamp(20px,4vw,40px)',display:'flex',alignItems:'center',gap:14,flexWrap:'wrap'}}>
+            <div style={{width:32,height:32,borderRadius:'50%',background:C.green600,color:C.white,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+              <Check size={16}/>
+            </div>
+            <div style={{flex:1,minWidth:200}}>
+              <div style={{fontSize:'0.92rem',fontWeight:700,color:C.green700,marginBottom:2}}>Quote carried forward</div>
+              <div style={{fontSize:'0.84rem',color:C.grey700,lineHeight:1.5}}>{carriedQuote.vehicleCount} {carriedQuote.vehicleCount===1?'vehicle':'vehicles'} pre-loaded into Step 2 · ${Math.round(carriedQuote.totalMonthly).toLocaleString()}/mo estimate. You can review and edit anything.</div>
+            </div>
+          </div>
+        </section>
+      )}
 
       <section style={{background:C.grey50,padding:'clamp(40px,5vw,60px) 0 clamp(80px,10vw,120px)'}}>
         <div style={{maxWidth:1200,margin:'0 auto',padding:'0 clamp(20px,4vw,40px)',display:'grid',gridTemplateColumns:'260px 1fr',gap:32}} className="apply-grid">
