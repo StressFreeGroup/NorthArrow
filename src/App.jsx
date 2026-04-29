@@ -492,11 +492,11 @@ function ShieldPage({setPage}){
     {t:'Window blind slats or pull cords — accidental breakage'},
     {t:'Shower curtain rod or hooks — accidental breakage'},
     {t:'Broken cup holders or small molded interior trim components'},
-    {t:'Fresh water hose and grommet'},
-    {t:'Septic hose and adaptor'},
-    {t:'Stabilizer jack hand-crank'},
-    {t:'TV remote — missing or broken',sub:'Remote only — not the TV or entertainment unit'},
-    {t:'Sink, shower, or tub faucet fixtures — accidental damage'},
+    {t:'Fresh water hose and grommet',isNew:true},
+    {t:'Septic hose and adaptor',isNew:true},
+    {t:'Stabilizer jack hand-crank',isNew:true},
+    {t:'TV remote — missing or broken',sub:'Remote only — not the TV or entertainment unit',isNew:true},
+    {t:'Sink, shower, or tub faucet fixtures — accidental damage',isNew:true},
     {t:'One courtesy mobile service call',sub:"If provided by host at host's sole discretion"},
     {t:'Missing interior supply kit items (small bin items only)'},
   ]
@@ -544,19 +544,21 @@ function ShieldPage({setPage}){
         <div style={{position:'absolute',top:'15%',right:-100,width:340,height:340,borderRadius:'50%',background:`radial-gradient(circle, ${C.green500}25 0%, transparent 65%)`,pointerEvents:'none'}}/>
 
         <div style={{position:'relative',maxWidth:480}}>
-          {/* HEADLINE PRICE CARD */}
-          <div style={{padding:'28px 32px',background:'linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',border:'1px solid rgba(255,255,255,0.1)',borderRadius:14,marginBottom:24,backdropFilter:'blur(8px)',position:'relative',overflow:'hidden'}}>
-            <div style={{position:'absolute',top:0,left:0,bottom:0,width:4,background:`linear-gradient(180deg, ${C.green400}, ${C.green600})`}}/>
-            <div style={{display:'flex',alignItems:'center',gap:6,fontSize:'0.7rem',fontWeight:700,letterSpacing:'0.14em',textTransform:'uppercase',color:C.green400,marginBottom:10}}>
-              <span style={{width:6,height:6,background:C.green400,borderRadius:'50%',boxShadow:`0 0 10px ${C.green400}`}}/>
-              Standalone Waiver Pricing
-            </div>
-            <div style={{display:'flex',alignItems:'baseline',gap:10,marginBottom:6,flexWrap:'wrap'}}>
-              <span style={{fontFamily:'var(--font-display)',fontSize:'clamp(3.6rem,7vw,5.6rem)',fontWeight:800,lineHeight:1,letterSpacing:'-0.02em'}}>$25</span>
-              <span style={{color:C.navy300,fontSize:'1rem',fontWeight:500}}>per day · per vehicle</span>
-            </div>
-            <div style={{display:'inline-flex',alignItems:'center',gap:6,padding:'5px 12px',background:'rgba(76,192,126,0.14)',border:'1px solid rgba(76,192,126,0.25)',borderRadius:99,fontSize:'0.78rem',color:C.green400,fontWeight:600,marginTop:8}}>
-              <Lock size={12}/>Capped at $199 per trip
+          {/* HEADLINE PRICE PANEL — full color-blocked design (no stripe accents) */}
+          <div style={{padding:'28px 32px',background:`linear-gradient(135deg, ${C.green700} 0%, ${C.green600} 60%, ${C.green500} 100%)`,borderRadius:14,marginBottom:24,position:'relative',overflow:'hidden',boxShadow:`0 12px 32px rgba(35,139,78,0.35)`}}>
+            {/* Decorative pattern overlay */}
+            <div style={{position:'absolute',inset:0,opacity:0.08,backgroundImage:`radial-gradient(${C.white} 1px, transparent 1px)`,backgroundSize:'18px 18px',pointerEvents:'none'}}/>
+            <div style={{position:'relative'}}>
+              <div style={{display:'flex',alignItems:'center',gap:6,fontSize:'0.7rem',fontWeight:700,letterSpacing:'0.14em',textTransform:'uppercase',color:'rgba(255,255,255,0.92)',marginBottom:14}}>
+                <ShieldCheck size={14}/>Standalone Waiver Pricing
+              </div>
+              <div style={{display:'flex',alignItems:'baseline',gap:12,marginBottom:8,flexWrap:'wrap'}}>
+                <span style={{fontFamily:'var(--font-display)',fontSize:'clamp(3.6rem,7vw,5.6rem)',fontWeight:800,lineHeight:1,letterSpacing:'-0.02em',color:C.white}}>$25</span>
+                <span style={{color:'rgba(255,255,255,0.92)',fontSize:'1.05rem',fontWeight:600}}>per day · per vehicle</span>
+              </div>
+              <div style={{display:'inline-flex',alignItems:'center',gap:6,padding:'7px 14px',background:'rgba(255,255,255,0.18)',border:'1px solid rgba(255,255,255,0.3)',borderRadius:99,fontSize:'0.8rem',color:C.white,fontWeight:700,marginTop:6,backdropFilter:'blur(4px)'}}>
+                <Lock size={12}/>Capped at $199 per trip
+              </div>
             </div>
           </div>
 
@@ -605,41 +607,51 @@ function ShieldPage({setPage}){
       </div>
     </section>
 
-    {/* WHAT IS COVERED / NOT COVERED */}
+    {/* WHAT IS COVERED / NOT COVERED — match stressfreeshield.vercel.app exactly */}
     <section style={{padding:'clamp(60px,8vw,100px) 0',background:C.navy50}}>
       <div style={sWrap}>
         <SectionHeader overline="Coverage Details" title="What's Covered — and What's Not" accent="green"/>
         <p style={{textAlign:'center',color:C.grey600,fontSize:'0.95rem',maxWidth:680,margin:'-8px auto 36px',lineHeight:1.65}}>Items not expressly listed as covered are excluded. All claims are subject to estimate review and approval prior to reimbursement.</p>
+
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}} className="shield-cov-grid">
-          {/* COVERED */}
-          <div style={{background:C.white,padding:'clamp(28px,3vw,40px) clamp(22px,3vw,36px)',borderTop:`4px solid ${C.green500}`,boxShadow:'0 2px 12px rgba(15,34,64,0.04)'}}>
-            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:20,paddingBottom:14,borderBottom:`1px solid ${C.grey200}`}}>
-              <div style={{width:30,height:30,background:C.green600,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}}><Check size={17} color={C.white}/></div>
-              <h3 style={{color:C.green700,margin:0,fontSize:'1.18rem'}}>What IS covered</h3>
+          {/* IS COVERED — light blue tinted panel, no stripe */}
+          <div style={{background:'#E8EFF8',padding:'clamp(28px,3vw,40px) clamp(24px,3vw,36px)',borderRadius:14,border:'1px solid #CFDDF0'}}>
+            <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:24}}>
+              <div style={{width:36,height:36,background:C.navy700,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                <Check size={18} color={C.white} strokeWidth={3}/>
+              </div>
+              <h3 style={{color:C.navy800,margin:0,fontSize:'1.3rem',fontFamily:'var(--font-display)',fontWeight:700}}>What IS covered</h3>
             </div>
             <ul style={{listStyle:'none',padding:0,margin:0}}>
               {covered.map((c,i)=>(
-                <li key={i} style={{paddingLeft:18,marginBottom:11,position:'relative',color:C.grey700,fontSize:'0.91rem',lineHeight:1.55}}>
-                  <span style={{position:'absolute',left:0,top:8,width:6,height:6,background:C.green500,borderRadius:'50%'}}/>
-                  {c.t}
-                  {c.sub&&<div style={{fontSize:'0.8rem',color:C.grey500,marginTop:3,fontStyle:'italic'}}>{c.sub}</div>}
+                <li key={i} style={{paddingLeft:20,paddingBottom:12,marginBottom:12,position:'relative',color:C.navy800,fontSize:'0.93rem',lineHeight:1.55,borderBottom:i<covered.length-1?`1px solid rgba(15,34,64,0.06)`:'none'}}>
+                  <span style={{position:'absolute',left:0,top:9,width:8,height:8,background:C.navy700,borderRadius:'50%'}}/>
+                  <span style={{display:'flex',alignItems:'center',gap:8,flexWrap:'wrap'}}>
+                    <span style={{fontWeight:600}}>{c.t}</span>
+                    {c.isNew&&<span style={{display:'inline-block',padding:'2px 7px',background:C.navy500,color:C.white,fontSize:'0.62rem',fontWeight:800,letterSpacing:'0.06em',borderRadius:4}}>NEW</span>}
+                  </span>
+                  {c.sub&&<div style={{fontSize:'0.82rem',color:C.grey600,marginTop:4,lineHeight:1.5}}>{c.sub}</div>}
                 </li>
               ))}
             </ul>
-            <div style={{marginTop:18,padding:'12px 14px',background:C.navy50,fontSize:'0.84rem',color:C.navy700,lineHeight:1.55,borderLeft:`3px solid ${C.navy500}`}}>
-              <strong>Scratch and scuff limit:</strong> Marks up to 3 inches, one location per occurrence only.
+            {/* Scratch & Scuff callout — inset within the panel */}
+            <div style={{marginTop:20,padding:'14px 16px',background:'rgba(15,34,64,0.05)',border:`1px solid rgba(15,34,64,0.1)`,borderRadius:8,fontSize:'0.86rem',color:C.navy800,lineHeight:1.6}}>
+              <strong style={{color:C.navy900}}>Scratch & Scuff Limit:</strong> Marks up to 3 inches, one location per occurrence only.
             </div>
           </div>
-          {/* NOT COVERED */}
-          <div style={{background:C.white,padding:'clamp(28px,3vw,40px) clamp(22px,3vw,36px)',borderTop:`4px solid ${C.red600}`,boxShadow:'0 2px 12px rgba(15,34,64,0.04)'}}>
-            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:20,paddingBottom:14,borderBottom:`1px solid ${C.grey200}`}}>
-              <div style={{width:30,height:30,background:C.red600,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}}><XCircle size={17} color={C.white}/></div>
-              <h3 style={{color:C.red600,margin:0,fontSize:'1.18rem'}}>What is NOT covered</h3>
+
+          {/* NOT COVERED — light pink/red tinted panel, no stripe */}
+          <div style={{background:'#FCEAE8',padding:'clamp(28px,3vw,40px) clamp(24px,3vw,36px)',borderRadius:14,border:'1px solid #F5C7C2'}}>
+            <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:24}}>
+              <div style={{width:36,height:36,background:C.red600,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                <X size={18} color={C.white} strokeWidth={3}/>
+              </div>
+              <h3 style={{color:C.red700,margin:0,fontSize:'1.3rem',fontFamily:'var(--font-display)',fontWeight:700}}>What is NOT covered</h3>
             </div>
             <ul style={{listStyle:'none',padding:0,margin:0}}>
               {notCovered.map((c,i)=>(
-                <li key={i} style={{paddingLeft:18,marginBottom:11,position:'relative',color:C.grey700,fontSize:'0.91rem',lineHeight:1.55}}>
-                  <span style={{position:'absolute',left:0,top:8,width:6,height:6,background:C.red600,borderRadius:'50%'}}/>
+                <li key={i} style={{paddingLeft:20,paddingBottom:12,marginBottom:12,position:'relative',color:C.navy800,fontSize:'0.93rem',lineHeight:1.55,borderBottom:i<notCovered.length-1?`1px solid rgba(220,38,38,0.1)`:'none',fontWeight:600}}>
+                  <span style={{position:'absolute',left:0,top:9,width:8,height:8,background:C.red600,borderRadius:'50%'}}/>
                   {c}
                 </li>
               ))}
@@ -647,13 +659,15 @@ function ShieldPage({setPage}){
           </div>
         </div>
 
-        {/* FESTIVAL EXCLUSION CALLOUT */}
-        <div style={{marginTop:24,padding:'20px 24px',background:C.red50,borderLeft:`4px solid ${C.red600}`,borderRadius:4,display:'flex',gap:14,alignItems:'flex-start'}}>
-          <Ban size={22} color={C.red600} style={{marginTop:3,flexShrink:0}}/>
-          <div>
-            <div style={{fontWeight:700,color:C.red600,marginBottom:6,fontSize:'0.98rem'}}>Festival and high-attendance event exclusion</div>
-            <div style={{color:C.grey700,fontSize:'0.91rem',lineHeight:1.65,marginBottom:8}}>The Standard Shield does not apply to any event with <strong>500+ expected attendees within 25 miles</strong> of the vehicle. Named exclusions: Burning Man, Coachella, Stagecoach, King of the Hammers, EDC, and any event designated by Stress Free RVs at booking.</div>
-            <div style={{color:C.grey700,fontSize:'0.91rem',lineHeight:1.65,fontStyle:'italic'}}>Planning an event trip? Ask about <strong>Premium Event Coverage</strong> — available separately.</div>
+        {/* FESTIVAL EXCLUSION CALLOUT — full color-blocked, no left stripe */}
+        <div style={{marginTop:24,padding:'24px 28px',background:'#FCEAE8',border:'1px solid #F5C7C2',borderRadius:14,display:'flex',gap:18,alignItems:'flex-start'}}>
+          <div style={{width:42,height:42,background:C.red600,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+            <Ban size={20} color={C.white}/>
+          </div>
+          <div style={{flex:1}}>
+            <div style={{fontWeight:800,color:C.red700,marginBottom:8,fontSize:'1.05rem',fontFamily:'var(--font-display)'}}>Festival & high-attendance event exclusion</div>
+            <div style={{color:C.navy800,fontSize:'0.93rem',lineHeight:1.65,marginBottom:10}}>The Standard Shield does not apply to any event with <strong>500+ expected attendees within 25 miles</strong> of the vehicle. Named exclusions: Burning Man, Coachella, Stagecoach, King of the Hammers, EDC, and any event designated by Stress Free RVs at booking.</div>
+            <div style={{color:C.red700,fontSize:'0.9rem',lineHeight:1.6,fontWeight:700}}>Planning an event trip? Ask about Premium Event Coverage — available separately.</div>
           </div>
         </div>
       </div>
