@@ -177,9 +177,20 @@ function HomePage({setPage}){
           <div style={{fontSize:'0.78rem',fontWeight:700,letterSpacing:'0.15em',textTransform:'uppercase',color:C.green600,marginBottom:20}}>Built for Fleet Owners</div>
           <h1 style={{color:C.navy800,marginBottom:24}}>Commercial RV Insurance, <span style={{color:C.green600}}>Reimagined</span></h1>
           <p style={{fontSize:'1.15rem',color:C.grey600,lineHeight:1.75,marginBottom:36,maxWidth:520}}>North Arrow is the only insurance program purpose-built for peer-to-peer RV rental fleets. Real commercial coverage. Transparent pricing. No hidden fees or renter addendums.</p>
-          <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>
-            <button onClick={()=>{setPage('quote');window.scrollTo(0,0)}} style={{display:'inline-flex',alignItems:'center',gap:10,padding:'16px 36px',background:C.green600,color:C.white,borderRadius:6,fontWeight:700,fontSize:'1rem',cursor:'pointer',border:'none'}}>Get a Quote <ArrowRight size={18}/></button>
-            <button onClick={()=>{setPage('coverage');window.scrollTo(0,0)}} style={{padding:'16px 36px',borderRadius:6,fontWeight:700,fontSize:'1rem',border:`2px solid ${C.navy700}`,color:C.navy700,background:'transparent',cursor:'pointer'}}>View Plans</button>
+
+          {/* Two-path CTA — Preliminary Quote vs Submit Application */}
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,maxWidth:560}} className="hero-cta-grid">
+            <button onClick={()=>{setPage('quote');window.scrollTo(0,0)}} style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:6,padding:'18px 22px',background:C.green600,color:C.white,borderRadius:8,fontWeight:700,cursor:'pointer',border:'none',textAlign:'left',transition:'background 0.15s'}} onMouseEnter={e=>e.currentTarget.style.background=C.green700} onMouseLeave={e=>e.currentTarget.style.background=C.green600}>
+              <div style={{display:'flex',alignItems:'center',gap:8,fontSize:'1rem'}}>Get Preliminary Quote <ArrowRight size={16}/></div>
+              <div style={{fontSize:'0.78rem',fontWeight:500,opacity:0.92,lineHeight:1.45}}>See estimated pricing in 60 seconds — no email, no signup</div>
+            </button>
+            <button onClick={()=>{setPage('apply');window.scrollTo(0,0)}} style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:6,padding:'18px 22px',background:C.white,color:C.navy800,borderRadius:8,fontWeight:700,cursor:'pointer',border:`2px solid ${C.navy700}`,textAlign:'left',transition:'all 0.15s'}} onMouseEnter={e=>{e.currentTarget.style.background=C.navy50;e.currentTarget.style.borderColor=C.navy800}} onMouseLeave={e=>{e.currentTarget.style.background=C.white;e.currentTarget.style.borderColor=C.navy700}}>
+              <div style={{display:'flex',alignItems:'center',gap:8,fontSize:'1rem'}}>Submit Application <ArrowRight size={16}/></div>
+              <div style={{fontSize:'0.78rem',fontWeight:500,color:C.grey600,lineHeight:1.45}}>Begin formal underwriting — final premium and binding</div>
+            </button>
+          </div>
+          <div style={{fontSize:'0.78rem',color:C.grey500,marginTop:14,lineHeight:1.55,maxWidth:540}}>
+            <strong style={{color:C.grey700}}>Note:</strong> Final premium factors in multiple variables verified at underwriting (vehicle inspection, MVR, loss history, business credit). Quote pricing is preliminary.
           </div>
         </div>
         {/* Sample Quote panel — REAL rates from rate engine */}
@@ -187,7 +198,7 @@ function HomePage({setPage}){
           <SampleQuotePanel setPage={setPage}/>
         </div>
       </div>
-      <style>{`@media(max-width:768px){section>div{grid-template-columns:1fr!important}}`}</style>
+      <style>{`@media(max-width:768px){section>div{grid-template-columns:1fr!important}.hero-cta-grid{grid-template-columns:1fr!important}}`}</style>
     </section>
 
     {/* TRUST BAR */}
@@ -940,8 +951,8 @@ function ContactPage(){
   </>)
 }
 
-function ApplyPage(){
-  return <ApplicationForm/>
+function ApplyPage({setPage}){
+  return <ApplicationForm setPage={setPage}/>
 }
 
 function LoginPage(){
@@ -958,6 +969,6 @@ function LoginPage(){
 
 export default function App(){
   const[page,setPage]=useState('home')
-  const renderPage=()=>{switch(page){case'home':return<HomePage setPage={setPage}/>;case'quote':return<QuotePage setPage={setPage}/>;case'coverage':return<CoveragePage setPage={setPage}/>;case'shield':return<ShieldPage setPage={setPage}/>;case'about':return<AboutPage/>;case'claims':return<ClaimsPage/>;case'faq':return<FAQPage/>;case'contact':return<ContactPage/>;case'apply':return<ApplyPage/>;case'login':return<LoginPage/>;default:return<HomePage setPage={setPage}/>}}
+  const renderPage=()=>{switch(page){case'home':return<HomePage setPage={setPage}/>;case'quote':return<QuotePage setPage={setPage}/>;case'coverage':return<CoveragePage setPage={setPage}/>;case'shield':return<ShieldPage setPage={setPage}/>;case'about':return<AboutPage/>;case'claims':return<ClaimsPage/>;case'faq':return<FAQPage/>;case'contact':return<ContactPage/>;case'apply':return<ApplyPage setPage={setPage}/>;case'login':return<LoginPage/>;default:return<HomePage setPage={setPage}/>}}
   return(<><Nav page={page} setPage={setPage}/><main>{renderPage()}</main>{page!=='login'&&<Footer setPage={setPage}/>}</>)
 }
