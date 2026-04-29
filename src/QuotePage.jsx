@@ -191,23 +191,14 @@ export default function QuotePage({ setPage }) {
         color: C.white,
       }}>
         <div style={sWrap}>
-          {/* Two-step indicator */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 16px', background: 'rgba(76,192,126,0.15)', border: `1px solid ${C.green400}`, borderRadius: 99 }}>
-              <div style={{ width: 22, height: 22, borderRadius: '50%', background: C.green500, color: C.white, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.78rem', fontWeight: 800 }}>1</div>
-              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: C.green400, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Get Quote</span>
-            </div>
-            <div style={{ width: 28, height: 1, background: 'rgba(255,255,255,0.25)' }}/>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 99, opacity: 0.6 }}>
-              <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.78rem', fontWeight: 800 }}>2</div>
-              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Submit Application</span>
-            </div>
-          </div>
-          <h1 style={{ color: C.white, marginBottom: 14, fontSize: 'clamp(1.8rem,4vw,2.6rem)', lineHeight: 1.15 }}>
-            Step 1 — Build Your Quote
+          {/* PATH TABS — clickable, switches between Preliminary Quote and Submit Application */}
+          <PathTabs active="quote" setPage={setPage}/>
+
+          <h1 style={{ color: C.white, marginBottom: 14, fontSize: 'clamp(1.8rem,4vw,2.6rem)', lineHeight: 1.15, marginTop: 24 }}>
+            Get Your Preliminary Quote
           </h1>
-          <p style={{ color: C.navy200, fontSize: '1.05rem', lineHeight: 1.7, maxWidth: 720 }}>
-            Add each vehicle and pick coverage to see live pricing. No email gate, no commitment — this is your pricing preview. When you're ready to bind coverage, your quote carries forward into the formal application automatically.
+          <p style={{ color: C.navy200, fontSize: '1.05rem', lineHeight: 1.7, maxWidth: 760 }}>
+            Add each vehicle and pick coverage to see estimated pricing — no email, no commitment. Final premium is determined at underwriting and factors in multiple verified variables (inspection, MVR, loss history, business credit). When you're ready to bind, your selections carry forward into the formal application automatically.
           </p>
         </div>
       </section>
@@ -945,6 +936,78 @@ function DeclinedPanel({ reason, setPage }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
           }}
         >Contact an Underwriter <ArrowRight size={16}/></button>
+      </div>
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────
+// PATH TABS — switch between Preliminary Quote and Submit Application
+// Exported so ApplicationForm can use the same component
+// ─────────────────────────────────────────────────────────────
+export function PathTabs({ active, setPage }) {
+  const tabs = [
+    {
+      key: 'quote',
+      label: 'Preliminary Quote',
+      sub: 'See estimated pricing',
+      page: 'quote',
+    },
+    {
+      key: 'apply',
+      label: 'Submit Application',
+      sub: 'Begin formal underwriting',
+      page: 'apply',
+    },
+  ]
+
+  return (
+    <div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, padding: 4, maxWidth: 560 }}>
+        {tabs.map(tab => {
+          const isActive = active === tab.key
+          return (
+            <button
+              key={tab.key}
+              onClick={() => {
+                if (!isActive) {
+                  setPage(tab.page)
+                  window.scrollTo(0, 0)
+                }
+              }}
+              style={{
+                padding: '12px 18px',
+                background: isActive ? C.white : 'transparent',
+                color: isActive ? C.navy800 : 'rgba(255,255,255,0.85)',
+                border: 'none',
+                borderRadius: 7,
+                cursor: isActive ? 'default' : 'pointer',
+                textAlign: 'left',
+                transition: 'all 0.15s',
+                fontWeight: 700,
+                boxShadow: isActive ? '0 2px 8px rgba(0,0,0,0.15)' : 'none',
+              }}
+              onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
+              onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{
+                  width: 22, height: 22, borderRadius: '50%',
+                  background: isActive ? (tab.key === 'quote' ? C.green500 : C.navy500) : 'rgba(255,255,255,0.15)',
+                  color: isActive ? C.white : 'rgba(255,255,255,0.7)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '0.74rem', fontWeight: 800, flexShrink: 0,
+                }}>
+                  {tab.key === 'quote' ? '1' : '2'}
+                </div>
+                <span style={{ fontSize: '0.92rem', fontWeight: 700 }}>{tab.label}</span>
+              </div>
+              <div style={{ fontSize: '0.74rem', color: isActive ? C.grey500 : 'rgba(255,255,255,0.6)', fontWeight: 500, marginTop: 4, marginLeft: 30 }}>
+                {tab.sub}
+              </div>
+            </button>
+          )
+        })}
       </div>
     </div>
   )
