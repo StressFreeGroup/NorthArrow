@@ -104,11 +104,13 @@ function HomePage({setPage}){
       <div style={{background:C.green600,padding:'clamp(40px,5vw,64px) 0'}}><div style={{...sWrap,display:'grid',gridTemplateColumns:'64px 1fr',gap:24,alignItems:'start'}}><div style={{width:56,height:56,background:'rgba(255,255,255,0.15)',display:'flex',alignItems:'center',justifyContent:'center'}}><Zap size={26} color={C.white}/></div><div><h3 style={{color:C.white,marginBottom:10}}>Zero Renter Addendums</h3><p style={{color:'rgba(255,255,255,0.85)',fontSize:'0.95rem',lineHeight:1.7,maxWidth:600}}>The old program charged renters separately and took a cut. North Arrow eliminated that entirely. Your coverage, your control.</p></div></div></div>
     </section>
 
-    {/* COVERAGE COMPARISON TABLE */}
+    {/* COVERAGE TIERS PREVIEW (links to full Coverage page with CoverageEstimator) */}
     <section style={{padding:'clamp(60px,8vw,120px) 0',background:C.grey50}}>
       <div style={sWrap}>
-        <SectionHeader overline="Coverage Tiers" title="Three Plans, One Mission" subtitle="Every tier includes the same $33/mo transparent fee structure. Pick the coverage level that matches your fleet." accent="purple"/>
-        <ComparisonTable setPage={setPage}/>
+        <SectionHeader overline="Coverage Tiers" title="Four Plans, One Mission" subtitle="Every tier includes the same $33/mo transparent fee structure. Pick the coverage level that matches your fleet." accent="purple"/>
+        <div style={{textAlign:'center',marginTop:30}}>
+          <button onClick={()=>{setPage('coverage');window.scrollTo(0,0)}} style={{padding:'16px 40px',background:C.navy700,color:C.white,borderRadius:6,fontWeight:700,fontSize:'1rem',cursor:'pointer',border:'none',display:'inline-flex',alignItems:'center',gap:10}}>View Plans and Pricing <ArrowRight size={18}/></button>
+        </div>
       </div>
     </section>
 
