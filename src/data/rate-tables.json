@@ -131,21 +131,27 @@
       },
       {
         "min_units": 5,
-        "max_units": 9,
-        "discount": 0.1,
-        "label": "5-9 units"
+        "max_units": 10,
+        "discount": 0.06,
+        "label": "5-10 units"
       },
       {
-        "min_units": 10,
+        "min_units": 11,
         "max_units": 24,
-        "discount": 0.125,
-        "label": "10-24 units"
+        "discount": 0.08,
+        "label": "11-24 units"
       },
       {
         "min_units": 25,
+        "max_units": 49,
+        "discount": 0.1,
+        "label": "25-49 units"
+      },
+      {
+        "min_units": 50,
         "max_units": 999,
         "discount": 0.15,
-        "label": "25+ units"
+        "label": "50+ units"
       }
     ],
     "max_stacked_discount": 0.3
