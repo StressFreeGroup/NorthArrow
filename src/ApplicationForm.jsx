@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Check, ChevronDown, ChevronUp, ArrowRight, ArrowLeft, Save, Plus, Trash2, Edit3, Building2, FileText, Truck, Settings, Wrench, ShieldCheck, AlertCircle, Mail, Phone, User, Lock, Send } from 'lucide-react'
+import { PathTabs } from './QuotePage.jsx'
 
 const C={navy900:'#0A1628',navy800:'#0F2240',navy700:'#132D5E',navy600:'#1A3F7A',navy500:'#2558A3',navy400:'#3B7DD8',navy300:'#6FA3E8',navy200:'#A8C8F0',navy100:'#D4E4F8',navy50:'#EBF2FB',green700:'#1B6E3D',green600:'#238B4E',green500:'#2EA663',green400:'#4CC07E',green100:'#D6F0E2',green50:'#F0FAF4',purple700:'#4A2D7A',purple600:'#5E3B99',purple500:'#7349B8',purple400:'#8F6DD0',purple100:'#E6DCF5',white:'#FFFFFF',grey50:'#F7F8FA',grey100:'#F0F2F5',grey200:'#E2E6EB',grey300:'#CDD3DB',grey400:'#9CA5B2',grey500:'#6B7685',grey600:'#4A5568',grey700:'#2D3748',red600:'#DC2626',red50:'#FEF2F2',amber600:'#D97706',amber50:'#FFFBEB',amber200:'#FDE68A'}
 
@@ -431,7 +432,7 @@ const QUOTE_TIER_MAP={Bronze:'basic',Silver:'standard',Gold:'premium',Platinum:'
 // Add-on key mapping
 const ADDON_KEY_MAP={add_sli:'sli',add_personal_accident:'pai',add_personal_effects:'pec',add_roadside:'roadside'}
 
-export default function ApplicationForm(){
+export default function ApplicationForm({setPage}={}){
   const[profile,setProfile]=useState(null)
   const[step,setStep]=useState(1)
   const[saved,setSaved]=useState(null)
@@ -541,9 +542,9 @@ export default function ApplicationForm(){
     return(
       <section style={{background:`linear-gradient(135deg, ${C.navy800}, ${C.navy700})`,paddingTop:'clamp(120px,14vw,160px)',paddingBottom:40}}>
         <div style={{maxWidth:1200,margin:'0 auto',padding:'0 clamp(20px,4vw,40px)'}}>
-          <div style={{fontSize:'0.78rem',fontWeight:700,letterSpacing:'0.15em',textTransform:'uppercase',color:C.navy300,marginBottom:12}}>Application</div>
-          <h1 style={{color:C.white,marginBottom:8,fontFamily:'var(--font-display, Georgia)',fontSize:'clamp(2rem,4vw,3rem)',fontWeight:800,lineHeight:1.15}}>Apply for Coverage</h1>
-          <p style={{color:C.navy200,fontSize:'1rem',marginBottom:0}}>Streamlined 5-step application. Save your progress, return anytime.</p>
+          {setPage&&<PathTabs active="apply" setPage={setPage}/>}
+          <h1 style={{color:C.white,marginBottom:8,marginTop:24,fontFamily:'var(--font-display, Georgia)',fontSize:'clamp(2rem,4vw,3rem)',fontWeight:800,lineHeight:1.15}}>Submit Your Application</h1>
+          <p style={{color:C.navy200,fontSize:'1rem',marginBottom:0,maxWidth:760,lineHeight:1.65}}>Streamlined 5-step application. Save your progress, return anytime. Final premium and binding eligibility are determined here based on inspection, MVR, loss history, business credit, and verified vehicle data.</p>
         </div>
         <div style={{padding:'40px 0 80px',background:C.grey50,marginTop:40}}>
           <div style={{maxWidth:1200,margin:'0 auto',padding:'40px clamp(20px,4vw,40px)'}}>
@@ -575,23 +576,11 @@ export default function ApplicationForm(){
     <>
       <section style={{background:`linear-gradient(135deg, ${C.navy800}, ${C.navy700})`,paddingTop:'clamp(120px,14vw,160px)',paddingBottom:40}}>
         <div style={{maxWidth:1200,margin:'0 auto',padding:'0 clamp(20px,4vw,40px)'}}>
-          {/* Two-step indicator */}
-          <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18,flexWrap:'wrap'}}>
-            <div style={{display:'flex',alignItems:'center',gap:10,padding:'8px 16px',background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.15)',borderRadius:99,opacity:0.7}}>
-              <div style={{width:22,height:22,borderRadius:'50%',background:carriedQuote?C.green500:'rgba(255,255,255,0.15)',color:carriedQuote?C.white:'rgba(255,255,255,0.7)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'0.78rem',fontWeight:800}}>
-                {carriedQuote?<Check size={12}/>:'1'}
-              </div>
-              <span style={{fontSize:'0.82rem',fontWeight:700,color:'rgba(255,255,255,0.7)',letterSpacing:'0.06em',textTransform:'uppercase'}}>Get Quote</span>
-            </div>
-            <div style={{width:28,height:1,background:'rgba(255,255,255,0.25)'}}/>
-            <div style={{display:'flex',alignItems:'center',gap:10,padding:'8px 16px',background:'rgba(76,192,126,0.15)',border:`1px solid ${C.green400}`,borderRadius:99}}>
-              <div style={{width:22,height:22,borderRadius:'50%',background:C.green500,color:C.white,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'0.78rem',fontWeight:800}}>2</div>
-              <span style={{fontSize:'0.82rem',fontWeight:700,color:C.green400,letterSpacing:'0.06em',textTransform:'uppercase'}}>Submit Application</span>
-            </div>
-          </div>
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',gap:24,flexWrap:'wrap'}}>
+          {/* PATH TABS — clickable, switches back to Preliminary Quote if needed */}
+          {setPage&&<PathTabs active="apply" setPage={setPage}/>}
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',gap:24,flexWrap:'wrap',marginTop:24}}>
             <div>
-              <h1 style={{color:C.white,marginBottom:8,fontFamily:'var(--font-display, Georgia)',fontSize:'clamp(2rem,4vw,3rem)',fontWeight:800,lineHeight:1.15}}>Step 2 — Submit Your Application</h1>
+              <h1 style={{color:C.white,marginBottom:8,fontFamily:'var(--font-display, Georgia)',fontSize:'clamp(2rem,4vw,3rem)',fontWeight:800,lineHeight:1.15}}>Submit Your Application</h1>
               <p style={{color:C.navy200,fontSize:'1rem',marginBottom:0}}>Welcome back, {profile.name.split(' ')[0]}. Application <strong style={{fontFamily:'monospace',color:C.white}}>{profile.appId}</strong></p>
             </div>
             {saved&&<div style={{display:'inline-flex',alignItems:'center',gap:8,padding:'8px 14px',background:'rgba(255,255,255,0.08)',color:C.navy200,fontSize:'0.82rem',border:'1px solid rgba(255,255,255,0.12)',borderRadius:4}}>
