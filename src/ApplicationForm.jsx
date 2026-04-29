@@ -609,8 +609,8 @@ export default function ApplicationForm(){
               <Check size={16}/>
             </div>
             <div style={{flex:1,minWidth:200}}>
-              <div style={{fontSize:'0.92rem',fontWeight:700,color:C.green700,marginBottom:2}}>Quote carried forward</div>
-              <div style={{fontSize:'0.84rem',color:C.grey700,lineHeight:1.5}}>{carriedQuote.vehicleCount} {carriedQuote.vehicleCount===1?'vehicle':'vehicles'} pre-loaded into Step 2 · ${Math.round(carriedQuote.totalMonthly).toLocaleString()}/mo estimate. You can review and edit anything.</div>
+              <div style={{fontSize:'0.92rem',fontWeight:700,color:C.green700,marginBottom:2}}>Draft quote carried forward — finalize below</div>
+              <div style={{fontSize:'0.84rem',color:C.grey700,lineHeight:1.5}}>{carriedQuote.vehicleCount} {carriedQuote.vehicleCount===1?'vehicle':'vehicles'} pre-loaded · ${Math.round(carriedQuote.totalMonthly).toLocaleString()}/mo preliminary estimate. Final premium is determined during underwriting review and may adjust based on inspection, MVR, loss history, and verified vehicle data.</div>
             </div>
           </div>
         </section>
