@@ -87,12 +87,9 @@ function SampleQuotePanel({setPage}){
   return(
     <div style={{background:C.white,border:`2px solid ${C.navy800}`,overflow:'hidden',borderRadius:6,boxShadow:'0 8px 32px rgba(15,34,64,0.12)'}}>
       {/* Header */}
-      <div style={{background:C.navy800,padding:'14px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:12}}>
-        <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <div style={{width:8,height:8,borderRadius:'50%',background:C.green400,boxShadow:`0 0 10px ${C.green400}`}}/>
-          <span style={{color:C.white,fontSize:'0.74rem',fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase'}}>Live Sample Quote</span>
-        </div>
-        <span style={{color:C.navy300,fontSize:'0.7rem',fontWeight:600}}>Updated in real-time</span>
+      <div style={{background:C.navy800,padding:'14px 24px',display:'flex',alignItems:'center',gap:10}}>
+        <div style={{width:8,height:8,borderRadius:'50%',background:C.green400,boxShadow:`0 0 10px ${C.green400}`}}/>
+        <span style={{color:C.white,fontSize:'0.74rem',fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase'}}>Sample Quote</span>
       </div>
 
       {/* Vehicle context */}
@@ -129,25 +126,12 @@ function SampleQuotePanel({setPage}){
         ))}
       </div>
 
-      {/* Value props inline */}
-      <div style={{padding:'14px 24px',background:C.grey50,borderTop:`1px solid ${C.grey200}`,borderBottom:`1px solid ${C.grey200}`}}>
-        {[
-          'All tiers: $33/mo flat fee, no hidden charges',
-          'Zero per-rental renter addendums',
-          'Add or drop units anytime — no lock-in',
-        ].map((line,i)=>(
-          <div key={i} style={{display:'flex',alignItems:'center',gap:8,padding:'4px 0',fontSize:'0.82rem',color:C.grey700}}>
-            <Check size={14} color={C.green600} style={{flexShrink:0}}/>
-            <span>{line}</span>
-          </div>
-        ))}
-      </div>
-
       {/* CTA */}
       <button onClick={()=>{setPage('quote');window.scrollTo(0,0)}} style={{
         width:'100%',padding:'16px',background:C.green600,color:C.white,border:'none',cursor:'pointer',
         fontWeight:700,fontSize:'0.95rem',display:'flex',alignItems:'center',justifyContent:'center',gap:10,
         transition:'background 0.15s',
+        borderTop:`1px solid ${C.grey200}`,
       }} onMouseEnter={e=>e.currentTarget.style.background=C.green700} onMouseLeave={e=>e.currentTarget.style.background=C.green600}>
         Run Your Real Quote <ArrowRight size={16}/>
       </button>
