@@ -115,7 +115,8 @@ export default function QuotePage({ setPage }) {
     multi_line_auto: false,
     multi_line_home: false,
     multi_line_life: false,
-    affiliate_referral: false,
+    referral_source: '',
+    referral_source_other: '',
   })
 
   const [showBreakdown, setShowBreakdown] = useState(false)
@@ -131,7 +132,7 @@ export default function QuotePage({ setPage }) {
       multi_line_auto: form.multi_line_auto,
       multi_line_home: form.multi_line_home,
       multi_line_life: form.multi_line_life,
-      affiliate_referral: form.affiliate_referral,
+      affiliate_referral: false,
       premier_owner_pct: 0,
       rv_type: v.rv_type,
       replacement_value: v.replacement_value,
@@ -190,14 +191,23 @@ export default function QuotePage({ setPage }) {
         color: C.white,
       }}>
         <div style={sWrap}>
-          <div style={{ fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.green400, marginBottom: 14 }}>
-            Instant Quote · No Email Required
+          {/* Two-step indicator */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 16px', background: 'rgba(76,192,126,0.15)', border: `1px solid ${C.green400}`, borderRadius: 99 }}>
+              <div style={{ width: 22, height: 22, borderRadius: '50%', background: C.green500, color: C.white, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.78rem', fontWeight: 800 }}>1</div>
+              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: C.green400, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Get Quote</span>
+            </div>
+            <div style={{ width: 28, height: 1, background: 'rgba(255,255,255,0.25)' }}/>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 99, opacity: 0.6 }}>
+              <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.78rem', fontWeight: 800 }}>2</div>
+              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Submit Application</span>
+            </div>
           </div>
           <h1 style={{ color: C.white, marginBottom: 14, fontSize: 'clamp(1.8rem,4vw,2.6rem)', lineHeight: 1.15 }}>
-            Build Your Quote in 60 Seconds
+            Step 1 — Build Your Quote
           </h1>
-          <p style={{ color: C.navy200, fontSize: '1.05rem', lineHeight: 1.7, maxWidth: 640 }}>
-            Add each vehicle in your fleet. Pick coverage and add-ons per vehicle. Live pricing updates as you go — no signup, no email gate, no sales call required.
+          <p style={{ color: C.navy200, fontSize: '1.05rem', lineHeight: 1.7, maxWidth: 720 }}>
+            Add each vehicle and pick coverage to see live pricing. No email gate, no commitment — this is your pricing preview. When you're ready to bind coverage, your quote carries forward into the formal application automatically.
           </p>
         </div>
       </section>
@@ -324,32 +334,83 @@ export default function QuotePage({ setPage }) {
                 </label>
               </div>
 
+              {/* BUNDLE DISCOUNTS — table-row layout with HR dividers, NO card grid */}
               <div style={cardSx}>
                 <div style={sectionTitle}><Check size={20} color={C.green600}/>Bundle Discounts (optional)</div>
-                <div style={{ fontSize: '0.85rem', color: C.grey500, marginBottom: 14 }}>
-                  Each multi-line policy you bring saves 1% off premium. Affiliate-referred fleets get 2.5% off.
+                <div style={{ fontSize: '0.85rem', color: C.grey500, marginBottom: 18 }}>
+                  Each multi-line policy you bring saves 1% off premium. Stack all three for 3% off.
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10 }}>
+                <div style={{ background: C.grey50, borderRadius: 8, overflow: 'hidden' }}>
                   {[
-                    ['multi_line_auto', 'Personal Auto', '1% off'],
-                    ['multi_line_home', 'Homeowners', '1% off'],
-                    ['multi_line_life', 'Life Insurance', '1% off'],
-                    ['affiliate_referral', 'Affiliate Referral', '2.5% off'],
-                  ].map(([key, label, badge]) => (
-                    <label key={key} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', border: `1.5px solid ${form[key] ? C.green600 : C.grey300}`, background: form[key] ? C.green50 : C.white, borderRadius: 6, cursor: 'pointer', transition: 'all 0.15s' }}>
+                    ['multi_line_auto', 'Personal Auto', 'Existing personal auto policy with another carrier', '1% off'],
+                    ['multi_line_home', 'Homeowners',    'Existing home or condo insurance policy',          '1% off'],
+                    ['multi_line_life', 'Life Insurance', 'Existing term or whole life insurance policy',     '1% off'],
+                  ].map(([key, label, desc, badge], i, arr) => (
+                    <label key={key} style={{
+                      display: 'flex', alignItems: 'center', gap: 16,
+                      padding: '16px 18px',
+                      borderBottom: i < arr.length - 1 ? `1px solid ${C.grey200}` : 'none',
+                      cursor: 'pointer',
+                      background: form[key] ? C.green50 : 'transparent',
+                      transition: 'background 0.15s',
+                    }}>
                       <input
                         type="checkbox"
                         checked={form[key]}
                         onChange={e => update(key, e.target.checked)}
-                        style={{ width: 18, height: 18, cursor: 'pointer', accentColor: C.green600 }}
+                        style={{ width: 20, height: 20, cursor: 'pointer', accentColor: C.green600, flexShrink: 0 }}
                       />
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '0.88rem', fontWeight: 600, color: C.navy800 }}>{label}</div>
-                        <div style={{ fontSize: '0.74rem', color: C.green700, fontWeight: 700, marginTop: 2 }}>{badge}</div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: '0.95rem', fontWeight: 700, color: C.navy800 }}>{label}</div>
+                        <div style={{ fontSize: '0.8rem', color: C.grey500, marginTop: 2 }}>{desc}</div>
                       </div>
+                      <div style={{
+                        flexShrink: 0,
+                        padding: '6px 12px',
+                        background: form[key] ? C.green600 : C.white,
+                        color: form[key] ? C.white : C.green700,
+                        border: `1.5px solid ${C.green600}`,
+                        borderRadius: 99,
+                        fontSize: '0.78rem',
+                        fontWeight: 800,
+                        letterSpacing: '0.04em',
+                      }}>{badge}</div>
                     </label>
                   ))}
                 </div>
+              </div>
+
+              {/* REFERRAL SOURCE — tracking only, NOT a discount */}
+              <div style={cardSx}>
+                <div style={sectionTitle}><Info size={20} color={C.green600}/>How did you hear about us?</div>
+                <div style={{ fontSize: '0.85rem', color: C.grey500, marginBottom: 14 }}>
+                  Helps us know which channels are working. This does not affect your quote.
+                </div>
+                <select
+                  value={form.referral_source}
+                  onChange={e => update('referral_source', e.target.value)}
+                  style={inputSx}
+                >
+                  <option value="">Select a referral source…</option>
+                  <option value="google">Google</option>
+                  <option value="ai_search">AI search (ChatGPT, Claude, etc.)</option>
+                  <option value="stress_free_rvs">Stress Free RVs</option>
+                  <option value="p2prvs">P2PRVS</option>
+                  <option value="other">Not listed (specify below)</option>
+                  <option value="prefer_not_to_say">None — prefer not to say</option>
+                </select>
+                {form.referral_source === 'other' && (
+                  <div style={{ marginTop: 14 }}>
+                    <label style={{ ...labelSx, fontSize: '0.78rem' }}>Please specify</label>
+                    <input
+                      type="text"
+                      value={form.referral_source_other}
+                      onChange={e => update('referral_source_other', e.target.value)}
+                      placeholder="e.g., a friend, a podcast, an industry event…"
+                      style={inputSx}
+                    />
+                  </div>
+                )}
               </div>
             </div>
 
@@ -361,6 +422,7 @@ export default function QuotePage({ setPage }) {
                   <FleetQuotePanel
                     summary={summary}
                     vehicleQuotes={vehicleQuotes}
+                    form={form}
                     showBreakdown={showBreakdown}
                     setShowBreakdown={setShowBreakdown}
                     setPage={setPage}
@@ -698,9 +760,48 @@ function VehicleCard({ vehicle, index, canRemove, onChange, onRemove, quote, car
   )
 }
 
-function FleetQuotePanel({ summary, vehicleQuotes, showBreakdown, setShowBreakdown, setPage }) {
+function FleetQuotePanel({ summary, vehicleQuotes, form, showBreakdown, setShowBreakdown, setPage }) {
   const fleetCount = vehicleQuotes.length
   const approvedCount = summary.approved.length
+
+  const continueToApplication = () => {
+    // Save quote data to sessionStorage so the Application form can pre-populate
+    try {
+      const quoteData = {
+        timestamp: Date.now(),
+        vehicles: form.vehicles,
+        operator: {
+          owner_birthdate: form.owner_birthdate,
+          years_in_operation: form.years_in_operation,
+          prior_claims_3yr: form.prior_claims_3yr,
+          vin_title_status: form.vin_title_status,
+          credit_score_band: form.credit_score_band,
+          has_prior_commercial_insurance: form.has_prior_commercial_insurance,
+        },
+        bundles: {
+          multi_line_auto: form.multi_line_auto,
+          multi_line_home: form.multi_line_home,
+          multi_line_life: form.multi_line_life,
+        },
+        referral: {
+          source: form.referral_source,
+          source_other: form.referral_source_other,
+        },
+        summary: {
+          totalMonthly: summary.totalMonthly,
+          totalAnnual: summary.totalAnnual,
+          totalDeposit: summary.totalDeposit,
+          totalFirst: summary.totalFirst,
+        },
+      }
+      sessionStorage.setItem('na_quote_data', JSON.stringify(quoteData))
+    } catch (e) {
+      // sessionStorage might be disabled — non-fatal, application will start blank
+      console.warn('Could not save quote to sessionStorage:', e)
+    }
+    setPage('apply')
+    window.scrollTo(0, 0)
+  }
 
   return (
     <div>
@@ -785,7 +886,7 @@ function FleetQuotePanel({ summary, vehicleQuotes, showBreakdown, setShowBreakdo
 
       <div style={{ padding: '18px 24px 24px' }}>
         <button
-          onClick={() => { setPage('apply'); window.scrollTo(0,0) }}
+          onClick={continueToApplication}
           style={{
             width: '100%', padding: '14px',
             background: C.green600, color: C.white,
@@ -799,6 +900,9 @@ function FleetQuotePanel({ summary, vehicleQuotes, showBreakdown, setShowBreakdo
         >
           Continue to Application <ArrowRight size={16}/>
         </button>
+        <div style={{ fontSize: '0.74rem', color: C.grey500, textAlign: 'center', marginTop: 10, lineHeight: 1.5 }}>
+          Your quote selections carry forward — no re-entry required.
+        </div>
       </div>
     </div>
   )
