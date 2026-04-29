@@ -208,12 +208,67 @@ function CoveragePage({setPage}){
       </div>
     </section>
 
-    {/* Add-Ons */}
+    {/* Add-Ons — full descriptions */}
     <section style={{padding:'clamp(60px,8vw,120px) 0',background:C.grey50}}>
       <div style={sWrap}>
-        <SectionHeader overline="Optional Add-Ons" title="Customize Your Protection" accent="purple"/>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:0,borderTop:`1px solid ${C.grey200}`,borderLeft:`1px solid ${C.grey200}`}}>
-          {[{name:'Supplemental Liability (SLI)',price:'$18/mo',icon:Scale,desc:'Additional liability beyond base tier.'},{name:'Personal Accident',price:'$10/mo',icon:Heart,desc:'Medical coverage for rental accidents.'},{name:'Personal Effects',price:'$7/mo',icon:Layers,desc:'Protection for belongings inside the RV.'},{name:'Roadside Assistance',price:'$6/mo',icon:Truck,desc:'Towing, flat tire, lockout, fuel delivery.'}].map((a,i)=><div key={i} style={{padding:'clamp(24px,3vw,32px)',background:C.white,borderRight:`1px solid ${C.grey200}`,borderBottom:`1px solid ${C.grey200}`,borderLeft:`4px solid ${C.purple500}`}}><div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12}}><a.icon size={22} color={C.purple600}/><span style={{fontFamily:'var(--font-display)',fontWeight:800,fontSize:'1.2rem',color:C.navy800}}>{a.price}</span></div><h4 style={{fontSize:'1rem',marginBottom:8,color:C.navy800}}>{a.name}</h4><p style={{fontSize:'0.84rem',color:C.grey500,lineHeight:1.6}}>{a.desc}</p></div>)}
+        <SectionHeader overline="Optional Add-Ons" title="Customize Your Protection" subtitle="Select à la carte coverages per vehicle. Items shown here are bundled into Gold and Platinum tiers automatically — Bronze and Silver users can add them individually." accent="purple"/>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:18,marginTop:8}}>
+          {[
+            {
+              name:'Supplemental Liability (SLI)',
+              short:'SLI',
+              price:'$18/mo',
+              icon:Scale,
+              desc:'Adds an additional layer of liability protection above the base tier limits. Critical for high-value claims involving bodily injury or property damage that exceed standard policy maximums.',
+              when:'Strongly recommended for fleets renting in high-traffic urban areas, near major events, or when renters have limited personal auto coverage.',
+              includedIn:'Included in Gold and Platinum',
+            },
+            {
+              name:'Personal Accident Insurance (PAI)',
+              short:'PAI',
+              price:'$10/mo',
+              icon:Heart,
+              desc:'Medical coverage for the renter and passengers in the event of an accident during the rental period. Includes ER costs, hospitalization, and accidental death benefits.',
+              when:'Reduces the chance of medical-related claims being filed against the host or vehicle policy. Common request for family rentals and group trips.',
+              includedIn:'Included in Gold and Platinum',
+            },
+            {
+              name:'Personal Effects Coverage (PEC)',
+              short:'PEC',
+              price:'$7/mo',
+              icon:Layers,
+              desc:'Protects the renter\'s personal belongings — electronics, clothing, gear, sports equipment — inside the RV against theft, fire, and accidental damage.',
+              when:'Reduces friction at trip-end disputes by giving renters their own coverage path for lost items rather than blaming the host or filing on the host\'s policy.',
+              includedIn:'Included in Gold and Platinum',
+            },
+            {
+              name:'Roadside Assistance',
+              short:'Roadside',
+              price:'$6/mo',
+              icon:Truck,
+              desc:'24/7 emergency roadside service across the continental US: towing, lockout, jumpstart, fuel delivery, and tire change. Covers both mechanical breakdown and roadside emergencies.',
+              when:'Reduces guest stress during the rental and prevents 2am host calls. Highly recommended for any fleet — and the lowest-cost add-on we offer.',
+              includedIn:'Included in Silver, Gold, and Platinum',
+            },
+          ].map((a,i)=>(
+            <div key={i} style={{padding:'clamp(24px,3vw,32px)',background:C.white,borderRadius:10,border:`1px solid ${C.grey200}`,borderTop:`4px solid ${C.purple500}`,boxShadow:'0 2px 14px rgba(15,34,64,0.04)',display:'flex',flexDirection:'column'}}>
+              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
+                <div style={{width:42,height:42,background:C.purple100,display:'flex',alignItems:'center',justifyContent:'center',borderRadius:8}}>
+                  <a.icon size={20} color={C.purple700}/>
+                </div>
+                <div style={{textAlign:'right'}}>
+                  <div style={{fontFamily:'var(--font-display)',fontWeight:800,fontSize:'1.5rem',color:C.navy800,lineHeight:1}}>{a.price}</div>
+                  <div style={{fontSize:'0.7rem',fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',color:C.purple600,marginTop:4}}>{a.short}</div>
+                </div>
+              </div>
+              <h4 style={{fontSize:'1.05rem',marginBottom:12,color:C.navy800,lineHeight:1.3}}>{a.name}</h4>
+              <p style={{fontSize:'0.88rem',color:C.grey700,lineHeight:1.65,marginBottom:14}}>{a.desc}</p>
+              <p style={{fontSize:'0.84rem',color:C.grey600,lineHeight:1.6,marginBottom:14,fontStyle:'italic'}}>{a.when}</p>
+              <div style={{marginTop:'auto',paddingTop:14,borderTop:`1px solid ${C.grey100}`,fontSize:'0.78rem',color:C.green700,fontWeight:700,display:'flex',alignItems:'center',gap:6}}>
+                <Check size={14}/> {a.includedIn}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -250,15 +305,16 @@ function CoveragePage({setPage}){
             </thead>
             <tbody>
               {[
-                {label:'Monthly Premium (per vehicle)',na:{v:'$84 – $327 across tiers',ok:true},mba:{v:'$125 – $367',ok:false},rm:{v:'$140 – $300+',ok:false},tr:{v:'Quote-only · high',ok:false}},
-                {label:'Bodily Injury Limits',na:{v:'Up to $1M / $2M',ok:true},mba:{v:'$30K / $60K + $1M excess',ok:'partial'},rm:{v:'State minimums',ok:false},tr:{v:'Customizable',ok:'partial'}},
-                {label:'Property Damage',na:{v:'Up to $250K',ok:true},mba:{v:'$15K',ok:false},rm:{v:'$25K standard',ok:false},tr:{v:'Customizable',ok:'partial'}},
-                {label:'Per-Vehicle Deposit',na:{v:'$0 – $499 by tier',ok:true},mba:{v:'$399 / vehicle',ok:false},rm:{v:'Varies',ok:false},tr:{v:'Required',ok:false}},
-                {label:'Renter Addendum Charges',na:{v:'Eliminated',ok:true},mba:{v:'Eliminated 2024',ok:false},rm:{v:'Per-rental fees',ok:false},tr:{v:'N/A',ok:'partial'}},
+                {label:'Monthly Premium (per vehicle)',na:{v:'$84 – $327 across tiers',ok:true},mba:{v:'$125 – $367',ok:false},rm:{v:'$140 – $300+',ok:false},tr:{v:'$37 – $229 (avg $141)',ok:'partial'}},
+                {label:'Bodily Injury Limits',na:{v:'Up to $1M / $2M',ok:true},mba:{v:'$30K / $60K + $1M excess',ok:'partial'},rm:{v:'State minimums',ok:false},tr:{v:'$1M owner / 30/60/15 rentee',ok:'partial'}},
+                {label:'Property Damage',na:{v:'Up to $250K',ok:true},mba:{v:'$15K',ok:false},rm:{v:'$25K standard',ok:false},tr:{v:'$150K limit · $1K ded',ok:'partial'}},
+                {label:'Per-Vehicle Deposit',na:{v:'$0 – $499 by tier',ok:true},mba:{v:'$399 / vehicle',ok:false},rm:{v:'Varies',ok:false},tr:{v:'~$292 (escrow on 24-unit fleet)',ok:'partial'}},
+                {label:'Renter Addendum Charges',na:{v:'Eliminated',ok:true},mba:{v:'Eliminated 2024',ok:false},rm:{v:'Per-rental fees',ok:false},tr:{v:'No per-rental fees',ok:'partial'}},
                 {label:'Monthly Fees (transparent)',na:{v:'$33 flat ($15+$10+$8)',ok:true},mba:{v:'Bundled / opaque',ok:false},rm:{v:'Bundled',ok:false},tr:{v:'Bundled',ok:false}},
-                {label:'Damage Waiver Available',na:{v:'Shield ADW · $25/day',ok:true},mba:{v:'Never offered',ok:false},rm:{v:'Outdoorsy IMG only',ok:false},tr:{v:'Not available',ok:false}},
-                {label:'Add / Drop Coverage',na:{v:'Anytime',ok:true},mba:{v:'Limited',ok:'partial'},rm:{v:'Monthly cycle',ok:'partial'},tr:{v:'No flexibility',ok:false}},
-                {label:'Carrier Rating',na:{v:'A-rated carriers',ok:true},mba:{v:'A+ via NatGen (non-admitted)',ok:'partial'},rm:{v:'A-rated',ok:true},tr:{v:'Varies',ok:'partial'}},
+                {label:'Damage Waiver Available',na:{v:'Shield ADW · $25/day',ok:true},mba:{v:'Never offered',ok:false},rm:{v:'Outdoorsy IMG only',ok:false},tr:{v:'Not offered',ok:false}},
+                {label:'Add / Drop Coverage',na:{v:'Anytime',ok:true},mba:{v:'Limited',ok:'partial'},rm:{v:'Monthly cycle',ok:'partial'},tr:{v:'30-day minimum on every unit',ok:false}},
+                {label:'Fleet Discount',na:{v:'Up to 15% (50+ units)',ok:true},mba:{v:'Volume only',ok:'partial'},rm:{v:'None',ok:false},tr:{v:'Volume by negotiation',ok:'partial'}},
+                {label:'Carrier Rating',na:{v:'A-rated carriers',ok:true},mba:{v:'A+ via NatGen (non-admitted)',ok:'partial'},rm:{v:'A-rated',ok:true},tr:{v:'A-rated · Accelerant National',ok:true}},
                 {label:'Designed For',na:{v:'P2P RV fleet operators',ok:true},mba:{v:'Traditional rental',ok:false},rm:{v:'Outdoorsy listings',ok:false},tr:{v:'Mixed specialty fleet',ok:false}},
                 {label:'Platform Lock-in',na:{v:'None',ok:true},mba:{v:'None',ok:true},rm:{v:'Outdoorsy ecosystem',ok:false},tr:{v:'None',ok:true}},
                 {label:'Vertically Integrated',na:{v:'Stack: Insurance + Shield + P2PRVS',ok:true},mba:{v:'Insurance only',ok:false},rm:{v:'Insurance + marketplace',ok:'partial'},tr:{v:'Insurance only',ok:false}},
@@ -302,8 +358,8 @@ function CoveragePage({setPage}){
                   <div style={{fontSize:'0.74rem'}}>Outdoorsy ecosystem only</div>
                 </td>
                 <td style={{padding:'18px 16px',textAlign:'center',background:C.navy900,color:'rgba(255,255,255,0.6)',fontSize:'0.82rem'}}>
-                  <div style={{fontWeight:600,marginBottom:3}}>Inflexible & costly</div>
-                  <div style={{fontSize:'0.74rem'}}>No fleet-specific design</div>
+                  <div style={{fontWeight:600,marginBottom:3}}>Solid carrier, rigid terms</div>
+                  <div style={{fontSize:'0.74rem'}}>30-day unit minimums, no damage waiver</div>
                 </td>
               </tr>
             </tbody>
@@ -312,7 +368,7 @@ function CoveragePage({setPage}){
 
         {/* Source notes */}
         <div style={{marginTop:24,padding:'16px 20px',background:C.grey50,fontSize:'0.78rem',color:C.grey600,lineHeight:1.6,borderRadius:6}}>
-          <strong style={{color:C.navy800}}>Sources:</strong> MBA pricing reflects 2024 restructured program (per actual quote received for 15-vehicle California fleet — rates $124.70 to $366.82/mo per vehicle, $5,985 in deposits on $2,988 annual premium). Roamly pricing reflects standalone monthly rates. Triad Underwriters does not publish standardized rates and operates as quote-only without revenue share or add/drop flexibility. Limits and features confirmed against current public-facing program documentation as of 2026.
+          <strong style={{color:C.navy800}}>Sources:</strong> MBA pricing reflects 2024 restructured program (actual quote received for 15-vehicle California fleet — rates $124.70 to $366.82/mo per vehicle, $5,985 in deposits on $2,988 annual premium). Roamly pricing reflects standalone monthly rates. Triad data sourced from a current Triad Insurance Management and Services Agency quote (April 2026): policy written through Accelerant National Insurance Company (A-rated), 24-unit fleet at $3,393 total monthly ($141 average per vehicle), $7,000 premium escrow deposit, 30-day minimum on every unit, $1M owner / 30/60/15 rentee liability split, $1,000 deductible, no off-road, salvage, livery, conversion, or Mexico coverage. Limits and features confirmed against current public-facing program documentation as of 2026.
         </div>
 
         <div style={{textAlign:'center',marginTop:36}}>
