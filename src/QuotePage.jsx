@@ -254,7 +254,7 @@ export default function QuotePage({ setPage }) {
                 </button>
 
                 <div style={{ fontSize: '0.78rem', color: C.grey500, lineHeight: 1.6, marginTop: 14, padding: '0 4px' }}>
-                  Most fleets contain different vehicle types and values — add each one individually for accurate quoting. Fleet discounts apply automatically: <strong>3+ units 5% off · 5+ 10% off · 10+ 12.5% off · 25+ 15% off.</strong>
+                  Most fleets contain different vehicle types and values — add each one individually for accurate quoting. Fleet discounts apply automatically: <strong>3-4 units 5% · 5-10 units 6% · 11-24 units 8% · 25-49 units 10% · 50+ units 15%.</strong>
                 </div>
               </div>
 
