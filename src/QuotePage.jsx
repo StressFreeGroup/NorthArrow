@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { ArrowRight, Check, Info, AlertCircle, ChevronDown, ChevronUp, Shield, DollarSign, Truck, Users } from 'lucide-react'
+import { ArrowRight, Check, Info, AlertCircle, ChevronDown, ChevronUp, Shield, DollarSign, Truck, Users, Plus, Trash2, X } from 'lucide-react'
 import rateTables from './data/rate-tables.json'
 import { generateQuote } from './lib/rateEngine.js'
 
@@ -21,16 +21,18 @@ const STATES = [
   ['WV','West Virginia'],['WI','Wisconsin'],['WY','Wyoming']
 ]
 
-const RV_TYPES = [
+// VEHICLE CATEGORIES — towable units have no odometer
+const TOWABLE_TYPES = [
   { key: 'Travel Trailer', label: 'Travel Trailer' },
   { key: 'Toy Hauler',     label: 'Toy Hauler' },
   { key: 'Fifth Wheel',    label: 'Fifth Wheel' },
-  { key: 'Class A',        label: 'Class A' },
-  { key: 'Class B',        label: 'Class B (Sprinter Van)' },
-  { key: 'Class C',        label: 'Class C' },
   { key: 'Pop Up',         label: 'Pop Up' },
-  { key: 'Truck Camper',   label: 'Truck Camper' },
-  { key: 'Park Model',     label: 'Park Model' },
+]
+const DRIVEABLE_TYPES = [
+  { key: 'Class A',      label: 'Class A' },
+  { key: 'Class B',      label: 'Class B (Sprinter Van)' },
+  { key: 'Class C',      label: 'Class C' },
+  { key: 'Truck Camper', label: 'Truck Camper' },
 ]
 
 const TIERS = [
@@ -40,30 +42,72 @@ const TIERS = [
   { key: 'Platinum', label: 'Platinum', sublabel: 'Elite',    deposit: 0,   color: C.navy900,   bgAccent: C.grey100,   desc: '$1M/$2M BI · $250K PD · $500 ded · Direct adjuster · No deposit' },
 ]
 
+const ADDONS = [
+  {
+    key: 'add_sli',
+    short: 'SLI',
+    label: 'Supplemental Liability',
+    price: '$18/mo',
+    includedIn: ['Gold','Platinum'],
+    info: 'Adds an additional layer of liability protection above the base tier limits. Critical for high-value claims involving bodily injury or property damage that exceed standard policy maximums. Strongly recommended for fleets renting in high-traffic urban areas, near major events, or when renters have limited personal auto coverage.',
+  },
+  {
+    key: 'add_personal_accident',
+    short: 'PAI',
+    label: 'Personal Accident Insurance',
+    price: '$10/mo',
+    includedIn: ['Gold','Platinum'],
+    info: 'Provides medical coverage for the renter and passengers in the event of an accident during the rental period. Includes ER costs, hospitalization, and accidental death benefits. Reduces the chance of medical-related claims being filed against the host or vehicle policy.',
+  },
+  {
+    key: 'add_personal_effects',
+    short: 'PEC',
+    label: 'Personal Effects Coverage',
+    price: '$7/mo',
+    includedIn: ['Gold','Platinum'],
+    info: 'Protects the renter\'s personal belongings (electronics, clothing, gear, sports equipment) inside the RV against theft, fire, and accidental damage. Reduces friction at trip-end disputes by giving renters their own coverage path for lost items rather than blaming the host.',
+  },
+  {
+    key: 'add_roadside',
+    short: 'Roadside',
+    label: 'Roadside Assistance',
+    price: '$6/mo',
+    includedIn: ['Silver','Gold','Platinum'],
+    info: '24/7 emergency roadside service across the continental US: towing, lockout, jumpstart, fuel delivery, and tire change. Covers both mechanical breakdown and roadside emergencies. Reduces guest stress during the rental and prevents host calls at 2am.',
+  },
+]
+
 const $ = (n) => n != null ? `$${Math.round(n).toLocaleString()}` : '—'
 
-// Default DOB = 35 years before today (sensible default landing)
 const defaultDOB = (() => {
   const d = new Date()
   d.setFullYear(d.getFullYear() - 35)
   return d.toISOString().slice(0, 10)
 })()
-
-// Today's date for max constraint on DOB
 const todayISO = new Date().toISOString().slice(0, 10)
-// 1900-01-01 minimum
 const minDOB = '1900-01-01'
+
+const newVehicle = (overrides = {}) => ({
+  id: Math.random().toString(36).slice(2, 10),
+  rv_category: 'towable',
+  rv_type: 'Travel Trailer',
+  replacement_value: 35000,
+  vehicle_year: 2022,
+  vehicle_state: 'CA',
+  odometer_miles: 0,
+  coverage_tier: 'Silver',
+  add_sli: false,
+  add_personal_accident: false,
+  add_personal_effects: false,
+  add_roadside: false,
+  ...overrides,
+})
 
 export default function QuotePage({ setPage }) {
   const [form, setForm] = useState({
-    rv_type: 'Travel Trailer',
-    replacement_value: 35000,
-    vehicle_year: 2022,
-    vehicle_state: 'CA',
-    coverage_tier: 'Silver',
-    fleet_size: 1,
+    vehicles: [newVehicle()],
     owner_birthdate: defaultDOB,
-    odometer_miles: 25000,
+    years_in_operation: 0,
     prior_claims_3yr: 0,
     vin_title_status: 'clean',
     credit_score_band: '700+',
@@ -72,19 +116,66 @@ export default function QuotePage({ setPage }) {
     multi_line_home: false,
     multi_line_life: false,
     affiliate_referral: false,
-    add_sli: false,
-    add_personal_accident: false,
-    add_personal_effects: false,
-    add_roadside: false,
-    premier_owner_pct: 0,
-    years_in_operation: 0,
   })
 
   const [showBreakdown, setShowBreakdown] = useState(false)
 
-  const quote = useMemo(() => generateQuote(form, rateTables), [form])
+  const vehicleQuotes = useMemo(() => form.vehicles.map(v => {
+    const inputs = {
+      owner_birthdate: form.owner_birthdate,
+      years_in_operation: form.years_in_operation,
+      prior_claims_3yr: form.prior_claims_3yr,
+      vin_title_status: form.vin_title_status,
+      credit_score_band: form.credit_score_band,
+      has_prior_commercial_insurance: form.has_prior_commercial_insurance,
+      multi_line_auto: form.multi_line_auto,
+      multi_line_home: form.multi_line_home,
+      multi_line_life: form.multi_line_life,
+      affiliate_referral: form.affiliate_referral,
+      premier_owner_pct: 0,
+      rv_type: v.rv_type,
+      replacement_value: v.replacement_value,
+      vehicle_year: v.vehicle_year,
+      vehicle_state: v.vehicle_state,
+      odometer_miles: v.rv_category === 'towable' ? 0 : v.odometer_miles,
+      coverage_tier: v.coverage_tier,
+      add_sli: v.add_sli,
+      add_personal_accident: v.add_personal_accident,
+      add_personal_effects: v.add_personal_effects,
+      add_roadside: v.add_roadside,
+      fleet_size: form.vehicles.length,
+    }
+    return { ...v, quote: generateQuote(inputs, rateTables) }
+  }), [form])
+
+  const summary = useMemo(() => {
+    const declined = vehicleQuotes.filter(v => v.quote.declined)
+    const approved = vehicleQuotes.filter(v => !v.quote.declined)
+    return {
+      declined,
+      approved,
+      anyDeclined: declined.length > 0,
+      allDeclined: approved.length === 0 && declined.length > 0,
+      totalMonthly: approved.reduce((s, v) => s + (v.quote.monthly_total || 0), 0),
+      totalAnnual:  approved.reduce((s, v) => s + (v.quote.annual_premium || 0), 0),
+      totalDeposit: approved.reduce((s, v) => s + (v.quote.deposit || 0), 0),
+      totalFirst:   approved.reduce((s, v) => s + (v.quote.first_payment || 0), 0),
+    }
+  }, [vehicleQuotes])
 
   const update = (k, v) => setForm(f => ({ ...f, [k]: v }))
+  const updateVehicle = (id, k, v) => setForm(f => ({
+    ...f,
+    vehicles: f.vehicles.map(veh => veh.id === id ? { ...veh, [k]: v } : veh)
+  }))
+  const addVehicle = () => {
+    const last = form.vehicles[form.vehicles.length - 1]
+    setForm(f => ({ ...f, vehicles: [...f.vehicles, newVehicle({ vehicle_state: last.vehicle_state })] }))
+  }
+  const removeVehicle = (id) => setForm(f => ({
+    ...f,
+    vehicles: f.vehicles.filter(v => v.id !== id)
+  }))
 
   const cardSx = { background: C.white, borderRadius: 10, padding: 28, border: `1px solid ${C.grey200}`, boxShadow: '0 2px 12px rgba(15,34,64,0.04)', marginBottom: 24 }
   const labelSx = { display: 'block', fontSize: '0.82rem', fontWeight: 700, color: C.grey700, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.04em' }
@@ -93,7 +184,6 @@ export default function QuotePage({ setPage }) {
 
   return (
     <div style={{ paddingTop: 78, background: C.grey50, minHeight: '100vh' }}>
-      {/* Hero */}
       <section style={{
         background: `linear-gradient(135deg, ${C.navy800} 0%, ${C.navy700} 100%)`,
         padding: 'clamp(50px,7vw,90px) 0 clamp(40px,5vw,60px)',
@@ -107,7 +197,7 @@ export default function QuotePage({ setPage }) {
             Build Your Quote in 60 Seconds
           </h1>
           <p style={{ color: C.navy200, fontSize: '1.05rem', lineHeight: 1.7, maxWidth: 640 }}>
-            Transparent pricing. See your monthly premium, deposit, and full breakdown as you build your quote — no signup, no email gate, no sales call required to find out the cost.
+            Add each vehicle in your fleet. Pick coverage and add-ons per vehicle. Live pricing updates as you go — no signup, no email gate, no sales call required.
           </p>
         </div>
       </section>
@@ -116,141 +206,61 @@ export default function QuotePage({ setPage }) {
         <div style={sWrap}>
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 380px', gap: 32 }} className="quote-grid">
 
-            {/* LEFT — FORM */}
             <div>
-              {/* Vehicle */}
-              <div style={cardSx}>
-                <div style={sectionTitle}><Truck size={20} color={C.green600}/>Vehicle Details</div>
-
-                <div style={{ marginBottom: 18 }}>
-                  <label style={labelSx}>RV Type</label>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 8 }}>
-                    {RV_TYPES.map(t => (
-                      <button
-                        key={t.key}
-                        onClick={() => update('rv_type', t.key)}
-                        style={{
-                          padding: '10px 12px',
-                          fontSize: '0.85rem',
-                          fontWeight: 600,
-                          border: `1.5px solid ${form.rv_type === t.key ? C.green600 : C.grey300}`,
-                          background: form.rv_type === t.key ? C.green50 : C.white,
-                          color: form.rv_type === t.key ? C.green700 : C.grey700,
-                          borderRadius: 6,
-                          cursor: 'pointer',
-                          textAlign: 'left',
-                          transition: 'all 0.15s',
-                        }}
-                      >
-                        {t.label}
-                      </button>
-                    ))}
+              <div style={{ marginBottom: 24 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+                  <div style={{ ...sectionTitle, marginBottom: 0 }}>
+                    <Truck size={20} color={C.green600}/>Your Fleet ({form.vehicles.length} {form.vehicles.length === 1 ? 'vehicle' : 'vehicles'})
                   </div>
                 </div>
 
+                {form.vehicles.map((v, idx) => (
+                  <VehicleCard
+                    key={v.id}
+                    vehicle={v}
+                    index={idx}
+                    canRemove={form.vehicles.length > 1}
+                    onChange={(k, val) => updateVehicle(v.id, k, val)}
+                    onRemove={() => removeVehicle(v.id)}
+                    quote={vehicleQuotes[idx]?.quote}
+                    cardSx={cardSx}
+                    labelSx={labelSx}
+                    inputSx={inputSx}
+                  />
+                ))}
+
+                <button
+                  onClick={addVehicle}
+                  style={{
+                    width: '100%',
+                    padding: '20px',
+                    background: C.white,
+                    border: `2px dashed ${C.green500}`,
+                    borderRadius: 10,
+                    cursor: 'pointer',
+                    color: C.green700,
+                    fontWeight: 700,
+                    fontSize: '0.95rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 10,
+                    transition: 'all 0.15s',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = C.green50; e.currentTarget.style.borderColor = C.green600 }}
+                  onMouseLeave={e => { e.currentTarget.style.background = C.white; e.currentTarget.style.borderColor = C.green500 }}
+                >
+                  <Plus size={18}/>Add Another Vehicle
+                </button>
+
+                <div style={{ fontSize: '0.78rem', color: C.grey500, lineHeight: 1.6, marginTop: 14, padding: '0 4px' }}>
+                  Most fleets contain different vehicle types and values — add each one individually for accurate quoting. Fleet discounts apply automatically: <strong>3+ units 5% off · 5+ 10% off · 10+ 12.5% off · 25+ 15% off.</strong>
+                </div>
+              </div>
+
+              <div style={cardSx}>
+                <div style={sectionTitle}><Users size={20} color={C.green600}/>Fleet Operator Information</div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 18 }}>
-                  <div>
-                    <label style={labelSx}>Stated Value</label>
-                    <div style={{ position: 'relative' }}>
-                      <DollarSign size={16} color={C.grey400} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)' }}/>
-                      <input
-                        type="number"
-                        value={form.replacement_value}
-                        onChange={e => update('replacement_value', Number(e.target.value) || 0)}
-                        style={{ ...inputSx, paddingLeft: 32 }}
-                        min={5000}
-                        max={2500000}
-                        step={500}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label style={labelSx}>Year</label>
-                    <input
-                      type="number"
-                      value={form.vehicle_year}
-                      onChange={e => update('vehicle_year', Number(e.target.value) || 0)}
-                      style={inputSx}
-                      min={2016}
-                      max={2027}
-                    />
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                  <div>
-                    <label style={labelSx}>State</label>
-                    <select value={form.vehicle_state} onChange={e => update('vehicle_state', e.target.value)} style={inputSx}>
-                      {STATES.map(([code, name]) => <option key={code} value={code}>{name}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label style={labelSx}>Odometer</label>
-                    <input
-                      type="number"
-                      value={form.odometer_miles}
-                      onChange={e => update('odometer_miles', Number(e.target.value) || 0)}
-                      style={inputSx}
-                      min={0}
-                      max={250000}
-                      step={1000}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Coverage Tier */}
-              <div style={cardSx}>
-                <div style={sectionTitle}><Shield size={20} color={C.green600}/>Coverage Tier</div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
-                  {TIERS.map(t => {
-                    const isSelected = form.coverage_tier === t.key
-                    return (
-                      <button
-                        key={t.key}
-                        onClick={() => update('coverage_tier', t.key)}
-                        style={{
-                          padding: '16px 14px',
-                          textAlign: 'left',
-                          background: isSelected ? t.color : C.white,
-                          color: isSelected ? C.white : C.navy800,
-                          border: `2px solid ${isSelected ? t.color : C.grey300}`,
-                          borderRadius: 8,
-                          cursor: 'pointer',
-                          transition: 'all 0.15s',
-                        }}
-                      >
-                        <div style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: isSelected ? 'rgba(255,255,255,0.85)' : t.color, marginBottom: 4 }}>
-                          {t.sublabel}
-                        </div>
-                        <div style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: 6 }}>{t.label}</div>
-                        <div style={{ fontSize: '0.72rem', lineHeight: 1.5, color: isSelected ? 'rgba(255,255,255,0.85)' : C.grey500 }}>
-                          {t.desc}
-                        </div>
-                        <div style={{ fontSize: '0.78rem', fontWeight: 700, marginTop: 10, color: isSelected ? C.white : t.color }}>
-                          Deposit: ${t.deposit}
-                        </div>
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-
-              {/* Fleet & Operator */}
-              <div style={cardSx}>
-                <div style={sectionTitle}><Users size={20} color={C.green600}/>Fleet & Operator</div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 18 }}>
-                  <div>
-                    <label style={labelSx}>Fleet Size</label>
-                    <input
-                      type="number"
-                      value={form.fleet_size}
-                      onChange={e => update('fleet_size', Math.max(1, Number(e.target.value) || 1))}
-                      style={inputSx}
-                      min={1}
-                      max={999}
-                    />
-                  </div>
                   <div>
                     <label style={labelSx}>Owner Date of Birth</label>
                     <input
@@ -314,19 +324,18 @@ export default function QuotePage({ setPage }) {
                 </label>
               </div>
 
-              {/* Discounts */}
               <div style={cardSx}>
                 <div style={sectionTitle}><Check size={20} color={C.green600}/>Bundle Discounts (optional)</div>
                 <div style={{ fontSize: '0.85rem', color: C.grey500, marginBottom: 14 }}>
-                  Stack up to 30% in discounts. Multi-line bundles available through North Arrow partner agencies.
+                  Each multi-line policy you bring saves 1% off premium. Affiliate-referred fleets get 2.5% off.
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10 }}>
                   {[
-                    ['multi_line_auto', 'Personal Auto Bundle', '5%'],
-                    ['multi_line_home', 'Homeowners Bundle', '5%'],
-                    ['multi_line_life', 'Life Insurance Bundle', '2.5%'],
-                    ['affiliate_referral', 'Referral / Affiliate', '2.5%'],
-                  ].map(([key, label, pct]) => (
+                    ['multi_line_auto', 'Personal Auto', '1% off'],
+                    ['multi_line_home', 'Homeowners', '1% off'],
+                    ['multi_line_life', 'Life Insurance', '1% off'],
+                    ['affiliate_referral', 'Affiliate Referral', '2.5% off'],
+                  ].map(([key, label, badge]) => (
                     <label key={key} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', border: `1.5px solid ${form[key] ? C.green600 : C.grey300}`, background: form[key] ? C.green50 : C.white, borderRadius: 6, cursor: 'pointer', transition: 'all 0.15s' }}>
                       <input
                         type="checkbox"
@@ -336,61 +345,22 @@ export default function QuotePage({ setPage }) {
                       />
                       <div style={{ flex: 1 }}>
                         <div style={{ fontSize: '0.88rem', fontWeight: 600, color: C.navy800 }}>{label}</div>
+                        <div style={{ fontSize: '0.74rem', color: C.green700, fontWeight: 700, marginTop: 2 }}>{badge}</div>
                       </div>
-                      <span style={{ fontSize: '0.85rem', fontWeight: 700, color: C.green600 }}>-{pct}</span>
                     </label>
                   ))}
                 </div>
               </div>
-
-              {/* Add-Ons */}
-              <div style={cardSx}>
-                <div style={sectionTitle}><Info size={20} color={C.green600}/>Optional Add-Ons</div>
-                <div style={{ fontSize: '0.85rem', color: C.grey500, marginBottom: 14 }}>
-                  Items shown below are <strong>only added</strong> if not already included in your tier. Gold/Platinum include SLI, PAI, PEC, and Roadside automatically.
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10 }}>
-                  {[
-                    ['add_sli', 'Supplemental Liability (SLI)', '$18/mo', ['Gold','Platinum']],
-                    ['add_personal_accident', 'Personal Accident Ins', '$10/mo', ['Gold','Platinum']],
-                    ['add_personal_effects', 'Personal Effects Coverage', '$7/mo', ['Gold','Platinum']],
-                    ['add_roadside', 'Roadside Assistance', '$6/mo', ['Silver','Gold','Platinum']],
-                  ].map(([key, label, price, includedIn]) => {
-                    const isIncluded = includedIn.includes(form.coverage_tier)
-                    return (
-                      <label key={key} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', border: `1.5px solid ${isIncluded ? C.green600 : (form[key] ? C.green600 : C.grey300)}`, background: isIncluded ? C.green50 : (form[key] ? C.green50 : C.white), borderRadius: 6, cursor: isIncluded ? 'default' : 'pointer', opacity: isIncluded ? 0.85 : 1, transition: 'all 0.15s' }}>
-                        {isIncluded ? (
-                          <Check size={18} color={C.green600}/>
-                        ) : (
-                          <input
-                            type="checkbox"
-                            checked={form[key]}
-                            onChange={e => update(key, e.target.checked)}
-                            style={{ width: 18, height: 18, cursor: 'pointer', accentColor: C.green600 }}
-                          />
-                        )}
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: '0.88rem', fontWeight: 600, color: C.navy800 }}>{label}</div>
-                          <div style={{ fontSize: '0.74rem', color: isIncluded ? C.green700 : C.grey500, marginTop: 2 }}>
-                            {isIncluded ? `Included in ${form.coverage_tier}` : price}
-                          </div>
-                        </div>
-                      </label>
-                    )
-                  })}
-                </div>
-              </div>
             </div>
 
-            {/* RIGHT — STICKY QUOTE PANEL */}
             <div>
               <div style={{ position: 'sticky', top: 100, ...cardSx, padding: 0, overflow: 'hidden', marginBottom: 0 }}>
-                {quote.declined ? (
-                  <DeclinedPanel reason={quote.decline_reason} setPage={setPage}/>
+                {summary.allDeclined ? (
+                  <DeclinedPanel reason={summary.declined[0]?.quote?.decline_reason} setPage={setPage}/>
                 ) : (
-                  <ApprovedPanel
-                    quote={quote}
-                    form={form}
+                  <FleetQuotePanel
+                    summary={summary}
+                    vehicleQuotes={vehicleQuotes}
                     showBreakdown={showBreakdown}
                     setShowBreakdown={setShowBreakdown}
                     setPage={setPage}
@@ -408,11 +378,428 @@ export default function QuotePage({ setPage }) {
 
       <style>{`
         @media (max-width: 980px) {
-          .quote-grid {
-            grid-template-columns: 1fr !important;
-          }
+          .quote-grid { grid-template-columns: 1fr !important; }
+          .quote-grid > div:last-child > div:first-child { position: static !important; }
         }
       `}</style>
+    </div>
+  )
+}
+
+function VehicleCard({ vehicle, index, canRemove, onChange, onRemove, quote, cardSx, labelSx, inputSx }) {
+  const [openInfo, setOpenInfo] = useState(null)
+  const v = vehicle
+  const isTowable = v.rv_category === 'towable'
+  const types = isTowable ? TOWABLE_TYPES : DRIVEABLE_TYPES
+
+  const switchCategory = (newCat) => {
+    onChange('rv_category', newCat)
+    const validTypes = newCat === 'towable' ? TOWABLE_TYPES : DRIVEABLE_TYPES
+    const stillValid = validTypes.find(t => t.key === v.rv_type)
+    if (!stillValid) onChange('rv_type', validTypes[0].key)
+    if (newCat === 'towable') onChange('odometer_miles', 0)
+  }
+
+  return (
+    <div style={{ ...cardSx, position: 'relative', borderLeft: `4px solid ${C.green500}`, paddingLeft: 32 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22, paddingBottom: 16, borderBottom: `1px solid ${C.grey200}` }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 32, height: 32, borderRadius: 6, background: C.green600, color: C.white, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.92rem' }}>
+            {index + 1}
+          </div>
+          <div>
+            <div style={{ fontSize: '1.05rem', fontWeight: 800, color: C.navy800, lineHeight: 1.2 }}>
+              Vehicle #{index + 1}
+            </div>
+            <div style={{ fontSize: '0.82rem', color: C.grey500, marginTop: 2 }}>
+              {v.vehicle_year} {v.rv_type} · {v.vehicle_state}
+              {quote && !quote.declined && <span style={{ color: C.green700, fontWeight: 700 }}> · {$(quote.monthly_total)}/mo</span>}
+              {quote?.declined && <span style={{ color: C.amber600, fontWeight: 700 }}> · Manual review needed</span>}
+            </div>
+          </div>
+        </div>
+        {canRemove && (
+          <button
+            onClick={onRemove}
+            style={{
+              padding: '8px 12px',
+              background: 'transparent',
+              border: `1px solid ${C.grey300}`,
+              borderRadius: 6,
+              cursor: 'pointer',
+              color: C.grey600,
+              fontSize: '0.82rem',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              transition: 'all 0.15s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = C.red50; e.currentTarget.style.borderColor = C.red600; e.currentTarget.style.color = C.red600 }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = C.grey300; e.currentTarget.style.color = C.grey600 }}
+          >
+            <Trash2 size={14}/>Remove
+          </button>
+        )}
+      </div>
+
+      <div style={{ marginBottom: 18 }}>
+        <label style={labelSx}>Vehicle Category</label>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0, background: C.grey100, borderRadius: 8, padding: 4 }}>
+          {[
+            { key: 'towable',   label: 'Towable',   sub: 'Trailer · 5th Wheel · Pop Up' },
+            { key: 'driveable', label: 'Driveable', sub: 'Class A · B · C · Truck Camper' },
+          ].map(c => (
+            <button
+              key={c.key}
+              onClick={() => switchCategory(c.key)}
+              style={{
+                padding: '12px 16px',
+                background: v.rv_category === c.key ? C.white : 'transparent',
+                color: v.rv_category === c.key ? C.green700 : C.grey600,
+                border: 'none',
+                borderRadius: 6,
+                cursor: 'pointer',
+                fontWeight: 700,
+                fontSize: '0.92rem',
+                textAlign: 'center',
+                transition: 'all 0.15s',
+                boxShadow: v.rv_category === c.key ? '0 2px 6px rgba(15,34,64,0.08)' : 'none',
+              }}
+            >
+              <div>{c.label}</div>
+              <div style={{ fontSize: '0.7rem', fontWeight: 500, color: v.rv_category === c.key ? C.grey500 : C.grey400, marginTop: 2 }}>{c.sub}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ marginBottom: 18 }}>
+        <label style={labelSx}>RV Type</label>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 8 }}>
+          {types.map(t => (
+            <button
+              key={t.key}
+              onClick={() => onChange('rv_type', t.key)}
+              style={{
+                padding: '10px 12px',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                border: `1.5px solid ${v.rv_type === t.key ? C.green600 : C.grey300}`,
+                background: v.rv_type === t.key ? C.green50 : C.white,
+                color: v.rv_type === t.key ? C.green700 : C.grey700,
+                borderRadius: 6,
+                cursor: 'pointer',
+                textAlign: 'left',
+                transition: 'all 0.15s',
+              }}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 18 }}>
+        <div>
+          <label style={labelSx}>Stated Value</label>
+          <div style={{ position: 'relative' }}>
+            <DollarSign size={16} color={C.grey400} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)' }}/>
+            <input
+              type="number"
+              value={v.replacement_value}
+              onChange={e => onChange('replacement_value', Number(e.target.value) || 0)}
+              style={{ ...inputSx, paddingLeft: 32 }}
+              min={5000}
+              max={2500000}
+              step={500}
+            />
+          </div>
+        </div>
+        <div>
+          <label style={labelSx}>Year</label>
+          <input
+            type="number"
+            value={v.vehicle_year}
+            onChange={e => onChange('vehicle_year', Number(e.target.value) || 0)}
+            style={inputSx}
+            min={2016}
+            max={2027}
+          />
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
+        <div>
+          <label style={labelSx}>State</label>
+          <select value={v.vehicle_state} onChange={e => onChange('vehicle_state', e.target.value)} style={inputSx}>
+            {STATES.map(([code, name]) => <option key={code} value={code}>{name}</option>)}
+          </select>
+        </div>
+        <div>
+          <label style={{ ...labelSx, color: isTowable ? C.grey400 : C.grey700 }}>
+            Odometer {isTowable && <span style={{ textTransform: 'none', fontWeight: 500, color: C.grey400, letterSpacing: 0 }}> — N/A for towable</span>}
+          </label>
+          <input
+            type="number"
+            value={isTowable ? '' : v.odometer_miles}
+            onChange={e => onChange('odometer_miles', Number(e.target.value) || 0)}
+            disabled={isTowable}
+            placeholder={isTowable ? 'Not applicable' : 'Miles'}
+            style={{ ...inputSx, opacity: isTowable ? 0.5 : 1, cursor: isTowable ? 'not-allowed' : 'text', background: isTowable ? C.grey100 : C.white }}
+            min={0}
+            max={250000}
+            step={1000}
+          />
+        </div>
+      </div>
+
+      <div style={{ marginBottom: 22 }}>
+        <label style={labelSx}>Coverage Tier (this vehicle)</label>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          {TIERS.map(t => {
+            const isSelected = v.coverage_tier === t.key
+            return (
+              <button
+                key={t.key}
+                onClick={() => onChange('coverage_tier', t.key)}
+                style={{
+                  padding: '16px 16px',
+                  textAlign: 'left',
+                  background: isSelected ? t.color : C.white,
+                  color: isSelected ? C.white : C.navy800,
+                  border: `2px solid ${isSelected ? t.color : C.grey300}`,
+                  borderRadius: 8,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s',
+                  position: 'relative',
+                  minHeight: 130,
+                }}
+              >
+                <div style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: isSelected ? 'rgba(255,255,255,0.85)' : t.color, marginBottom: 4 }}>
+                  {t.sublabel}
+                </div>
+                <div style={{ fontSize: '1.15rem', fontWeight: 800, marginBottom: 8, lineHeight: 1.1 }}>{t.label}</div>
+                <div style={{ fontSize: '0.74rem', lineHeight: 1.5, color: isSelected ? 'rgba(255,255,255,0.85)' : C.grey500 }}>
+                  {t.desc}
+                </div>
+                <div style={{ fontSize: '0.78rem', fontWeight: 700, marginTop: 10, color: isSelected ? C.white : t.color }}>
+                  Deposit: ${t.deposit}
+                </div>
+                {isSelected && <Check size={16} style={{ position: 'absolute', top: 14, right: 14 }}/>}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      <div>
+        <label style={labelSx}>Optional Add-Ons (this vehicle)</label>
+        <div style={{ fontSize: '0.78rem', color: C.grey500, marginBottom: 12, lineHeight: 1.55 }}>
+          Tier-included items show a checkmark. Click <Info size={12} style={{ display: 'inline', verticalAlign: -2 }}/> for details.
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }} className="addons-grid">
+          {ADDONS.map(addon => {
+            const isIncluded = addon.includedIn.includes(v.coverage_tier)
+            const checked = v[addon.key]
+            const showInfo = openInfo === addon.key
+            return (
+              <div key={addon.key} style={{ position: 'relative' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 10,
+                    padding: '12px 14px',
+                    border: `1.5px solid ${isIncluded ? C.green600 : (checked ? C.green600 : C.grey300)}`,
+                    background: isIncluded ? C.green50 : (checked ? C.green50 : C.white),
+                    borderRadius: 6,
+                    opacity: isIncluded ? 0.95 : 1,
+                    transition: 'all 0.15s',
+                  }}
+                >
+                  {isIncluded ? (
+                    <Check size={18} color={C.green600} style={{ marginTop: 2, flexShrink: 0 }}/>
+                  ) : (
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={e => onChange(addon.key, e.target.checked)}
+                      style={{ width: 18, height: 18, cursor: 'pointer', accentColor: C.green600, marginTop: 2, flexShrink: 0 }}
+                    />
+                  )}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ fontSize: '0.86rem', fontWeight: 600, color: C.navy800 }}>{addon.label}</span>
+                      <button
+                        onClick={() => setOpenInfo(showInfo ? null : addon.key)}
+                        aria-label={`Info about ${addon.label}`}
+                        style={{
+                          width: 20, height: 20, padding: 0,
+                          border: `1px solid ${showInfo ? C.green600 : C.grey300}`,
+                          background: showInfo ? C.green600 : C.white,
+                          color: showInfo ? C.white : C.grey500,
+                          borderRadius: '50%', cursor: 'pointer',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          flexShrink: 0,
+                          transition: 'all 0.15s',
+                        }}
+                      >
+                        <Info size={11}/>
+                      </button>
+                    </div>
+                    <div style={{ fontSize: '0.74rem', color: isIncluded ? C.green700 : C.grey500, marginTop: 2 }}>
+                      {isIncluded ? `Included in ${v.coverage_tier}` : addon.price}
+                    </div>
+                  </div>
+                </div>
+
+                {showInfo && (
+                  <div style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 6px)',
+                    left: 0,
+                    right: 0,
+                    background: C.navy800,
+                    color: C.white,
+                    padding: '14px 16px',
+                    borderRadius: 8,
+                    boxShadow: '0 8px 24px rgba(15,34,64,0.25)',
+                    zIndex: 10,
+                    fontSize: '0.82rem',
+                    lineHeight: 1.6,
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10, marginBottom: 8 }}>
+                      <strong style={{ color: C.green400, fontSize: '0.78rem', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{addon.short} · {addon.price}</strong>
+                      <button
+                        onClick={() => setOpenInfo(null)}
+                        aria-label="Close"
+                        style={{ background: 'transparent', border: 'none', color: C.navy300, cursor: 'pointer', padding: 0, display: 'flex' }}
+                      >
+                        <X size={14}/>
+                      </button>
+                    </div>
+                    <div>{addon.info}</div>
+                    <div style={{ position: 'absolute', top: -6, left: 24, width: 12, height: 12, background: C.navy800, transform: 'rotate(45deg)' }}/>
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      <style>{`
+        @media (max-width: 600px) {
+          .addons-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+    </div>
+  )
+}
+
+function FleetQuotePanel({ summary, vehicleQuotes, showBreakdown, setShowBreakdown, setPage }) {
+  const fleetCount = vehicleQuotes.length
+  const approvedCount = summary.approved.length
+
+  return (
+    <div>
+      <div style={{ background: `linear-gradient(135deg, ${C.green700} 0%, ${C.green600} 100%)`, padding: '20px 24px', color: C.white }}>
+        <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.85, marginBottom: 4 }}>
+          Your Fleet Quote
+        </div>
+        <div style={{ fontSize: '0.88rem', opacity: 0.92 }}>
+          {fleetCount} {fleetCount === 1 ? 'vehicle' : 'vehicles'}{summary.anyDeclined && ` · ${summary.declined.length} need${summary.declined.length === 1 ? 's' : ''} review`}
+        </div>
+      </div>
+
+      <div style={{ padding: '32px 24px 20px', textAlign: 'center', borderBottom: `1px solid ${C.grey200}` }}>
+        <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: C.grey500, marginBottom: 8 }}>
+          Total Fleet Monthly
+        </div>
+        <div style={{ fontSize: '3.4rem', fontWeight: 800, color: C.navy800, lineHeight: 1, marginBottom: 4 }}>
+          {$(summary.totalMonthly)}<span style={{ fontSize: '1rem', fontWeight: 600, color: C.grey500 }}>/mo</span>
+        </div>
+        {approvedCount > 1 && (
+          <div style={{ fontSize: '0.85rem', color: C.grey500 }}>
+            avg {$(summary.totalMonthly / approvedCount)}/vehicle
+          </div>
+        )}
+      </div>
+
+      <div style={{ padding: '20px 24px' }}>
+        {[
+          ['Annual Total', $(summary.totalAnnual)],
+          ['Binding Deposits (one-time)', $(summary.totalDeposit)],
+          ['First Payment (today)', $(summary.totalFirst)],
+        ].map(([label, val]) => (
+          <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', fontSize: '0.9rem' }}>
+            <span style={{ color: C.grey600 }}>{label}</span>
+            <span style={{ color: C.navy800, fontWeight: 700 }}>{val}</span>
+          </div>
+        ))}
+
+        {summary.anyDeclined && (
+          <div style={{ marginTop: 14, padding: 14, background: C.amber50, borderRadius: 6, border: `1px solid ${C.amber200}` }}>
+            <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: C.amber600, marginBottom: 6 }}>
+              Manual Review Required
+            </div>
+            <div style={{ fontSize: '0.82rem', color: C.grey700, lineHeight: 1.55 }}>
+              {summary.declined.length} {summary.declined.length === 1 ? 'vehicle requires' : 'vehicles require'} underwriter review. The total above reflects only vehicles that quoted instantly.
+            </div>
+          </div>
+        )}
+      </div>
+
+      <button
+        onClick={() => setShowBreakdown(b => !b)}
+        style={{
+          width: '100%', padding: '14px 24px',
+          background: 'transparent', color: C.grey700,
+          border: 'none', borderTop: `1px solid ${C.grey200}`, borderBottom: showBreakdown ? `1px solid ${C.grey200}` : 'none',
+          cursor: 'pointer', fontSize: '0.86rem', fontWeight: 600,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        }}
+      >
+        <span>Per-Vehicle Breakdown</span>
+        {showBreakdown ? <ChevronUp size={18}/> : <ChevronDown size={18}/>}
+      </button>
+
+      {showBreakdown && (
+        <div style={{ padding: '14px 24px 18px', background: C.grey50 }}>
+          {vehicleQuotes.map((v, i) => (
+            <div key={v.id} style={{ padding: '10px 0', borderBottom: i < vehicleQuotes.length - 1 ? `1px solid ${C.grey200}` : 'none', fontSize: '0.82rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
+                <span style={{ color: C.navy800, fontWeight: 700 }}>#{i+1} {v.rv_type}</span>
+                <span style={{ color: v.quote.declined ? C.amber600 : C.navy800, fontWeight: 700 }}>
+                  {v.quote.declined ? 'Review' : `${$(v.quote.monthly_total)}/mo`}
+                </span>
+              </div>
+              <div style={{ color: C.grey500, fontSize: '0.76rem' }}>
+                {v.coverage_tier} · {v.vehicle_state} · ${v.replacement_value.toLocaleString()}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div style={{ padding: '18px 24px 24px' }}>
+        <button
+          onClick={() => { setPage('apply'); window.scrollTo(0,0) }}
+          style={{
+            width: '100%', padding: '14px',
+            background: C.green600, color: C.white,
+            borderRadius: 6, fontWeight: 700, fontSize: '0.95rem',
+            border: 'none', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            transition: 'background 0.15s',
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = C.green700}
+          onMouseLeave={e => e.currentTarget.style.background = C.green600}
+        >
+          Continue to Application <ArrowRight size={16}/>
+        </button>
+      </div>
     </div>
   )
 }
@@ -423,7 +810,7 @@ function DeclinedPanel({ reason, setPage }) {
       <div style={{ background: `linear-gradient(135deg, ${C.amber600} 0%, #B85708 100%)`, padding: '28px 24px', color: C.white }}>
         <AlertCircle size={32} style={{ marginBottom: 10 }}/>
         <div style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: 6 }}>Manual Review Needed</div>
-        <div style={{ fontSize: '0.88rem', lineHeight: 1.6, opacity: 0.94 }}>{reason}</div>
+        <div style={{ fontSize: '0.88rem', lineHeight: 1.6, opacity: 0.94 }}>{reason || 'One or more inputs require underwriter review before we can quote.'}</div>
       </div>
       <div style={{ padding: 24 }}>
         <p style={{ fontSize: '0.92rem', color: C.grey700, lineHeight: 1.65, marginBottom: 18 }}>
@@ -437,115 +824,6 @@ function DeclinedPanel({ reason, setPage }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
           }}
         >Contact an Underwriter <ArrowRight size={16}/></button>
-      </div>
-    </div>
-  )
-}
-
-function ApprovedPanel({ quote, form, showBreakdown, setShowBreakdown, setPage }) {
-  const tier = TIERS.find(t => t.key === form.coverage_tier)
-  return (
-    <div>
-      <div style={{ background: `linear-gradient(135deg, ${tier.color} 0%, ${tier.color}DD 100%)`, padding: '20px 24px', color: C.white }}>
-        <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.85, marginBottom: 4 }}>
-          Your Quote · {tier.label} Tier
-        </div>
-        <div style={{ fontSize: '0.88rem', opacity: 0.92 }}>
-          {form.fleet_size} {form.fleet_size === 1 ? 'unit' : 'units'} · {form.rv_type} · {form.vehicle_state}
-        </div>
-      </div>
-
-      <div style={{ padding: '32px 24px 20px', textAlign: 'center', borderBottom: `1px solid ${C.grey200}` }}>
-        <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: C.grey500, marginBottom: 8 }}>
-          Per-Vehicle Monthly
-        </div>
-        <div style={{ fontSize: '3.4rem', fontWeight: 800, color: C.navy800, lineHeight: 1, marginBottom: 4 }}>
-          {$(quote.monthly_total)}<span style={{ fontSize: '1rem', fontWeight: 600, color: C.grey500 }}>/mo</span>
-        </div>
-        <div style={{ fontSize: '0.85rem', color: C.grey500 }}>
-          {$(quote.monthly_premium)} premium + ${quote.monthly_fee} NA service fee
-        </div>
-      </div>
-
-      <div style={{ padding: '20px 24px' }}>
-        {[
-          ['Annual Premium (per vehicle)', $(quote.annual_premium)],
-          ['Binding Deposit (one-time)', $(quote.deposit)],
-          ['First Payment Due', $(quote.first_payment)],
-        ].map(([label, val]) => (
-          <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', fontSize: '0.9rem' }}>
-            <span style={{ color: C.grey600 }}>{label}</span>
-            <span style={{ color: C.navy800, fontWeight: 700 }}>{val}</span>
-          </div>
-        ))}
-
-        {form.fleet_size > 1 && (
-          <div style={{ marginTop: 14, padding: 14, background: C.green50, borderRadius: 6, border: `1px solid ${C.green100}` }}>
-            <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: C.green700, marginBottom: 6 }}>
-              Fleet Total ({form.fleet_size} units)
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.88rem', marginBottom: 4 }}>
-              <span style={{ color: C.grey600 }}>Monthly</span>
-              <span style={{ color: C.navy800, fontWeight: 700 }}>{$(quote.fleet_total_monthly)}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.88rem' }}>
-              <span style={{ color: C.grey600 }}>Annual</span>
-              <span style={{ color: C.navy800, fontWeight: 700 }}>{$(quote.fleet_total_annual)}</span>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <button
-        onClick={() => setShowBreakdown(b => !b)}
-        style={{ width: '100%', padding: '12px 24px', background: C.grey50, color: C.grey700, border: 'none', borderTop: `1px solid ${C.grey200}`, borderBottom: showBreakdown ? `1px solid ${C.grey200}` : 'none', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
-      >
-        {showBreakdown ? 'Hide' : 'Show'} calculation breakdown
-        {showBreakdown ? <ChevronUp size={16}/> : <ChevronDown size={16}/>}
-      </button>
-
-      {showBreakdown && (
-        <div style={{ padding: '16px 24px', background: C.grey50, fontSize: '0.82rem' }}>
-          {[
-            [`Value-based (${(quote.breakdown.value_pct * 100).toFixed(2)}% of $${form.replacement_value.toLocaleString()})`, $(quote.breakdown.value_based_monthly)],
-            quote.breakdown.floor_applied ? ['Min floor applied', $(quote.breakdown.min_floor)] : null,
-            ['Silver baseline', $(quote.breakdown.silver_baseline)],
-            ['× Tier multiplier', `× ${quote.breakdown.tier_mult.toFixed(2)}`],
-            ['× State multiplier', `× ${quote.breakdown.state_mult.toFixed(2)}`],
-            ['× Age multiplier', `× ${quote.breakdown.age_mult.toFixed(2)}`],
-            ['Subtotal (pre-discount)', $(quote.breakdown.pre_discount)],
-            quote.breakdown.total_discount_pct > 0 ? ['Discounts applied', `-${(quote.breakdown.total_discount_pct * 100).toFixed(1)}%`] : null,
-            quote.breakdown.surcharge_mult !== 1 ? ['Surcharge multiplier', `× ${quote.breakdown.surcharge_mult.toFixed(2)}`] : null,
-            ['+ NA service fee', `+ $33`],
-          ].filter(Boolean).map(([label, val]) => (
-            <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', color: C.grey600 }}>
-              <span>{label}</span>
-              <span style={{ fontFamily: 'ui-monospace, monospace', color: C.navy800 }}>{val}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      <div style={{ padding: 24, borderTop: `1px solid ${C.grey200}` }}>
-        <button
-          onClick={() => { setPage('apply'); window.scrollTo(0, 0) }}
-          style={{
-            width: '100%', padding: '15px 20px',
-            background: C.green600, color: C.white,
-            borderRadius: 6, fontWeight: 700, fontSize: '0.95rem',
-            border: 'none', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-          }}
-        >Continue to Application <ArrowRight size={17}/></button>
-        <button
-          onClick={() => { setPage('contact'); window.scrollTo(0, 0) }}
-          style={{
-            width: '100%', padding: '12px 20px', marginTop: 10,
-            background: 'transparent', color: C.navy700,
-            border: `1.5px solid ${C.navy700}`, borderRadius: 6,
-            fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer',
-          }}
-        >Talk to an Agent</button>
       </div>
     </div>
   )
