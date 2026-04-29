@@ -430,8 +430,20 @@ export default function QuotePage({ setPage }) {
                 )}
               </div>
 
-              <div style={{ fontSize: '0.78rem', color: C.grey500, lineHeight: 1.65, marginTop: 16, padding: '0 4px' }}>
-                <strong style={{ color: C.grey700 }}>Disclosure:</strong> This is an indicative quote based on the inputs provided. Final premium subject to underwriting review, vehicle inspection, and verification of driving history. Coverage subject to state availability.
+              {/* DRAFT QUOTE DISCLAIMER — prominent, full color-blocked */}
+              <div style={{ marginTop: 16, padding: '18px 20px', background: '#FEF3C7', border: '1px solid #FCD34D', borderRadius: 10 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                  <AlertCircle size={16} color="#92400E"/>
+                  <strong style={{ color: '#92400E', fontSize: '0.82rem', letterSpacing: '0.06em', textTransform: 'uppercase' }}>This is a Draft Quote — Not a Binding Offer</strong>
+                </div>
+                <div style={{ fontSize: '0.82rem', color: '#78350F', lineHeight: 1.6 }}>
+                  Pricing shown is a preliminary estimate based on the inputs you've provided. North Arrow is not bound to these rates. Final premium and final eligibility are determined during underwriting review and may adjust based on factors not captured at this stage — including vehicle inspection, motor vehicle reports (MVR), insurance loss history, business credit, and verification of declared values, mileage, and driving records.
+                </div>
+              </div>
+
+              {/* Standard disclosure */}
+              <div style={{ fontSize: '0.74rem', color: C.grey500, lineHeight: 1.6, marginTop: 12, padding: '0 4px' }}>
+                Coverage is subject to state availability. Quote inputs are not stored on our servers. Quote ID is generated only upon binding. By continuing to the application, you agree this preliminary draft does not create any obligation on the part of North Arrow Commercial Insurance Services to bind coverage at the rates shown.
               </div>
             </div>
           </div>
@@ -805,9 +817,14 @@ function FleetQuotePanel({ summary, vehicleQuotes, form, showBreakdown, setShowB
 
   return (
     <div>
-      <div style={{ background: `linear-gradient(135deg, ${C.green700} 0%, ${C.green600} 100%)`, padding: '20px 24px', color: C.white }}>
-        <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.85, marginBottom: 4 }}>
-          Your Fleet Quote
+      <div style={{ background: `linear-gradient(135deg, ${C.green700} 0%, ${C.green600} 100%)`, padding: '20px 24px', color: C.white, position: 'relative' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 4 }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.85 }}>
+            Your Fleet Quote
+          </div>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 9px', background: 'rgba(255,255,255,0.18)', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 4, fontSize: '0.62rem', fontWeight: 800, letterSpacing: '0.12em' }}>
+            <Info size={9}/>DRAFT
+          </div>
         </div>
         <div style={{ fontSize: '0.88rem', opacity: 0.92 }}>
           {fleetCount} {fleetCount === 1 ? 'vehicle' : 'vehicles'}{summary.anyDeclined && ` · ${summary.declined.length} need${summary.declined.length === 1 ? 's' : ''} review`}
@@ -901,7 +918,7 @@ function FleetQuotePanel({ summary, vehicleQuotes, form, showBreakdown, setShowB
           Continue to Application <ArrowRight size={16}/>
         </button>
         <div style={{ fontSize: '0.74rem', color: C.grey500, textAlign: 'center', marginTop: 10, lineHeight: 1.5 }}>
-          Your quote selections carry forward — no re-entry required.
+          Your draft selections carry forward — final pricing set at underwriting.
         </div>
       </div>
     </div>
